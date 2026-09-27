@@ -81,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
       dotItem.className = `step-dot-item ${idx === 0 ? "active" : ""}`;
       dotItem.id = `step-dot-item-${idx}`;
 
-      const shortName = step.isPersonalDetails 
-        ? "Profile" 
+      const shortName = step.isPersonalDetails
+        ? "Profile"
         : (step.dimension ? step.dimension.toUpperCase() : `Part ${idx}`);
 
       dotItem.innerHTML = `
@@ -143,8 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
       stepView.id = `step-view-${stepIndex}`;
 
       // Header for this step
-      let categoryPill = step.category 
-        ? `<div class="step-category-pill">${step.category}</div>` 
+      let categoryPill = step.category
+        ? `<div class="step-category-pill">${step.category}</div>`
         : (step.isPersonalDetails ? `<div class="step-category-pill">Registration</div>` : "");
 
       let headerHtml = `
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
               formData.personal[field.name] = val;
             }
-          } else if (val && field.name === "whatsappNumber" && !/^[0-9]{10}$/.test(val.replace(/[^0-9]/g, ''))) {
+          } else if (val && field.name === "whatsappg" && !/^[0-9]{10}$/.test(val.replace(/[^0-9]/g, ''))) {
             if (field.required) {
               isValid = false;
               showFieldError(field.name, `Please enter a valid 10-digit mobile number`);
@@ -574,8 +574,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const payload = {
       ...formData.personal,
-      answers: formData.answers,
-      scores: computedScores,
       totalScore,
       timestamp: new Date().toISOString()
     };
@@ -584,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await window.DhruvaBackend.saveTestSubmission(payload);
-      
+
       // SECURITY: Encrypt session payload containing gender, studentName, and scores
       // Stored in sessionStorage only — tampering URL does nothing.
       const sessionData = {
@@ -594,8 +592,8 @@ document.addEventListener("DOMContentLoaded", () => {
         totalScore
       };
 
-      const authToken = window.DhruvaSecurity 
-        ? window.DhruvaSecurity.encryptSessionPayload(sessionData) 
+      const authToken = window.DhruvaSecurity
+        ? window.DhruvaSecurity.encryptSessionPayload(sessionData)
         : btoa(JSON.stringify(sessionData));
 
       if (authToken) {
