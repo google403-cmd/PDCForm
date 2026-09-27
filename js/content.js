@@ -61,14 +61,14 @@ window.DHRUVA_CONFIG = {
           label: "Full Name",
           type: "text",
           placeholder: "Enter your full name",
-          required: false
+          required: true
         },
         {
           name: "whatsappNumber",
           label: "Phone / WhatsApp Number",
           type: "tel",
           placeholder: "10-digit mobile number (e.g. 9876543210)",
-          required: false,
+          required: true,
           pattern: "^[0-9]{10}$"
         },
         {
@@ -76,7 +76,7 @@ window.DHRUVA_CONFIG = {
           label: "Email Address",
           type: "email",
           placeholder: "name@example.com",
-          required: false
+          required: true
         },
         {
           name: "gender",
@@ -90,13 +90,13 @@ window.DHRUVA_CONFIG = {
           label: "Home Town / Native City",
           type: "text",
           placeholder: "e.g. Pune, Mumbai, Nashik, etc.",
-          required: false
+          required: true
         },
         {
           name: "branch",
           label: "Engineering Branch",
           type: "select",
-          required: false,
+          required: true,
           hasOtherInput: true,
           otherPlaceholder: "e.g. Chemical, Civil, Robotics, Instrumentation, etc.",
           options: [
@@ -114,7 +114,7 @@ window.DHRUVA_CONFIG = {
           name: "year",
           label: "Current Year & Division",
           type: "select",
-          required: false,
+          required: true,
           hasOtherInput: true,
           otherPlaceholder: "e.g. SE-A, TE-B, BE-C",
           options: [

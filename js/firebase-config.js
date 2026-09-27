@@ -1,88 +1,98 @@
 /**
- * ===================================================================
- * DHRUVA CLUB — FIREBASE FIRESTORE CONFIGURATION
- * ===================================================================
- * 
- * Replace the placeholder values below with your actual Firebase Project
- * credentials from the Firebase Console (https://console.firebase.google.com/):
- * 
- * 1. Go to Project Settings -> General -> Your apps -> Web app
- * 2. Copy the firebaseConfig object properties and paste them here.
- * 3. Make sure Firestore Database is created in Test Mode or with proper write rules.
- * ===================================================================
+ * Dhruva Club Firebase Firestore Configuration
+ *
+ * Firebase compatibility SDK must be loaded before this file:
+ *
+ * firebase-app-compat.js
+ * firebase-firestore-compat.js
  */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDS7leZONMPWe1UItrShq2NxFrMCFJqTjs",
+  authDomain: "dhruva-7c184.firebaseapp.com",
+  projectId: "dhruva-7c184",
+  storageBucket: "dhruva-7c184.firebasestorage.app",
+  messagingSenderId: "611719166487",
+  appId: "1:611719166487:web:7a6d3d29fc57b90b7efa52",
 };
 
-// State flag to detect if user has configured real credentials
 let isFirebaseConfigured = false;
 let db = null;
 
 try {
-  if (
-    typeof firebase !== "undefined" &&
-    firebaseConfig.apiKey !== "YOUR_API_KEY_HERE" &&
-    firebaseConfig.projectId !== "YOUR_PROJECT_ID"
-  ) {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    isFirebaseConfigured = true;
-    console.log("✅ Firebase Firestore initialized successfully.");
-  } else {
-    console.warn("⚠️ Firebase is using placeholder credentials. Test submissions will be logged to console & local storage for preview until you add real Firebase credentials.");
+  const hasValidConfig =
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.messagingSenderId &&
+    firebaseConfig.appId &&
+    !firebaseConfig.apiKey.includes("YOUR_") &&
+    !firebaseConfig.projectId.includes("YOUR_");
+
+  if (typeof firebase === "undefined") {
+    throw new Error(
+      "Firebase SDK was not loaded. Check the script tags in index.html."
+    );
   }
+
+  if (!hasValidConfig) {
+    throw new Error(
+      "Firebase configuration still contains placeholder values."
+    );
+  }
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  db = firebase.firestore();
+  isFirebaseConfigured = true;
+
+  console.log("Firebase Firestore initialized successfully.");
 } catch (error) {
-  console.error("❌ Firebase Initialization Error:", error);
+  console.error("Firebase initialization failed:", error.message);
 }
 
 /**
- * Saves a completed test submission to Firestore (or localStorage fallback).
- * @param {Object} submissionData - Complete response payload
+ * Save one completed assessment to Firestore.
+ *
+ * @param {Object} submissionData
  * @returns {Promise<{success: boolean, id?: string, error?: string}>}
  */
 async function saveTestSubmission(submissionData) {
-  const timestamp = new Date().toISOString();
+  if (!isFirebaseConfigured || !db) {
+    throw new Error(
+      "Firebase is not configured. Check js/firebase-config.js."
+    );
+  }
+
   const payload = {
     ...submissionData,
-    submittedAt: timestamp,
+    submittedAt: new Date().toISOString(),
     userAgent: navigator.userAgent
   };
 
-  if (isFirebaseConfigured && db) {
-    try {
-      const docRef = await db.collection("dhruva_test_submissions").add(payload);
-      console.log("✅ Submission saved to Firestore with ID:", docRef.id);
-      return { success: true, id: docRef.id };
-    } catch (error) {
-      console.error("❌ Firestore write error:", error);
-      // Fallback save to localStorage so student data isn't lost
-      saveToLocalBackup(payload);
-      return { success: true, id: "offline_saved", warning: error.message };
-    }
-  } else {
-    // Demo / offline mode fallback
-    saveToLocalBackup(payload);
-    console.log("📦 (Demo Mode) Submission saved locally:", payload);
-    // Simulate slight network delay for natural UX
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return { success: true, id: "demo_" + Date.now() };
-  }
-}
-
-function saveToLocalBackup(payload) {
   try {
-    const existing = JSON.parse(localStorage.getItem("dhruva_submissions_backup") || "[]");
-    existing.push(payload);
-    localStorage.setItem("dhruva_submissions_backup", JSON.stringify(existing));
-  } catch (e) {
-    console.error("Local backup write failed", e);
+    const documentReference = await db
+      .collection("dhruva_test_submissions")
+      .add(payload);
+
+    console.log(
+      "Assessment saved successfully. Document ID:",
+      documentReference.id
+    );
+
+    return {
+      success: true,
+      id: documentReference.id
+    };
+  } catch (error) {
+    console.error("Firestore write failed:", error);
+
+    return {
+      success: false,
+      error: error.message
+    };
   }
 }
 
