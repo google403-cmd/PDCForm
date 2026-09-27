@@ -69,7 +69,6 @@ async function saveTestSubmission(submissionData) {
   const payload = {
     ...submissionData,
     submittedAt: new Date().toISOString(),
-    userAgent: navigator.userAgent
   };
 
   try {
