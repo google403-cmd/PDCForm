@@ -1,0 +1,155 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =====================================================================
+    // DHRUVA CLUB ASSESSMENT SUBMISSIONS
+    // =====================================================================
+    // Collection: dhruva_test_submissions
+    // Purpose: Store student assessment responses (no authentication required)
+    // Access: Public write (form submissions), No public read
+    // =====================================================================
+
+    match /dhruva_test_submissions/{submissionId} {
+
+      // ───────────────────────────────────────────────────────────────────
+      // ALLOW: Create (Public form submissions)
+      // ───────────────────────────────────────────────────────────────────
+      // - No authentication required (public form)
+      // - Strict field validation to prevent abuse
+      // - Data type and size restrictions
+      // - Score range validation
+      // ───────────────────────────────────────────────────────────────────
+
+      allow create: if
+        // Request must contain ONLY these fields (prevents extra data injection)
+        request.resource.data.keys().hasOnly([
+          'fullName',
+          'email',
+          'whatsappNumber',
+          'gender',
+          'homeTown',
+          'branch',
+          'year',
+          'answers',
+          'scores',
+          'totalScore',
+          'timestamp',
+          'submittedAt',
+          'userAgent'
+        ])
+
+        // ─────────────────────────────────────────────────────────────────
+        // REQUIRED PERSONAL INFORMATION (All must be strings)
+        // ─────────────────────────────────────────────────────────────────
+
+        && request.resource.data.fullName is string
+        && request.resource.data.email is string
+        && request.resource.data.whatsappNumber is string
+        && request.resource.data.gender is string
+        && request.resource.data.homeTown is string
+        && request.resource.data.branch is string
+        && request.resource.data.year is string
+
+        // ─────────────────────────────────────────────────────────────────
+        // FIELD LENGTH RESTRICTIONS (Prevent abuse/spam)
+        // ─────────────────────────────────────────────────────────────────
+
+        && request.resource.data.fullName.size() > 0
+        && request.resource.data.fullName.size() <= 120
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.whatsappNumber.size() >= 10
+        && request.resource.data.whatsappNumber.size() <= 15
+        && request.resource.data.homeTown.size() > 0
+        && request.resource.data.homeTown.size() <= 100
+        && request.resource.data.branch.size() > 0
+        && request.resource.data.branch.size() <= 100
+        && request.resource.data.year.size() > 0
+        && request.resource.data.year.size() <= 50
+
+        // ─────────────────────────────────────────────────────────────────
+        // GENDER VALIDATION (Only allowed values)
+        // ─────────────────────────────────────────────────────────────────
+
+        && request.resource.data.gender in ['Male', 'Female', 'Other']
+
+        // ─────────────────────────────────────────────────────────────────
+        // ASSESSMENT DATA VALIDATION
+        // ─────────────────────────────────────────────────────────────────
+
+        // answers must be a map (object)
+        && request.resource.data.answers is map
+
+        // scores must contain exactly pq, iq, sq
+        && request.resource.data.scores is map
+        && request.resource.data.scores.keys().hasOnly(['pq', 'iq', 'sq'])
+
+        // Each score must be a number between 0-100
+        && request.resource.data.scores.pq is number
+        && request.resource.data.scores.pq >= 0
+        && request.resource.data.scores.pq <= 100
+        && request.resource.data.scores.iq is number
+        && request.resource.data.scores.iq >= 0
+        && request.resource.data.scores.iq <= 100
+        && request.resource.data.scores.sq is number
+        && request.resource.data.scores.sq >= 0
+        && request.resource.data.scores.sq <= 100
+
+        // ─────────────────────────────────────────────────────────────────
+        // OVERALL SCORE VALIDATION (0-100)
+        // ─────────────────────────────────────────────────────────────────
+
+        && request.resource.data.totalScore is number
+        && request.resource.data.totalScore >= 0
+        && request.resource.data.totalScore <= 100
+
+        // ─────────────────────────────────────────────────────────────────
+        // METADATA VALIDATION (Timestamps and browser info)
+        // ─────────────────────────────────────────────────────────────────
+
+        && request.resource.data.timestamp is string
+        && request.resource.data.submittedAt is string
+        && request.resource.data.userAgent is string
+        && request.resource.data.userAgent.size() > 0
+        && request.resource.data.userAgent.size() <= 500;
+
+      // ───────────────────────────────────────────────────────────────────
+      // DENY: Read (No public access to submissions)
+      // ───────────────────────────────────────────────────────────────────
+      // Students cannot view other students' responses
+      // Use Firebase Console or authenticated admin tool to view data
+      // ───────────────────────────────────────────────────────────────────
+
+      allow read: if false;
+
+      // ───────────────────────────────────────────────────────────────────
+      // DENY: Update (Submissions are immutable)
+      // ───────────────────────────────────────────────────────────────────
+      // Once submitted, responses cannot be edited by public
+      // Only admin can modify via Firebase Console if needed
+      // ───────────────────────────────────────────────────────────────────
+
+      allow update: if false;
+
+      // ───────────────────────────────────────────────────────────────────
+      // DENY: Delete (Submissions are permanent)
+      // ───────────────────────────────────────────────────────────────────
+      // Prevent accidental or malicious deletion of student data
+      // ───────────────────────────────────────────────────────────────────
+
+      allow delete: if false;
+    }
+
+    // =====================================================================
+    // DENY ALL OTHER COLLECTIONS
+    // =====================================================================
+    // Explicitly deny access to any other collection for security
+    // =====================================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
