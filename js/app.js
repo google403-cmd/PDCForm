@@ -6,6 +6,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const config = window.DHRUVA_CONFIG;
+
   if (!config) {
     console.error("Configuration not loaded from content.js!");
     return;
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const brandHeader = document.getElementById("brandHeader");
   const clubBadge = document.getElementById("clubBadge");
   const clubName = document.getElementById("clubName");
+
   const clubTagline = document.getElementById("clubTagline");
   const aboutToggleBtn = document.getElementById("aboutToggleBtn");
   const aboutContent = document.getElementById("aboutContent");
@@ -45,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (config.club) {
       if (clubBadge && config.club.badge) clubBadge.textContent = config.club.badge;
       if (clubName && config.club.name) clubName.textContent = config.club.name;
+
       if (clubTagline && config.club.tagline) clubTagline.textContent = config.club.tagline;
 
       if (config.club.about) {

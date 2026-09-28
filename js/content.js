@@ -14,7 +14,8 @@ window.DHRUVA_CONFIG = {
   // Brand & Club Information
   club: {
     name: "Dhruva Club",
-    tagline: "Personality Development & Character Building Assessment",
+    tagline: "An Official Student Club of PVGCOET",
+    badge: "PQ-IQ-SQ Assessment",
     badge: "Official Assessment 2026",
     logoPath: "assets/logo.png",
 
@@ -29,21 +30,28 @@ window.DHRUVA_CONFIG = {
           desc: "Health, energy, disciplined daily habits, and vitality."
         },
         {
+          title: "Emotional Quotient (EQ)",
+          desc: "Self-awareness, resilience, empathy, and interpersonal balance."
+        },
+        {
           title: "Intellectual Quotient (IQ)",
           desc: "Analytical reasoning, clarity of thought, and engineering acumen."
         },
         {
-          title: "Emotional Quotient (EQ)",
-          desc: "Self-awareness, resilience, empathy, and interpersonal balance."
+          title: "Spiritual Quotient (SQ)",
+          desc: "Values, purpose, inner strength, and value-based living."
         }
       ]
     }
   },
 
+
+
+
   // WhatsApp Community Links (Redirect target based on verified token)
   whatsappLinks: {
-    male: "https://chat.whatsapp.com/YOUR_MALE_COMMUNITY_LINK",
-    female: "https://chat.whatsapp.com/YOUR_FEMALE_COMMUNITY_LINK",
+    male: "https://chat.whatsapp.com/KScAduT2RdrFiI0nhAHwim",
+    female: "https://chat.whatsapp.com/IqOcPV8pDrODJBVh6HJYFV",
     default: "https://chat.whatsapp.com/YOUR_DEFAULT_COMMUNITY_LINK"
   },
 
