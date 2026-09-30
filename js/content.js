@@ -58,9 +58,16 @@ window.PDC_CONFIG = {
   campusAccess: {
     blockedMessage: "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Please proceed to the Kondhwa assessment below.",
     supportNote: "Please use the official Kondhwa pathway shared by the club coordinators.",
-    KONDHWA_QUIZ_URL: "https://bit.ly/3Qs-personality-assessment-pdc",
-    kondhwaQuizUrl: "https://bit.ly/3Qs-personality-assessment-pdc",
-    kondhwaLogoPath: "assets/kondhwa-logo.svg"
+    KONDHWA_QUIZ_URL: "kondhwa.html",
+    kondhwaQuizUrl: "kondhwa.html",
+    BIBWEWADI_QUIZ_URL: "index.html",
+    bibwewadiQuizUrl: "index.html",
+    kondhwaLogoPath: "assets/kondhwa-logo.svg",
+    collections: {
+      bibwewadi: "pdc_bibwewadi_submissions",
+      kondhwa: "pdc_kondhwa_submissions",
+      legacy: "pdc_test_submissions"
+    }
   },
 
   // ── WhatsApp Official Community Link ──────────────────────────────
@@ -519,6 +526,13 @@ window.PDC_CONFIG = {
           ]
         }
       ]
+    },
+    {
+      id: "community_step",
+      title: "Join Official PDC WhatsApp Community",
+      subtitle: "Connect with PDC coordinators, mentors, and fellow engineering students to receive your workshop assignments and event schedules.",
+      isCommunityStep: true,
+      category: "WhatsApp Community"
     }
   ],
 

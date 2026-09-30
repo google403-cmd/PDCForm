@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const shortName = step.isPersonalDetails
         ? "Profile"
-        : (step.dimension ? step.dimension.toUpperCase() : `Part ${idx}`);
+        : (step.isCommunityStep ? "Community" : (step.dimension ? step.dimension.toUpperCase() : `Part ${idx}`));
 
       dotItem.innerHTML = `
         <div class="step-dot">${idx + 1}</div>
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (stepCountLabel) {
       const stepName = currentStepConfig.isPersonalDetails
         ? "Profile Registration"
-        : (currentStepConfig.category || currentStepConfig.title);
+        : (currentStepConfig.isCommunityStep ? "WhatsApp Community" : (currentStepConfig.category || currentStepConfig.title));
       stepCountLabel.textContent = `Step ${currentStepIndex + 1} of ${totalSteps}: ${stepName}`;
     }
 
@@ -140,9 +140,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nextBtn) {
       const isLastStep = currentStepIndex === totalSteps - 1;
+      const isPreCommunity = currentStepConfig.dimension === "sq" || currentStepConfig.dimension === "eq";
       const btnText = nextBtn.querySelector(".btn-text");
       if (btnText && !isSubmitting) {
-        btnText.textContent = isLastStep ? "Submit Assessment" : "Continue";
+        if (isLastStep) {
+          btnText.textContent = "Submit Assessment";
+        } else if (isPreCommunity) {
+          btnText.textContent = "Next: WhatsApp Community →";
+        } else {
+          btnText.textContent = "Continue";
+        }
       }
     }
   }
@@ -281,6 +288,131 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
         });
         bodyHtml += `</div>`;
+      } else if (step.isCommunityStep) {
+        const communityUrl = config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
+        bodyHtml = `
+          <div class="community-step-container">
+            <!-- PDC Community Invitation Card -->
+            <div class="community-invite-card">
+              <div class="community-card-glow"></div>
+              
+              <div class="community-card-top">
+                <div class="community-badge-pill">
+                  <span class="live-pulse-dot"></span>
+                  <span>Official PDC Community • VIT Pune</span>
+                </div>
+                <h3 class="community-heading">Join the Official PDC WhatsApp Community</h3>
+                <p class="community-lead">
+                  Connect with experienced senior mentors, club coordinators, and proactive engineering peers. Get direct notifications for high-impact workshops, 1-on-1 mentor circles, and adventure outings.
+                </p>
+              </div>
+
+              <!-- Community Benefit Grid -->
+              <div class="community-perks-list">
+                <div class="community-perk-item">
+                  <span class="perk-icon">🎓</span>
+                  <div class="perk-text">
+                    <strong>Software Training Workshops (STWs)</strong>
+                    <span>Direct updates on IIT Bombay technical workshops & tracks</span>
+                  </div>
+                </div>
+                <div class="community-perk-item">
+                  <span class="perk-icon">⚡</span>
+                  <div class="perk-text">
+                    <strong>Personality Development (PDWs)</strong>
+                    <span>Stage presence, public speaking drills & group discussion practice</span>
+                  </div>
+                </div>
+                <div class="community-perk-item">
+                  <span class="perk-icon">🌿</span>
+                  <div class="perk-text">
+                    <strong>Personalized Mentor Meets</strong>
+                    <span>Confidential 1-on-1 guidance for academics, habits & stress relief</span>
+                  </div>
+                </div>
+                <div class="community-perk-item">
+                  <span class="perk-icon">⛺</span>
+                  <div class="perk-text">
+                    <strong>Edutainment Outings & Camps</strong>
+                    <span>Leadership treks, bonfire dialogues & collaborative problem solving</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Big Clickable CTA Button -->
+              <div class="community-cta-box">
+                <a href="${communityUrl}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn community-main-btn" id="communityStepJoinBtn">
+                  <svg class="whatsapp-icon" viewBox="0 0 24 24" width="22" height="22">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                  </svg>
+                  <span>Click to Join WhatsApp Community</span>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </a>
+                <span class="community-hint">Opens in a new tab • No spam, strictly official PDC communication</span>
+              </div>
+            </div>
+
+            <!-- Verification Question & Checkbox Section -->
+            <div class="community-verify-box" id="communityVerifyBox">
+              <h4 class="verify-title">
+                <span>💬</span> Have you joined the PDC WhatsApp Community?
+              </h4>
+              <p class="verify-desc">
+                Select your response below. Either choice allows you to submit your assessment and view your personalized evaluation report.
+              </p>
+
+              <div class="community-choice-grid" role="radiogroup" aria-label="WhatsApp Community Join Status">
+                <!-- Option Yes -->
+                <label class="community-choice-card" id="cardJoinedYes" data-value="yes" tabindex="0" role="radio" aria-checked="false">
+                  <input type="radio" name="joinedCommunityChoice" value="yes" id="radioJoinedYes">
+                  <div class="choice-indicator">
+                    <span class="choice-check">✓</span>
+                  </div>
+                  <div class="choice-details">
+                    <div class="choice-header-row">
+                      <strong class="choice-title">Yes, I have joined the Community</strong>
+                      <span class="choice-badge badge-yes">Joined ✅</span>
+                    </div>
+                    <span class="choice-subtext">I joined the group or clicked the link above to connect with PDC mentors.</span>
+                  </div>
+                </label>
+
+                <!-- Option No -->
+                <label class="community-choice-card" id="cardJoinedNo" data-value="no" tabindex="0" role="radio" aria-checked="false">
+                  <input type="radio" name="joinedCommunityChoice" value="no" id="radioJoinedNo">
+                  <div class="choice-indicator">
+                    <span class="choice-check">✓</span>
+                  </div>
+                  <div class="choice-details">
+                    <div class="choice-header-row">
+                      <strong class="choice-title">No, I haven't joined yet</strong>
+                      <span class="choice-badge badge-no">Will join later</span>
+                    </div>
+                    <span class="choice-subtext">I will join later or proceed directly to view my score and personalized report.</span>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Confirmation Checkbox -->
+              <div class="community-checkbox-container">
+                <label class="custom-checkbox-row" for="joinedCommunityCheckbox">
+                  <input type="checkbox" id="joinedCommunityCheckbox" name="joinedCommunityCheckbox">
+                  <span class="checkbox-visual"></span>
+                  <span class="checkbox-label-text">
+                    I confirm my response and am ready to submit my assessment
+                  </span>
+                </label>
+              </div>
+
+              <div class="verify-error-msg" id="error-communityChoice" style="display: none;">
+                ⚠️ Please select whether you have joined or will join later to submit your assessment.
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       // Add a submission error alert placeholder on the last step
@@ -419,6 +551,63 @@ document.addEventListener("DOMContentLoaded", () => {
         saveDraft();
       });
     });
+
+    // Community Step: WhatsApp Join Button click auto-selection
+    const communityJoinBtn = document.getElementById("communityStepJoinBtn");
+    if (communityJoinBtn) {
+      communityJoinBtn.addEventListener("click", () => {
+        selectCommunityChoice("yes");
+      });
+    }
+
+    // Community Step: Choice Cards (Yes / No)
+    const choiceCards = document.querySelectorAll(".community-choice-card");
+    choiceCards.forEach(card => {
+      const val = card.dataset.value;
+      const selectCard = () => {
+        selectCommunityChoice(val);
+      };
+      card.addEventListener("click", selectCard);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectCard();
+        }
+      });
+    });
+
+    // Community Step: Confirmation Checkbox
+    const chk = document.getElementById("joinedCommunityCheckbox");
+    if (chk) {
+      chk.addEventListener("change", () => {
+        if (chk.checked) {
+          const selectedRadio = document.querySelector('input[name="joinedCommunityChoice"]:checked');
+          if (!selectedRadio) {
+            selectCommunityChoice("yes");
+          }
+        }
+        const err = document.getElementById("error-communityChoice");
+        if (err) err.style.display = "none";
+        saveDraft();
+      });
+    }
+
+    function selectCommunityChoice(val) {
+      choiceCards.forEach(c => {
+        const isMatch = c.dataset.value === val;
+        c.classList.toggle("selected", isMatch);
+        c.setAttribute("aria-checked", isMatch ? "true" : "false");
+        const radio = c.querySelector('input[type="radio"]');
+        if (radio) radio.checked = isMatch;
+      });
+      const confirmChk = document.getElementById("joinedCommunityCheckbox");
+      if (confirmChk) confirmChk.checked = true;
+
+      formData.joinedCommunity = val;
+      const err = document.getElementById("error-communityChoice");
+      if (err) err.style.display = "none";
+      saveDraft();
+    }
   }
 
   function clearFieldError(fieldName) {
@@ -534,6 +723,23 @@ document.addEventListener("DOMContentLoaded", () => {
         return false;
       }
       return true;
+    } else if (currentStepConfig.isCommunityStep) {
+      const selectedRadio = document.querySelector('input[name="joinedCommunityChoice"]:checked');
+      const checkbox = document.getElementById("joinedCommunityCheckbox");
+      const err = document.getElementById("error-communityChoice");
+
+      if (!selectedRadio && (!checkbox || !checkbox.checked)) {
+        if (err) {
+          err.style.display = "block";
+          err.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        showToast("Please confirm whether you have joined or select No to continue.", "info");
+        return false;
+      }
+
+      if (err) err.style.display = "none";
+      formData.joinedCommunity = selectedRadio ? selectedRadio.value : (checkbox && checkbox.checked ? "yes" : "no");
+      return true;
     }
 
     return true;
@@ -555,9 +761,115 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgressUI();
     saveDraft();
 
+    // Check if on community step to trigger live join widget
+    const currentStepConfig = config.steps[currentStepIndex];
+    const liveWidget = document.getElementById("liveJoinWidget");
+    if (liveWidget) {
+      if (currentStepConfig && currentStepConfig.isCommunityStep) {
+        liveWidget.style.display = "block";
+        initAppLiveJoinWidget();
+      } else {
+        liveWidget.style.display = "none";
+        const widgetCard = document.getElementById("liveJoinCard");
+        if (widgetCard) widgetCard.classList.remove("visible");
+      }
+    }
+
     const formCard = document.getElementById("formCard");
     if (formCard) {
       formCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  // ── Live Joining Widget Engine for Community Step ──
+  let appLiveCycleTimer = null;
+  let appLiveHideTimer = null;
+  let appLiveDismissed = false;
+
+  function initAppLiveJoinWidget() {
+    const widgetCard = document.getElementById("liveJoinCard");
+    const liveAvatar = document.getElementById("liveAvatar");
+    const liveName = document.getElementById("liveName");
+    const liveTag = document.getElementById("liveTag");
+    const liveTime = document.getElementById("liveTime");
+    const liveCounter = document.getElementById("liveCounterPill");
+    const dismissBtn = document.getElementById("liveJoinDismiss");
+
+    if (!widgetCard) return;
+
+    const SIMULATED_JOINERS = [
+      { name: "Aditya Kulkarni", branch: "Comp Engg", year: "FY", initials: "AK", color: "#2563EB", time: "Just now" },
+      { name: "Sneha Patil", branch: "AI & DS", year: "FY", initials: "SP", color: "#E11D48", time: "1m ago" },
+      { name: "Rohan Sharma", branch: "ENTC", year: "SY", initials: "RS", color: "#D97706", time: "Just now" },
+      { name: "Tanmay More", branch: "IT", year: "FY", initials: "TM", color: "#7C3AED", time: "2m ago" },
+      { name: "Pooja Deshmukh", branch: "Mechanical", year: "FY", initials: "PD", color: "#059669", time: "Just now" },
+      { name: "Atharva Joshi", branch: "CSE (AI-ML)", year: "SY", initials: "AJ", color: "#F96340", time: "3m ago" },
+      { name: "Ananya K.", branch: "Comp Engg", year: "FY", initials: "AK", color: "#DB2777", time: "Just now" },
+      { name: "Varun Pawar", branch: "Instrumentation", year: "FY", initials: "VP", color: "#4F46E5", time: "1m ago" },
+      { name: "Mihir Bhave", branch: "Chemical", year: "SY", initials: "MB", color: "#0D9488", time: "Just now" },
+      { name: "Shruti Verma", branch: "IT", year: "FY", initials: "SV", color: "#9333EA", time: "4m ago" },
+      { name: "Omkar Shinde", branch: "ENTC", year: "FY", initials: "OS", color: "#EA580C", time: "Just now" },
+      { name: "Riddhi Gokhale", branch: "AI & DS", year: "FY", initials: "RG", color: "#BE123C", time: "2m ago" },
+      { name: "Siddharth Nair", branch: "Comp Engg", year: "TY", initials: "SN", color: "#2563EB", time: "Just now" },
+      { name: "Prathamesh G.", branch: "Mechanical", year: "SY", initials: "PG", color: "#15803D", time: "5m ago" },
+      { name: "Neha Kadam", branch: "IT", year: "FY", initials: "NK", color: "#C026D3", time: "Just now" },
+      { name: "Saurabh Mane", branch: "CSE (AI-ML)", year: "FY", initials: "SM", color: "#F96340", time: "1m ago" }
+    ];
+
+    let currentIndex = 0;
+    let baseCount = 47 + Math.floor(Math.random() * 8);
+
+    function updateWidgetContent(person) {
+      if (liveAvatar) {
+        liveAvatar.textContent = person.initials;
+        liveAvatar.style.backgroundColor = person.color;
+      }
+      if (liveName) liveName.textContent = person.name;
+      if (liveTag) liveTag.textContent = `${person.branch} (${person.year})`;
+      if (liveTime) liveTime.textContent = person.time;
+      if (liveCounter) {
+        liveCounter.textContent = `${baseCount} joined today`;
+      }
+    }
+
+    function showNotification() {
+      if (appLiveDismissed) return;
+      const person = SIMULATED_JOINERS[currentIndex];
+      currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
+
+      if (Math.random() > 0.6) {
+        baseCount++;
+      }
+
+      updateWidgetContent(person);
+      widgetCard.classList.add("visible");
+
+      if (appLiveHideTimer) clearTimeout(appLiveHideTimer);
+      appLiveHideTimer = setTimeout(() => {
+        widgetCard.classList.remove("visible");
+        const nextDelay = 4000 + Math.floor(Math.random() * 3000);
+        if (appLiveCycleTimer) clearTimeout(appLiveCycleTimer);
+        appLiveCycleTimer = setTimeout(showNotification, nextDelay);
+      }, 4500);
+    }
+
+    if (appLiveCycleTimer) clearTimeout(appLiveCycleTimer);
+    appLiveCycleTimer = setTimeout(showNotification, 1800);
+
+    const communityUrl = config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
+    widgetCard.addEventListener("click", (e) => {
+      if (e.target === dismissBtn || dismissBtn?.contains(e.target)) return;
+      window.open(communityUrl, "_blank", "noopener,noreferrer");
+    });
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        widgetCard.classList.remove("visible");
+        appLiveDismissed = true;
+        if (appLiveCycleTimer) clearTimeout(appLiveCycleTimer);
+        if (appLiveHideTimer) clearTimeout(appLiveHideTimer);
+      });
     }
   }
 
@@ -710,6 +1022,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const sessionData = {
         gender: userGender,
         fullName: studentName,
+        joinedCommunity: formData.joinedCommunity || "yes",
         scores: {
           pq: computedScores.pq,
           iq: computedScores.iq,
@@ -837,6 +1150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentStepIndex,
         personal: formData.personal,
         answers: formData.answers,
+        joinedCommunity: formData.joinedCommunity || "",
         updatedAt: Date.now()
       };
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -848,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearDraft() {
     try {
       localStorage.removeItem(DRAFT_KEY);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function restoreDraft() {
@@ -915,6 +1229,25 @@ document.addEventListener("DOMContentLoaded", () => {
             restoredCount++;
           }
         });
+      }
+
+      // Restore Community Choice
+      if (draft.joinedCommunity) {
+        formData.joinedCommunity = draft.joinedCommunity;
+        const matchingChoice = document.querySelector(`.community-choice-card[data-value="${draft.joinedCommunity}"]`);
+        if (matchingChoice) {
+          const radio = matchingChoice.querySelector('input[type="radio"]');
+          if (radio) radio.checked = true;
+          document.querySelectorAll(".community-choice-card").forEach(c => {
+            c.classList.remove("selected");
+            c.setAttribute("aria-checked", "false");
+          });
+          matchingChoice.classList.add("selected");
+          matchingChoice.setAttribute("aria-checked", "true");
+          restoredCount++;
+        }
+        const chk = document.getElementById("joinedCommunityCheckbox");
+        if (chk) chk.checked = true;
       }
 
       // Show friendly restoration notification if data was restored

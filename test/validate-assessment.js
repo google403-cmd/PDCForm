@@ -7,9 +7,12 @@ console.log("==================================================");
 
 // 1. Verify steps
 assert(config.steps && Array.isArray(config.steps), "config.steps must be an array");
-assert.strictEqual(config.steps.length, 4, "Must have exactly 4 steps (Profile, PQ, IQ, EQ)");
+assert(config.steps.length === 4 || config.steps.length === 5, "Must have 4 or 5 steps (Profile, PQ, IQ, EQ, Community)");
 
-const [profileStep, pqStep, iqStep, eqStep] = config.steps;
+const [profileStep, pqStep, iqStep, eqStep, communityStep] = config.steps;
+if (communityStep) {
+  assert(communityStep.isCommunityStep, "5th step must be community step");
+}
 
 // Profile Step Validation
 assert(profileStep.isPersonalDetails, "Step 0 must be personal details");

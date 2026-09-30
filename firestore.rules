@@ -6,120 +6,123 @@ service cloud.firestore {
     // =====================================================================
     // PDC (PERSONALITY DEVELOPMENT CLUB) ASSESSMENT SUBMISSIONS
     // =====================================================================
-    // Collection: pdc_test_submissions
-    // Purpose: Store student assessment responses (no authentication required)
+    // Separate collections for campus management:
+    // 1. pdc_bibwewadi_submissions — Bibwewadi Campus Submissions
+    // 2. pdc_kondhwa_submissions   — Kondhwa Campus Submissions
+    // 3. pdc_test_submissions      — Legacy / Compatibility Collection
+    //
     // Access: Public write (form submissions), No public read
     // Assessment: 20 Questions — 7 PQ (max 35) + 6 IQ (max 30) + 7 EQ (max 35) = 100
     // =====================================================================
 
+    // Common helper function validating all 15 required assessment payload fields
+    function isValidAssessmentSubmission(data, expectedCampus) {
+      return data.keys().hasOnly([
+        'fullName',
+        'email',
+        'whatsappNumber',
+        'gender',
+        'homeTown',
+        'campus',
+        'branch',
+        'division',
+        'year',
+        'answers',
+        'scores',
+        'totalScore',
+        'timestamp',
+        'submittedAt',
+        'userAgent'
+      ])
+      // Required Personal Information
+      && data.fullName is string
+      && data.fullName.size() > 0
+      && data.fullName.size() <= 120
+
+      && data.email is string
+      && data.email.size() > 0
+      && data.email.size() <= 254
+
+      && data.whatsappNumber is string
+      && data.whatsappNumber.size() >= 10
+      && data.whatsappNumber.size() <= 15
+
+      && data.gender is string
+      && data.gender in ['Male', 'Female', 'Other']
+
+      && data.homeTown is string
+      && data.homeTown.size() > 0
+      && data.homeTown.size() <= 100
+
+      // Campus segregation
+      && data.campus is string
+      && (
+        (expectedCampus == 'ANY' && data.campus in ['Bibwewadi', 'Kondhwa']) ||
+        (expectedCampus != 'ANY' && data.campus == expectedCampus)
+      )
+
+      && data.branch is string
+      && data.branch.size() > 0
+      && data.branch.size() <= 100
+
+      && data.division is string
+      && data.division in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'SEDA']
+
+      && data.year is string
+      && data.year in ['FY', 'SY', 'TY', 'Final Year']
+
+      // Assessment Responses & Scores
+      && data.answers is map
+      && data.answers.size() <= 20
+
+      && data.scores is map
+      && data.scores.pq is number
+      && data.scores.pq >= 0
+      && data.scores.pq <= 35
+
+      && data.scores.iq is number
+      && data.scores.iq >= 0
+      && data.scores.iq <= 30
+
+      && (
+        (data.scores.keys().hasAny(['eq']) && data.scores.eq is number && data.scores.eq >= 0 && data.scores.eq <= 35) ||
+        (data.scores.keys().hasAny(['sq']) && data.scores.sq is number && data.scores.sq >= 0 && data.scores.sq <= 35)
+      )
+
+      && data.totalScore is number
+      && data.totalScore >= 0
+      && data.totalScore <= 100
+
+      // Metadata
+      && data.timestamp is string
+      && data.submittedAt is string
+      && data.userAgent is string
+      && data.userAgent.size() > 0
+      && data.userAgent.size() <= 500;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 1. BIBWEWADI CAMPUS SUBMISSIONS
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_bibwewadi_submissions/{submissionId} {
+      allow create: if isValidAssessmentSubmission(request.resource.data, 'Bibwewadi');
+      allow read, update, delete: if false;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 2. KONDHWA CAMPUS SUBMISSIONS
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_kondhwa_submissions/{submissionId} {
+      allow create: if isValidAssessmentSubmission(request.resource.data, 'Kondhwa');
+      allow read, update, delete: if false;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 3. LEGACY / COMPATIBILITY SUBMISSIONS
+    // ───────────────────────────────────────────────────────────────────
     match /pdc_test_submissions/{submissionId} {
-
-      // ───────────────────────────────────────────────────────────────────
-      // ALLOW: Create (Public form submissions)
-      // ───────────────────────────────────────────────────────────────────
-      // - No authentication required (public student evaluation form)
-      // - Strict field validation to prevent abuse or data injection
-      // - Data type and size restrictions
-      // - Score range validation per dimension maximum
-      // ───────────────────────────────────────────────────────────────────
-
-      allow create: if
-        // Request must contain ONLY these validated fields
-        request.resource.data.keys().hasOnly([
-          'fullName',
-          'email',
-          'whatsappNumber',
-          'gender',
-          'homeTown',
-          'campus',
-          'branch',
-          'division',
-          'year',
-          'answers',
-          'scores',
-          'totalScore',
-          'timestamp',
-          'submittedAt',
-          'userAgent'
-        ])
-
-        // ─────────────────────────────────────────────────────────────────
-        // REQUIRED PERSONAL INFORMATION
-        // ─────────────────────────────────────────────────────────────────
-        && request.resource.data.fullName is string
-        && request.resource.data.fullName.size() > 0
-        && request.resource.data.fullName.size() <= 120
-
-        && request.resource.data.email is string
-        && request.resource.data.email.size() > 0
-        && request.resource.data.email.size() <= 254
-
-        && request.resource.data.whatsappNumber is string
-        && request.resource.data.whatsappNumber.size() >= 10
-        && request.resource.data.whatsappNumber.size() <= 15
-
-        && request.resource.data.gender is string
-        && request.resource.data.gender in ['Male', 'Female', 'Other']
-
-        && request.resource.data.homeTown is string
-        && request.resource.data.homeTown.size() > 0
-        && request.resource.data.homeTown.size() <= 100
-
-        && request.resource.data.campus is string
-        && request.resource.data.campus in ['Bibwewadi', 'Kondhwa']
-        && request.resource.data.campus == 'Bibwewadi'
-
-        && request.resource.data.branch is string
-        && request.resource.data.branch.size() > 0
-        && request.resource.data.branch.size() <= 100
-
-        && request.resource.data.division is string
-        && request.resource.data.division in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'SEDA']
-
-        && request.resource.data.year is string
-        && request.resource.data.year in ['FY', 'SY', 'TY', 'Final Year']
-
-        // ─────────────────────────────────────────────────────────────────
-        // ASSESSMENT DATA VALIDATION
-        // ─────────────────────────────────────────────────────────────────
-        && request.resource.data.answers is map
-        && request.resource.data.answers.size() <= 20
-
-        && request.resource.data.scores is map
-        // Supports EQ (Emotional Quotient) and optional SQ alias
-        && request.resource.data.scores.pq is number
-        && request.resource.data.scores.pq >= 0
-        && request.resource.data.scores.pq <= 35
-
-        && request.resource.data.scores.iq is number
-        && request.resource.data.scores.iq >= 0
-        && request.resource.data.scores.iq <= 30
-
-        && (
-          (request.resource.data.scores.keys().hasAny(['eq']) && request.resource.data.scores.eq is number && request.resource.data.scores.eq >= 0 && request.resource.data.scores.eq <= 35) ||
-          (request.resource.data.scores.keys().hasAny(['sq']) && request.resource.data.scores.sq is number && request.resource.data.scores.sq >= 0 && request.resource.data.scores.sq <= 35)
-        )
-
-        // ─────────────────────────────────────────────────────────────────
-        // OVERALL SCORE VALIDATION (0–100)
-        // ─────────────────────────────────────────────────────────────────
-        && request.resource.data.totalScore is number
-        && request.resource.data.totalScore >= 0
-        && request.resource.data.totalScore <= 100
-
-        // ─────────────────────────────────────────────────────────────────
-        // METADATA VALIDATION
-        // ─────────────────────────────────────────────────────────────────
-        && request.resource.data.timestamp is string
-        && request.resource.data.submittedAt is string
-        && request.resource.data.userAgent is string
-        && request.resource.data.userAgent.size() > 0
-        && request.resource.data.userAgent.size() <= 500;
-
-      // Immutable & Private Submissions
-      allow read: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create: if isValidAssessmentSubmission(request.resource.data, 'ANY');
+      allow read, update, delete: if false;
     }
 
     // Explicitly deny access to any other collections

@@ -142,23 +142,46 @@ async function executeWithRetry(fn, maxRetries = 3, initialDelayMs = 600) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ZERO-DATA-LOSS LOCAL SYNC QUEUE
-// Ensures NO student response is ever lost, even during total Wi-Fi loss
 // ─────────────────────────────────────────────────────────────────
+// ZERO-DATA-LOSS LOCAL SYNC QUEUE & CAMPUS COLLECTION ROUTING
+// Ensures NO student response is ever lost, even during total Wi-Fi loss
+// Separates Bibwewadi and Kondhwa submissions into distinct collections
+// ─────────────────────────────────────────────────────────────────
+const COLLECTIONS = {
+  BIBWEWADI: "pdc_bibwewadi_submissions",
+  KONDHWA: "pdc_kondhwa_submissions",
+  LEGACY: "pdc_test_submissions"
+};
+
+/**
+ * Returns the designated Firestore collection name based on the student's campus.
+ * @param {string} campus 
+ * @returns {string} Collection name
+ */
+function getTargetCollection(campus) {
+  const cleanCampus = String(campus || "").trim().toLowerCase();
+  if (cleanCampus === "kondhwa") {
+    return COLLECTIONS.KONDHWA;
+  }
+  return COLLECTIONS.BIBWEWADI;
+}
+
 const SYNC_QUEUE_KEY = "pdc_sync_queue";
 
-function queuePendingSync(payload) {
+function queuePendingSync(payload, targetCollection) {
   if (typeof localStorage === "undefined") return null;
   try {
     const queue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || "[]");
     const queueId = "pdc_queue_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+    const assignedCollection = targetCollection || getTargetCollection(payload?.campus);
     queue.push({
       id: queueId,
+      collection: assignedCollection,
       payload,
       queuedAt: new Date().toISOString()
     });
     localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(queue));
-    console.log("Submission safely stored in high-traffic offline sync queue:", queueId);
+    console.log(`Submission safely stored in high-traffic offline sync queue for [${assignedCollection}]:`, queueId);
     return queueId;
   } catch (err) {
     console.warn("Could not save to sync queue:", err);
@@ -185,10 +208,11 @@ async function flushSyncQueue() {
 
     for (const item of queue) {
       try {
-        await withTimeout(db.collection("pdc_test_submissions").add(item.payload), 8000);
-        console.log("Successfully uploaded queued submission:", item.id);
+        const collectionName = item.collection || getTargetCollection(item.payload?.campus);
+        await withTimeout(db.collection(collectionName).add(item.payload), 8000);
+        console.log(`Successfully uploaded queued submission to [${collectionName}]:`, item.id);
       } catch (err) {
-        console.warn("Queued item upload deferred:", item.id, err.message);
+        console.warn(`Queued item upload deferred [${item.collection}]:`, item.id, err.message);
         remaining.push(item);
       }
     }
@@ -219,15 +243,18 @@ if (typeof window !== "undefined" && typeof window.addEventListener === "functio
 }
 
 /**
- * Save one completed assessment to Firestore (pdc_test_submissions).
+ * Save one completed assessment to Firestore.
  * High-concurrency features:
  * - Anti-race lock & double-click protection
+ * - Dynamic collection routing based on campus:
+ *     Bibwewadi -> pdc_bibwewadi_submissions (with fallback)
+ *     Kondhwa   -> pdc_kondhwa_submissions
  * - 3x exponential backoff with jitter
  * - 9-second timeout per attempt
  * - Guaranteed fallback to persistent sync queue if network is overwhelmed
  *
  * @param {Object} submissionData
- * @returns {Promise<{success: boolean, id?: string, error?: string, isOffline?: boolean, queued?: boolean}>}
+ * @returns {Promise<{success: boolean, id?: string, collection?: string, error?: string, isOffline?: boolean, queued?: boolean}>}
  */
 async function saveTestSubmission(submissionData) {
   // Guard against concurrent in-flight submissions
@@ -276,6 +303,9 @@ async function saveTestSubmission(submissionData) {
     userAgent: String(submissionData.userAgent || (typeof navigator !== "undefined" ? navigator.userAgent : "Node")).substring(0, 500)
   };
 
+  // Determine target collection (Bibwewadi vs Kondhwa)
+  const targetCollection = submissionData.collection || getTargetCollection(payload.campus);
+
   // Validate scores against section maximums
   if (payload.scores.pq > 35 || payload.scores.iq > 30 || payload.scores.sq > 35 || payload.totalScore > 100) {
     _submissionInFlight = false;
@@ -291,26 +321,45 @@ async function saveTestSubmission(submissionData) {
     try {
       const documentReference = await executeWithRetry(async () => {
         return await withTimeout(
-          db.collection("pdc_test_submissions").add(payload),
+          db.collection(targetCollection).add(payload),
           9000,
           "Firestore write timed out due to network congestion"
         );
       }, 3, 600);
 
       _lastSubmissionId = documentReference.id;
-      console.log("PDC assessment saved successfully to Firestore. ID:", documentReference.id);
+      console.log(`PDC assessment saved successfully to [${targetCollection}]. ID:`, documentReference.id);
 
       // Attempt to flush any earlier queued submissions in the background
       setTimeout(flushSyncQueue, 1000);
 
       return {
         success: true,
-        id: documentReference.id
+        id: documentReference.id,
+        collection: targetCollection
       };
     } catch (error) {
-      console.error("Firestore write failed after retries:", error.code || error.message);
+      console.error(`Firestore write to [${targetCollection}] failed after retries:`, error.code || error.message);
 
-      // If it's a strict security rejection, inform the user
+      // If it's a strict security rejection on modern rules, attempt legacy collection fallback for Bibwewadi
+      if (error.code === "permission-denied" && targetCollection === COLLECTIONS.BIBWEWADI) {
+        try {
+          console.info("Retrying with legacy collection pdc_test_submissions...");
+          const legacyRef = await withTimeout(
+            db.collection(COLLECTIONS.LEGACY).add(payload),
+            6000
+          );
+          _lastSubmissionId = legacyRef.id;
+          return {
+            success: true,
+            id: legacyRef.id,
+            collection: COLLECTIONS.LEGACY
+          };
+        } catch (legacyErr) {
+          console.warn("Legacy fallback rejected:", legacyErr.message);
+        }
+      }
+
       if (error.code === "permission-denied") {
         return {
           success: false,
@@ -321,12 +370,13 @@ async function saveTestSubmission(submissionData) {
       // HIGH-TRAFFIC NETWORK FAIL-SAFE:
       // If Firestore is temporarily congested or network dropped, queue the submission locally!
       // The student will NOT lose their score and will seamlessly see their results!
-      const queuedId = queuePendingSync(payload);
+      const queuedId = queuePendingSync(payload, targetCollection);
       _lastSubmissionId = queuedId;
 
       return {
         success: true,
         id: queuedId,
+        collection: targetCollection,
         isOffline: true,
         queued: true
       };
@@ -337,19 +387,21 @@ async function saveTestSubmission(submissionData) {
 
   // 2. Graceful Local / Demo Storage Fallback
   try {
-    const demoId = queuePendingSync(payload) || ("pdc_local_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7));
-    console.log("Assessment safely recorded in local session:", demoId);
+    const demoId = queuePendingSync(payload, targetCollection) || ("pdc_local_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7));
+    console.log(`Assessment safely recorded in local session for [${targetCollection}]:`, demoId);
     _lastSubmissionId = demoId;
     return {
       success: true,
       id: demoId,
+      collection: targetCollection,
       isOffline: true
     };
   } catch (localErr) {
     console.warn("Local storage fallback warning:", localErr);
     return {
       success: true,
-      id: "pdc_session_" + Date.now()
+      id: "pdc_session_" + Date.now(),
+      collection: targetCollection
     };
   } finally {
     _submissionInFlight = false;
@@ -358,6 +410,8 @@ async function saveTestSubmission(submissionData) {
 
 if (typeof window !== "undefined") {
   window.PDCBackend = {
+    COLLECTIONS,
+    getTargetCollection,
     saveTestSubmission,
     isFirebaseConfigured: () => isFirebaseConfigured,
     getFirebaseConfig,
@@ -369,6 +423,8 @@ if (typeof window !== "undefined") {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
+    COLLECTIONS,
+    getTargetCollection,
     firebaseConfig,
     saveTestSubmission,
     flushSyncQueue
