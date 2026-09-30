@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   ${field.options.map(opt => `
                     <label class="gender-radio-card" data-gender="${opt}" tabindex="0" role="radio" aria-checked="false">
                       <input type="radio" name="gender" value="${opt}" ${field.required ? 'required' : ''}>
-                      <span>${opt === 'Male' ? '👨 Male' : (opt === 'Female' ? '👩 Female' : '🧑 Other')}</span>
+                      <span>${opt === 'Male' ? ' Male' : (opt === 'Female' ? 'Female' : ' Other')}</span>
                     </label>
                   `).join('')}
                 </div>
@@ -324,6 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const radio = card.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
         clearFieldError("gender");
+        saveDraft();
       };
 
       card.addEventListener("click", selectGender);
@@ -349,7 +350,29 @@ document.addEventListener("DOMContentLoaded", () => {
             wrap.style.display = "none";
           }
         }
+
+        // Campus Kondhwa notice handler
+        if (select.name === "campus") {
+          let kondhwaNotice = document.getElementById("kondhwa-campus-notice");
+          if (select.value === "Kondhwa") {
+            if (!kondhwaNotice) {
+              kondhwaNotice = document.createElement("div");
+              kondhwaNotice.id = "kondhwa-campus-notice";
+              kondhwaNotice.style.cssText = "margin-top:10px;padding:12px 14px;background:#FFF6F3;border:1px solid #FFBEAD;border-radius:10px;color:#C2410C;font-size:0.86rem;line-height:1.5;";
+              kondhwaNotice.innerHTML = `
+                <strong>📍 Kondhwa Campus Route:</strong> Students from Kondhwa campus can take their official assessment directly here:
+                <a href="https://bit.ly/3Qs-personality-assessment-pdc" target="_blank" rel="noopener noreferrer" style="color:#F96340;font-weight:700;text-decoration:underline;display:block;margin-top:4px;">
+                  👉 Open Kondhwa Campus Assessment (https://bit.ly/3Qs-personality-assessment-pdc)
+                </a>
+              `;
+              select.parentElement.appendChild(kondhwaNotice);
+            }
+          } else if (kondhwaNotice) {
+            kondhwaNotice.remove();
+          }
+        }
         clearFieldError(select.name);
+        saveDraft();
       });
     });
 
@@ -374,6 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Remove error alert on question block
         const block = document.getElementById(`block-${qid}`);
         if (block) block.classList.remove("unanswered-highlight");
+        saveDraft();
       };
 
       card.addEventListener("click", selectOption);
@@ -385,13 +409,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Input blur / input change clearing errors
+    // Input blur / input change clearing errors & saving draft
     const inputs = document.querySelectorAll(".form-input, .form-select");
     inputs.forEach(input => {
       input.addEventListener("input", () => {
         input.classList.remove("error");
         const err = document.getElementById(`error-${input.name}`);
         if (err) err.classList.remove("visible");
+        saveDraft();
       });
     });
   }
@@ -528,6 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     currentStepIndex = newIndex;
     updateProgressUI();
+    saveDraft();
 
     const formCard = document.getElementById("formCard");
     if (formCard) {
@@ -536,22 +562,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 7. SCORE CALCULATION ENGINE (PQ, IQ, EQ)
+  // 7. SCORE CALCULATION ENGINE (PQ, IQ, SQ)
   // ===================================================================
   // PQ: 7 questions × max 5 marks = 35
   // IQ: 6 questions × max 5 marks = 30
-  // EQ: 7 questions × max 5 marks = 35 (Emotional Quotient)
+  // SQ: 7 questions × max 5 marks = 35 (Spiritual Quotient)
   // Total = 35 + 30 + 35 = 100
   // ===================================================================
   function calculateScores() {
     let pqEarned = 0;
     let iqEarned = 0;
-    let eqEarned = 0;
+    let sqEarned = 0;
 
     (config.steps || []).forEach(step => {
       if (!step.questions || !step.questions.length) return;
 
-      const dim = (step.dimension || (step.id.includes("iq") ? "iq" : (step.id.includes("eq") || step.id.includes("sq") ? "eq" : "pq"))).toLowerCase();
+      const dim = (step.dimension || (step.id.includes("iq") ? "iq" : (step.id.includes("sq") || step.id.includes("eq") ? "sq" : "pq"))).toLowerCase();
 
       step.questions.forEach(q => {
         const userSelectedOptId = formData.answers[q.id];
@@ -564,8 +590,8 @@ document.addEventListener("DOMContentLoaded", () => {
           pqEarned += marks;
         } else if (dim === "iq") {
           iqEarned += marks;
-        } else if (dim === "eq" || dim === "sq") {
-          eqEarned += marks;
+        } else if (dim === "sq" || dim === "eq") {
+          sqEarned += marks;
         }
       });
     });
@@ -574,14 +600,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const pq = roundScore(pqEarned);
     const iq = roundScore(iqEarned);
-    const eq = roundScore(eqEarned);
-    const total = roundScore(pq + iq + eq);
+    const sq = roundScore(sqEarned);
+    const total = roundScore(pq + iq + sq);
 
     return {
       pq,
       iq,
-      eq,
-      sq: eq, // backwards compatibility
+      sq,
+      eq: sq, // backwards compatibility
       total
     };
   }
@@ -640,8 +666,8 @@ document.addEventListener("DOMContentLoaded", () => {
       scores: {
         pq: computedScores.pq,
         iq: computedScores.iq,
-        eq: computedScores.eq,
-        sq: computedScores.eq
+        sq: computedScores.sq,
+        eq: computedScores.sq
       },
       totalScore: computedScores.total,
       timestamp: submissionTimestamp,
@@ -687,25 +713,28 @@ document.addEventListener("DOMContentLoaded", () => {
         scores: {
           pq: computedScores.pq,
           iq: computedScores.iq,
-          eq: computedScores.eq,
-          sq: computedScores.eq
+          sq: computedScores.sq,
+          eq: computedScores.sq
         },
         totalScore: computedScores.total,
         percentages: {
           pq: Math.round((computedScores.pq / 35) * 100),
           iq: Math.round((computedScores.iq / 30) * 100),
-          eq: Math.round((computedScores.eq / 35) * 100),
-          sq: Math.round((computedScores.eq / 35) * 100),
+          sq: Math.round((computedScores.sq / 35) * 100),
+          eq: Math.round((computedScores.sq / 35) * 100),
           total: Math.round((computedScores.total / 100) * 100)
         },
         maxScores: {
           pq: 35,
           iq: 30,
-          eq: 35,
           sq: 35,
+          eq: 35,
           total: 100
         }
       };
+
+      // Clear draft since submission succeeded
+      clearDraft();
 
       const security = window.PDCSecurity || window.DhruvaSecurity;
       const authToken = security
@@ -787,8 +816,153 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000);
   }
 
+  // ===================================================================
+  // 10. REAL-TIME FORM PROGRESS AUTOSAVE (HIGH-TRAFFIC & RELIABILITY)
+  // ===================================================================
+  const DRAFT_KEY = "pdc_assessment_draft";
+
+  function saveDraft() {
+    try {
+      // Capture personal details fields
+      const pInputs = document.querySelectorAll("#step-view-0 input, #step-view-0 select");
+      pInputs.forEach(inp => {
+        if (inp.type === "radio") {
+          if (inp.checked) formData.personal[inp.name] = inp.value;
+        } else if (inp.name && !inp.name.endsWith("_other")) {
+          formData.personal[inp.name] = inp.value;
+        }
+      });
+
+      const draft = {
+        currentStepIndex,
+        personal: formData.personal,
+        answers: formData.answers,
+        updatedAt: Date.now()
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (e) {
+      // Ignore quota or private-browsing restrictions silently
+    }
+  }
+
+  function clearDraft() {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch (e) {}
+  }
+
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+
+      const draft = JSON.parse(raw);
+      if (!draft || typeof draft !== "object") return;
+
+      // Expire draft if older than 5 days
+      if (draft.updatedAt && Date.now() - draft.updatedAt > 5 * 24 * 60 * 60 * 1000) {
+        clearDraft();
+        return;
+      }
+
+      let restoredCount = 0;
+
+      // Restore Personal Details
+      if (draft.personal && typeof draft.personal === "object") {
+        formData.personal = { ...draft.personal };
+        Object.entries(draft.personal).forEach(([fieldName, val]) => {
+          if (!val) return;
+          const input = document.querySelector(`[name="${fieldName}"]`);
+          if (!input) return;
+
+          if (input.type === "radio") {
+            const matchingRadio = document.querySelector(`input[name="${fieldName}"][value="${val}"]`);
+            if (matchingRadio) {
+              matchingRadio.checked = true;
+              const card = matchingRadio.closest(".gender-radio-card");
+              if (card) {
+                document.querySelectorAll(".gender-radio-card").forEach(c => {
+                  c.classList.remove("selected");
+                  c.setAttribute("aria-checked", "false");
+                });
+                card.classList.add("selected");
+                card.setAttribute("aria-checked", "true");
+              }
+              restoredCount++;
+            }
+          } else {
+            input.value = val;
+            restoredCount++;
+            if (val === "Other") {
+              const otherWrap = document.getElementById(`${fieldName}_other_wrap`);
+              if (otherWrap) otherWrap.style.display = "block";
+            }
+          }
+        });
+      }
+
+      // Restore MCQ Answers
+      if (draft.answers && typeof draft.answers === "object") {
+        formData.answers = { ...draft.answers };
+        Object.entries(draft.answers).forEach(([qid, optid]) => {
+          if (!optid) return;
+          const card = document.querySelector(`.option-card[data-qid="${qid}"][data-optid="${optid}"]`);
+          if (card) {
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            card.classList.add("selected");
+            card.setAttribute("aria-checked", "true");
+            restoredCount++;
+          }
+        });
+      }
+
+      // Show friendly restoration notification if data was restored
+      if (restoredCount > 0) {
+        showDraftRestoredBanner(draft.currentStepIndex || 0);
+      }
+    } catch (e) {
+      console.warn("Could not restore draft:", e);
+    }
+  }
+
+  function showDraftRestoredBanner(savedStep) {
+    const existing = document.getElementById("draft-restored-banner");
+    if (existing) existing.remove();
+
+    const banner = document.createElement("div");
+    banner.id = "draft-restored-banner";
+    banner.style.cssText = "margin-bottom:16px;padding:12px 16px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;color:#166534;font-size:0.875rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;";
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.15rem;">✨</span>
+        <span><strong>Progress Restored:</strong> Your previous inputs and answers were safely recovered.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${savedStep > 0 ? `<button type="button" id="resumeStepBtn" style="background:#166534;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:0.8rem;font-weight:700;cursor:pointer;">Resume Step ${savedStep + 1} →</button>` : ""}
+        <button type="button" id="clearDraftBtn" style="background:transparent;color:#DC2626;border:none;font-size:0.8rem;font-weight:700;text-decoration:underline;cursor:pointer;">Clear & Start Fresh</button>
+      </div>
+    `;
+
+    const formCard = document.getElementById("formCard");
+    if (formCard) {
+      formCard.insertBefore(banner, formCard.firstChild);
+    }
+
+    document.getElementById("clearDraftBtn")?.addEventListener("click", () => {
+      clearDraft();
+      window.location.reload();
+    });
+
+    document.getElementById("resumeStepBtn")?.addEventListener("click", () => {
+      goToStep(savedStep);
+      banner.remove();
+    });
+  }
+
   // Initialize Application
   initBranding();
   initStepper();
   renderStepViews();
+  restoreDraft();
 });

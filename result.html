@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Your Assessment Report — Personality Development Club (PDC)</title>
-  <meta name="description" content="Personalized PQ · IQ · EQ Assessment Report and actionable personal development recommendations from PDC, VIT Pune.">
+  <meta name="description" content="Personalized PQ · IQ · SQ Assessment Report and actionable personal development recommendations from PDC, VIT Pune.">
   <meta name="theme-color" content="#F96340">
 
   <!-- Prevent page caching so session token is protected -->
@@ -105,7 +105,7 @@
 
     .score-card-pq::before { background: #F96340; }
     .score-card-iq::before { background: #2563EB; }
-    .score-card-eq::before { background: #D97706; }
+    .score-card-sq::before, .score-card-eq::before { background: #D97706; }
 
     .score-card-header {
       display: flex;
@@ -132,7 +132,7 @@
 
     .score-card-pq .score-badge-val { color: #F96340; }
     .score-card-iq .score-badge-val { color: #2563EB; }
-    .score-card-eq .score-badge-val { color: #D97706; }
+    .score-card-sq .score-badge-val, .score-card-eq .score-badge-val { color: #D97706; }
 
     .score-progress-track {
       height: 6px;
@@ -150,7 +150,7 @@
 
     .score-card-pq .score-progress-fill { background: linear-gradient(90deg, #FF8A65, #F96340); }
     .score-card-iq .score-progress-fill { background: linear-gradient(90deg, #60A5FA, #2563EB); }
-    .score-card-eq .score-progress-fill { background: linear-gradient(90deg, #FBBF24, #D97706); }
+    .score-card-sq .score-progress-fill, .score-card-eq .score-progress-fill { background: linear-gradient(90deg, #FBBF24, #D97706); }
 
     .score-tier-tag {
       font-size: 0.72rem;
@@ -165,7 +165,7 @@
 
     .score-card-pq .score-tier-tag { background: rgba(249, 99, 64, 0.1); color: #E04F2E; }
     .score-card-iq .score-tier-tag { background: rgba(37, 99, 235, 0.1); color: #1D4ED8; }
-    .score-card-eq .score-tier-tag { background: rgba(217, 119, 6, 0.12); color: #B45309; }
+    .score-card-sq .score-tier-tag, .score-card-eq .score-tier-tag { background: rgba(217, 119, 6, 0.12); color: #B45309; }
 
     /* ── Concise Actionable Report Sections ── */
     .report-block {
@@ -315,6 +315,12 @@
       margin-bottom: 16px;
       display: flex;
       flex-direction: column;
+      animation: fadeInSlide 0.4s ease-in-out;
+    }
+
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .activity-photo-wrap {
@@ -559,6 +565,117 @@
       flex-shrink: 0;
     }
 
+    /* ── Standalone WhatsApp CTA Section (Placed ABOVE "Why PDC Can Help You") ── */
+    .whatsapp-cta-section {
+      margin: 32px 0 24px;
+    }
+
+    /* ── View More Collapsible Section Styles ── */
+    .view-more-wrapper {
+      margin: 20px 0 28px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      background: #FFFFFF;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .view-more-wrapper:hover {
+      border-color: #CBD5E1;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .view-more-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #FFF9F7 0%, #FFFFFF 100%);
+      cursor: pointer;
+      user-select: none;
+      gap: 16px;
+    }
+
+    .view-more-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .view-more-icon-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(249, 99, 64, 0.12);
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .view-more-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 3px;
+    }
+
+    .view-more-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .view-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-full);
+      background: #F96340;
+      color: #FFFFFF;
+      font-size: 0.86rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .view-more-btn:hover {
+      background: #E24B24;
+      transform: translateY(-1px);
+    }
+
+    .view-more-chevron {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .view-more-wrapper.expanded .view-more-chevron {
+      transform: rotate(180deg);
+    }
+
+    .view-more-detailed-content {
+      padding: 16px 18px 18px;
+      border-top: 1px solid var(--border-subtle);
+      background: #FAFBFC;
+      display: none;
+      animation: fadeInContent 0.35s ease;
+    }
+
+    .view-more-wrapper.expanded .view-more-detailed-content {
+      display: block;
+    }
+
+    @keyframes fadeInContent {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 640px) {
       .overall-score-bar {
         grid-template-columns: repeat(2, 1fr);
@@ -571,6 +688,14 @@
       }
       .activity-photo-wrap {
         height: 260px;
+      }
+      .view-more-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .view-more-btn {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -656,28 +781,31 @@
         ? sessionData.fullName
         : "";
 
-      // Scores (Normalized with EQ as the official 3rd dimension)
+      // Scores (Normalized with SQ as the official 3rd dimension)
       const scores = {
         pq: Number(sessionData.scores?.pq || 0),
         iq: Number(sessionData.scores?.iq || 0),
-        eq: Number(sessionData.scores?.eq !== undefined ? sessionData.scores.eq : (sessionData.scores?.sq || 0))
+        sq: Number(sessionData.scores?.sq !== undefined ? sessionData.scores.sq : (sessionData.scores?.eq || 0))
       };
+      scores.eq = scores.sq; // alias
 
       const maxScores = {
         pq: 35,
         iq: 30,
+        sq: 35,
         eq: 35,
         total: 100
       };
 
       const totalScore = sessionData.totalScore !== undefined
         ? Number(sessionData.totalScore)
-        : Math.round(scores.pq + scores.iq + scores.eq);
+        : Math.round(scores.pq + scores.iq + scores.sq);
 
       const percentages = {
         pq: Math.min(100, Math.round((scores.pq / maxScores.pq) * 100)),
         iq: Math.min(100, Math.round((scores.iq / maxScores.iq) * 100)),
-        eq: Math.min(100, Math.round((scores.eq / maxScores.eq) * 100)),
+        sq: Math.min(100, Math.round((scores.sq / maxScores.sq) * 100)),
+        eq: Math.min(100, Math.round((scores.sq / maxScores.sq) * 100)),
         total: Math.min(100, Math.round((totalScore / maxScores.total) * 100))
       };
 
@@ -696,7 +824,7 @@
       const dimensions = [
         { key: "pq", name: "Personality Quotient (PQ)", score: scores.pq, max: maxScores.pq, pct: percentages.pq, conf: config.scoreInsights?.pq },
         { key: "iq", name: "Intellectual Quotient (IQ)", score: scores.iq, max: maxScores.iq, pct: percentages.iq, conf: config.scoreInsights?.iq },
-        { key: "eq", name: "Emotional Quotient (EQ)", score: scores.eq, max: maxScores.eq, pct: percentages.eq, conf: config.scoreInsights?.eq }
+        { key: "sq", name: "Spiritual Quotient (SQ)", score: scores.sq, max: maxScores.sq, pct: percentages.sq, conf: config.scoreInsights?.sq || config.scoreInsights?.eq }
       ];
 
       // Sort by percentage descending
@@ -737,8 +865,8 @@
             <span class="chip-label">IQ (Max 30)</span>
           </div>
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.eq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
-            <span class="chip-label">EQ (Max 35)</span>
+            <span class="chip-val">${scores.sq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
+            <span class="chip-label">SQ (Max 35)</span>
           </div>
           <div class="overall-score-chip chip-highlight">
             <span class="chip-val">${totalScore} <span style="font-size:0.75rem;opacity:0.85;">/ 100</span></span>
@@ -901,7 +1029,51 @@
         </section>
       `;
 
-      // ── Section 8: Strong PDC Value Proposition & WhatsApp CTA ──
+      // ── View More Collapsible Section for Snapshot & Qualities ──
+      const viewMoreBlockHtml = `
+        <div class="view-more-wrapper" id="viewMoreWrapper">
+          <div class="view-more-header-bar" id="viewMoreToggleBar" role="button" tabindex="0" aria-expanded="false" aria-controls="viewMoreContent">
+            <div class="view-more-info">
+              <div class="view-more-icon-badge">📋</div>
+              <div>
+                <h4 class="view-more-title">Detailed Personality Snapshot & Qualities Breakdown</h4>
+                <p class="view-more-subtitle">Explore your complete analysis, improvement opportunities, and leadership strengths.</p>
+              </div>
+            </div>
+            <button type="button" class="view-more-btn" id="viewMoreToggleBtn" aria-label="Toggle detailed breakdown">
+              <span id="viewMoreBtnText">View More</span>
+              <svg class="view-more-chevron" id="viewMoreChevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div class="view-more-detailed-content" id="viewMoreContent" style="display: none;">
+            ${snapshotHtml}
+            ${improveSectionHtml}
+            ${strongSectionHtml}
+          </div>
+        </div>
+      `;
+
+      // ── Standalone WhatsApp CTA Section (Placed ABOVE "Why PDC Can Help You") ──
+      const whatsappCtaHtml = `
+        <section class="whatsapp-cta-section" aria-labelledby="ctaHeading">
+          <div class="final-cta-wrap">
+            <h4 class="final-cta-title" id="ctaHeading">Take the next step with PDC.</h4>
+            <p class="final-cta-desc">
+              Join the PDC WhatsApp Community to stay connected with upcoming workshops, mentorship sessions, and exclusive opportunities to participate.
+            </p>
+            <a href="${targetCommunityLink}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" id="joinCommunityBtn">
+              <svg class="whatsapp-icon" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              <span>Join WhatsApp Community</span>
+            </a>
+          </div>
+        </section>
+      `;
+
+      // ── Section 8: Strong PDC Value Proposition ──
       const benefitSectionHtml = `
         <section class="pdc-benefit-section" aria-labelledby="benefitHeading">
           <span class="benefit-badge">Your Journey Beyond This Assessment</span>
@@ -946,20 +1118,6 @@
               <span>Receive continuous guidance and mentorship throughout your engineering years</span>
             </div>
           </div>
-
-          <!-- Final High-Impact Call to Action -->
-          <div class="final-cta-wrap">
-            <h4 class="final-cta-title">Take the next step with PDC.</h4>
-            <p class="final-cta-desc">
-              Join the PDC WhatsApp Community to stay connected with upcoming workshops, mentorship sessions, and exclusive opportunities to participate.
-            </p>
-            <a href="${targetCommunityLink}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" id="joinCommunityBtn">
-              <svg class="whatsapp-icon" viewBox="0 0 24 24">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-              </svg>
-              <span>Join WhatsApp Community</span>
-            </a>
-          </div>
         </section>
       `;
 
@@ -973,22 +1131,59 @@
           </div>
           <h2 style="font-size:clamp(1.6rem, 3.5vw, 2.2rem);font-weight:800;color:var(--text-primary);margin:0 0 6px;">Assessment Submitted!</h2>
           <p style="font-size:0.96rem;color:var(--text-secondary);margin:0;">
-            ${studentName ? `Congratulations, <strong>${studentName}</strong>! ` : ""}Here is your personalized PQ · IQ · EQ evaluation.
+            ${studentName ? `Congratulations, <strong>${studentName}</strong>! ` : ""}Here is your personalized PQ · IQ · SQ evaluation.
           </p>
         </div>
 
         ${overallChipsHtml}
         ${dimCardsHtml}
-        ${snapshotHtml}
-        ${improveSectionHtml}
-        ${strongSectionHtml}
+        ${viewMoreBlockHtml}
         ${activitiesShowcaseHtml}
+        ${whatsappCtaHtml}
         ${benefitSectionHtml}
       `;
 
-      // ── Initialize Interactive Activity Carousel ──
+      // ── Attach View More Toggle Handler ──
+      const viewMoreWrapper = document.getElementById("viewMoreWrapper");
+      const viewMoreToggleBar = document.getElementById("viewMoreToggleBar");
+      const viewMoreToggleBtn = document.getElementById("viewMoreToggleBtn");
+      const viewMoreBtnText = document.getElementById("viewMoreBtnText");
+      const viewMoreContent = document.getElementById("viewMoreContent");
+
+      function toggleViewMore(e) {
+        if (e) e.preventDefault();
+        const isExpanded = viewMoreWrapper.classList.toggle("expanded");
+        if (viewMoreToggleBar) viewMoreToggleBar.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+        if (viewMoreToggleBtn) viewMoreToggleBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+        if (viewMoreContent) {
+          viewMoreContent.style.display = isExpanded ? "block" : "none";
+        }
+        if (viewMoreBtnText) {
+          viewMoreBtnText.textContent = isExpanded ? "View Less" : "View More";
+        }
+        if (isExpanded) {
+          viewMoreContent?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+
+      viewMoreToggleBtn?.addEventListener("click", toggleViewMore);
+      viewMoreToggleBar?.addEventListener("click", (e) => {
+        if (e.target !== viewMoreToggleBtn && !viewMoreToggleBtn.contains(e.target)) {
+          toggleViewMore(e);
+        }
+      });
+      viewMoreToggleBar?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleViewMore(e);
+        }
+      });
+
+      // ── Initialize Interactive & Auto-Sliding Activity Carousel ──
       let activeActIndex = 0;
       const totalActivities = activitiesList.length;
+      let autoSlideTimer = null;
+      const AUTO_SLIDE_INTERVAL = 3500; // Automatically slide every 3.5 seconds
 
       function showActivityIndex(idx) {
         if (idx < 0) idx = totalActivities - 1;
@@ -1006,26 +1201,57 @@
         });
       }
 
+      function startAutoSlide() {
+        stopAutoSlide();
+        if (totalActivities > 1) {
+          autoSlideTimer = setInterval(() => {
+            showActivityIndex(activeActIndex + 1);
+          }, AUTO_SLIDE_INTERVAL);
+        }
+      }
+
+      function stopAutoSlide() {
+        if (autoSlideTimer) {
+          clearInterval(autoSlideTimer);
+          autoSlideTimer = null;
+        }
+      }
+
+      function restartAutoSlide() {
+        stopAutoSlide();
+        startAutoSlide();
+      }
+
+      // Start automatic sliding
+      startAutoSlide();
+
       document.getElementById("actPrevBtn")?.addEventListener("click", () => {
         showActivityIndex(activeActIndex - 1);
+        restartAutoSlide();
       });
 
       document.getElementById("actNextBtn")?.addEventListener("click", () => {
         showActivityIndex(activeActIndex + 1);
+        restartAutoSlide();
       });
 
       document.querySelectorAll(".act-dot").forEach(dot => {
         dot.addEventListener("click", () => {
           const idx = parseInt(dot.getAttribute("data-act-idx"), 10);
           showActivityIndex(idx);
+          restartAutoSlide();
         });
       });
 
-      // Keyboard & touch navigation for activities
+      // Keyboard & touch navigation for activities + pause on hover/touch
       const actSection = document.getElementById("activitiesSection");
       if (actSection) {
+        actSection.addEventListener("mouseenter", stopAutoSlide);
+        actSection.addEventListener("mouseleave", startAutoSlide);
+
         let touchStart = 0;
         actSection.addEventListener("touchstart", (e) => {
+          stopAutoSlide();
           touchStart = e.changedTouches[0].clientX;
         }, { passive: true });
 
@@ -1036,6 +1262,7 @@
           } else if (touchEnd - touchStart > 50) {
             showActivityIndex(activeActIndex - 1); // Swipe right -> prev
           }
+          startAutoSlide();
         }, { passive: true });
       }
 

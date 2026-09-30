@@ -30,7 +30,6 @@ assert.deepStrictEqual(divisionField.options, ["A", "B", "C", "D", "E", "F", "G"
 const branchField = profileStep.fields.find(field => field.name === "branch");
 assert(branchField && branchField.type === "select", "Branch must be a select field");
 assert.deepStrictEqual(branchField.options, [
-  "Question Type",
   "Computer Engineering",
   "Information Technology",
   "Electronics and Telecommunication Engineering",
@@ -59,12 +58,12 @@ assert.deepStrictEqual(activityImages, [
 // Section Steps Validation
 assert.strictEqual(pqStep.dimension, "pq", "PQ step dimension must be 'pq'");
 assert.strictEqual(iqStep.dimension, "iq", "IQ step dimension must be 'iq'");
-assert(eqStep.dimension === "eq" || eqStep.dimension === "sq", "EQ step dimension must be 'eq'");
+assert(eqStep.dimension === "eq" || eqStep.dimension === "sq", "3rd step dimension must be 'eq' or 'sq'");
 
 // Question Counts
 assert.strictEqual(pqStep.questions.length, 7, "PQ section must have exactly 7 questions");
 assert.strictEqual(iqStep.questions.length, 6, "IQ section must have exactly 6 questions");
-assert.strictEqual(eqStep.questions.length, 7, "EQ section must have exactly 7 questions");
+assert.strictEqual(eqStep.questions.length, 7, "SQ/EQ section must have exactly 7 questions");
 
 const allQuestions = [...pqStep.questions, ...iqStep.questions, ...eqStep.questions];
 assert.strictEqual(allQuestions.length, 20, "Total question count must be exactly 20");
@@ -78,9 +77,14 @@ const expectedIQIds = ["IQ1", "IQ2", "IQ3", "IQ4", "IQ7", "IQ9"];
 const actualIQIds = iqStep.questions.map(q => q.id);
 assert.deepStrictEqual(actualIQIds, expectedIQIds, "IQ question IDs must match specification exactly");
 
+const expectedSQIds = ["SQ1", "SQ2", "SQ4", "SQ5", "SQ6", "SQ8", "SQ9"];
 const expectedEQIds = ["EQ1", "EQ2", "EQ4", "EQ5", "EQ6", "EQ8", "EQ9"];
-const actualEQIds = eqStep.questions.map(q => q.id);
-assert.deepStrictEqual(actualEQIds, expectedEQIds, "EQ question IDs must match specification exactly");
+const actual3rdIds = eqStep.questions.map(q => q.id);
+assert(
+  JSON.stringify(actual3rdIds) === JSON.stringify(expectedSQIds) ||
+  JSON.stringify(actual3rdIds) === JSON.stringify(expectedEQIds),
+  "SQ/EQ question IDs must match specification exactly"
+);
 
 // Every question has exactly 5 options with unique IDs ['A', 'B', 'C', 'D', 'E'] and valid marks
 let maxPQ = 0, minPQ = 0;

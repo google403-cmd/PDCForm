@@ -23,7 +23,7 @@ window.PDC_CONFIG = {
     name: "Personality Development Club",
     shortName: "PDC",
     motto: "Character | Competence | Culture",
-    tagline: "Official Personality & Aptitude Assessment (PQ · IQ · EQ) • VIT Pune",
+    tagline: "Official Personality & Aptitude Assessment (PQ · IQ · SQ) • VIT Pune",
     badge: "Official PDC Assessment 2026",
     logoPath: "assets/pdc-logo.png",
     bannerPath: "Stories/PDC Banner.png",
@@ -43,8 +43,8 @@ window.PDC_CONFIG = {
           desc: "Sharpen logical structuring, technical problem-solving, and decisive analytical thinking."
         },
         {
-          title: "Culture (EQ)",
-          desc: "Cultivate self-awareness, empathy, emotional equilibrium, and enduring ethical clarity."
+          title: "Culture (SQ)",
+          desc: "Cultivate self-awareness, empathy, emotional equilibrium, timeless wisdom, and enduring ethical clarity."
         },
         {
           title: "Leadership",
@@ -58,8 +58,8 @@ window.PDC_CONFIG = {
   campusAccess: {
     blockedMessage: "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Please proceed to the Kondhwa assessment below.",
     supportNote: "Please use the official Kondhwa pathway shared by the club coordinators.",
-    KONDHWA_QUIZ_URL: "REPLACE_WITH_KONDHWA_LINK",
-    kondhwaQuizUrl: "REPLACE_WITH_KONDHWA_LINK",
+    KONDHWA_QUIZ_URL: "https://bit.ly/3Qs-personality-assessment-pdc",
+    kondhwaQuizUrl: "https://bit.ly/3Qs-personality-assessment-pdc",
     kondhwaLogoPath: "assets/kondhwa-logo.svg"
   },
 
@@ -112,8 +112,8 @@ window.PDC_CONFIG = {
       title: "Personalized Mentor Meets",
       subtitle: "One-on-One Mentorship Circles & Emotional Guidance",
       desc: "Small-group and 1-on-1 mentorship circles with experienced seniors and faculty mentors, providing a confidential environment to navigate college stress, habits, and career paths.",
-      qualityKey: "eq",
-      relevantQuality: "Emotional Quotient (EQ)",
+      qualityKey: "sq",
+      relevantQuality: "Spiritual Quotient (SQ)",
       howItHelps: "Builds deep self-awareness, emotional resilience under pressure, and provides actionable personal habit frameworks."
     },
     {
@@ -132,13 +132,13 @@ window.PDC_CONFIG = {
       title: "Timeless Wisdom Sessions",
       subtitle: "Universal Principles for Modern Mental Mastery & Purpose",
       desc: "Engaging interactive dialogues extracting timeless principles for managing overthinking, maintaining inner composure, resolving ethical dilemmas, and discovering long-term purpose.",
-      qualityKey: "eq",
-      relevantQuality: "Emotional Quotient (EQ)",
+      qualityKey: "sq",
+      relevantQuality: "Spiritual Quotient (SQ)",
       howItHelps: "Provides profound mental clarity, empathy, and emotional equilibrium that keeps you grounded regardless of external circumstances."
     }
   ],
 
-  // ── Multi-Step Assessment Form (20 Questions: 7 PQ + 6 IQ + 7 EQ) ──
+  // ── Multi-Step Assessment Form (20 Questions: 7 PQ + 6 IQ + 7 SQ) ──
   steps: [
     {
       id: "personal_details",
@@ -190,7 +190,6 @@ window.PDC_CONFIG = {
           hasOtherInput: true,
           otherPlaceholder: "e.g. Chemical, Civil, Robotics, Instrumentation, etc.",
           options: [
-            "Question Type",
             "Computer Engineering",
             "Information Technology",
             "Electronics and Telecommunication Engineering",
@@ -421,17 +420,17 @@ window.PDC_CONFIG = {
       ]
     },
     {
-      id: "section_eq",
-      dimension: "eq",
-      section: "EQ",
-      title: "Section 3 — Emotional Quotient (EQ)",
+      id: "section_sq",
+      dimension: "sq",
+      section: "SQ",
+      title: "Section 3 — Spiritual Quotient (SQ)",
       subtitle: "7 Questions · Maximum 35 Marks. Choose the option that most closely reflects your approach.",
-      category: "Emotional Quotient (EQ)",
+      category: "Spiritual Quotient (SQ)",
       questions: [
         {
-          id: "EQ1",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ1",
+          section: "SQ",
+          dimension: "sq",
           question: "When something difficult happens unexpectedly, what is the most constructive approach?",
           options: [
             { id: "A", text: "Look at what the situation can teach me.", marks: 5 },
@@ -442,9 +441,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ2",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ2",
+          section: "SQ",
+          dimension: "sq",
           question: "Two people perform the same action, but with very different intentions. What matters more?",
           options: [
             { id: "A", text: "The action itself.", marks: 2.5 },
@@ -455,9 +454,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ4",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ4",
+          section: "SQ",
+          dimension: "sq",
           question: "Someone hurts you deeply but later sincerely regrets it. What is the wiser response?",
           options: [
             { id: "A", text: "Forgive immediately and forget everything.", marks: 3.5 },
@@ -468,9 +467,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ5",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ5",
+          section: "SQ",
+          dimension: "sq",
           question: "Which statement comes closest to your understanding of happiness?",
           options: [
             { id: "A", text: "Happiness mainly comes from achieving what I want.", marks: 4 },
@@ -481,9 +480,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ6",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ6",
+          section: "SQ",
+          dimension: "sq",
           question: "If a person keeps repeating the same harmful behaviour despite knowing its consequences, what is most likely missing?",
           options: [
             { id: "A", text: "Better circumstances.", marks: 2.5 },
@@ -494,9 +493,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ8",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ8",
+          section: "SQ",
+          dimension: "sq",
           question: "If our body, roles and circumstances keep changing throughout life, what might this suggest?",
           options: [
             { id: "A", text: "Nothing meaningful can be concluded from change.", marks: 3.5 },
@@ -507,9 +506,9 @@ window.PDC_CONFIG = {
           ]
         },
         {
-          id: "EQ9",
-          section: "EQ",
-          dimension: "eq",
+          id: "SQ9",
+          section: "SQ",
+          dimension: "sq",
           question: "If a person believes that actions have deeper, long-term impacts beyond immediate outcomes, what would that view most strongly encourage?",
           options: [
             { id: "A", text: "Focusing mainly on the present life.", marks: 4 },
@@ -624,19 +623,19 @@ window.PDC_CONFIG = {
         }
       ]
     },
-    eq: {
-      name: "Emotional Quotient (EQ)",
-      shortName: "EQ",
+    sq: {
+      name: "Spiritual Quotient (SQ)",
+      shortName: "SQ",
       tag: "Self-Awareness, Empathy & Inner Resilience",
       icon: "🌿",
       color: "#D97706",
-      description: "Measures emotional regulation, empathy, mindfulness, and your ability to maintain purpose during adversity.",
+      description: "Measures emotional regulation, empathy, mindfulness, and your ability to maintain purpose and inner balance during adversity.",
       strongActivity: "Personalized Mentor Meets & Wisdom Sessions",
       improveActivity: "Timeless Wisdom Sessions & Mentor Meets",
       tiers: [
         {
           min: 80, max: 100,
-          label: "Mature Emotional Balance",
+          label: "Mature Spiritual Poise",
           observation: "You maintain deep composure, evaluate intentions rather than surface reactions, and stay anchored in purpose.",
           strengthAction: "You look for deeper lessons in setbacks and maintain healthy boundaries with empathy.",
           pdcHelpStrength: "Serving as a mentor in student circles and leading meaningful campus initiatives through your natural stability.",
@@ -673,7 +672,7 @@ window.PDC_CONFIG = {
 };
 
 // Aliases for backward compatibility
-window.PDC_CONFIG.scoreInsights.sq = window.PDC_CONFIG.scoreInsights.eq;
+window.PDC_CONFIG.scoreInsights.eq = window.PDC_CONFIG.scoreInsights.sq;
 window.DHRUVA_CONFIG = window.PDC_CONFIG;
 
 if (typeof module !== "undefined" && module.exports) {
