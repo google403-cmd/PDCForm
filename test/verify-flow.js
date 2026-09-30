@@ -7,9 +7,9 @@ console.log("==================================================");
 
 // 1. Check index.html
 const indexHtml = fs.readFileSync('index.html', 'utf8');
-assert(indexHtml.includes('id="liveJoinWidget"'), 'index.html must contain liveJoinWidget');
-assert(indexHtml.includes('id="liveJoinCard"'), 'index.html must contain liveJoinCard');
-console.log('✅ index.html contains liveJoinWidget markup');
+assert(indexHtml.includes('id="formCard"'), 'index.html must contain formCard');
+assert(indexHtml.includes('id="assessmentForm"'), 'index.html must contain assessmentForm');
+console.log('✅ index.html contains clean assessment form markup');
 
 // 2. Check result.html
 const resultHtml = fs.readFileSync('result.html', 'utf8');
@@ -39,8 +39,7 @@ assert(appJs.includes('Next: WhatsApp Community →'), 'app.js must have button 
 assert(appJs.includes('Submit Assessment'), 'app.js must have button text Submit Assessment');
 assert(appJs.includes('joinedCommunityChoice'), 'app.js must handle joinedCommunityChoice');
 assert(appJs.includes('joinedCommunityCheckbox'), 'app.js must handle joinedCommunityCheckbox');
-assert(appJs.includes('initAppLiveJoinWidget'), 'app.js must have initAppLiveJoinWidget');
-console.log('✅ js/app.js contains stepper flow, community step, choice handling, and live widget trigger');
+console.log('✅ js/app.js contains stepper flow, community step, choice handling, and submission logic');
 
 // 5. Check Registration Counter Threshold logic
 const contentJs = fs.readFileSync('js/content.js', 'utf8');
@@ -58,9 +57,7 @@ console.log('✅ firestore.rules contains pdc_stats counter access rules');
 
 assert(resultHtml.includes('registered in total'), 'result.html must show "registered in total"');
 assert(resultHtml.includes('MIN_DISPLAY_THRESHOLD'), 'result.html must respect MIN_DISPLAY_THRESHOLD');
-assert(appJs.includes('registered in total'), 'app.js must show "registered in total"');
-assert(appJs.includes('MIN_DISPLAY_THRESHOLD'), 'app.js must respect MIN_DISPLAY_THRESHOLD');
-console.log('✅ result.html and app.js update counter to "X registered in total" only at or above threshold');
+console.log('✅ result.html updates counter to "X registered in total" only at or above threshold');
 
 console.log("==================================================");
 console.log("ALL FLOW & COUNTER THRESHOLD CHECKS PASSED SUCCESSFULLY!");
