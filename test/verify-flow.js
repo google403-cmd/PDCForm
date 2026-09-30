@@ -42,6 +42,26 @@ assert(appJs.includes('joinedCommunityCheckbox'), 'app.js must handle joinedComm
 assert(appJs.includes('initAppLiveJoinWidget'), 'app.js must have initAppLiveJoinWidget');
 console.log('✅ js/app.js contains stepper flow, community step, choice handling, and live widget trigger');
 
+// 5. Check Registration Counter Threshold logic
+const contentJs = fs.readFileSync('js/content.js', 'utf8');
+assert(contentJs.includes('minDisplayThreshold: 50'), 'content.js must define minDisplayThreshold as 50');
+console.log('✅ js/content.js defines minDisplayThreshold: 50');
+
+const firebaseConfigJs = fs.readFileSync('js/firebase-config.js', 'utf8');
+assert(firebaseConfigJs.includes('incrementRegistrationCounter'), 'firebase-config.js must export incrementRegistrationCounter');
+assert(firebaseConfigJs.includes('getRegistrationCount'), 'firebase-config.js must export getRegistrationCount');
+console.log('✅ js/firebase-config.js includes incrementRegistrationCounter and getRegistrationCount');
+
+const firestoreRules = fs.readFileSync('firestore.rules', 'utf8');
+assert(firestoreRules.includes('match /pdc_stats/{docId}'), 'firestore.rules must allow pdc_stats registration tracking');
+console.log('✅ firestore.rules contains pdc_stats counter access rules');
+
+assert(resultHtml.includes('registered in total'), 'result.html must show "registered in total"');
+assert(resultHtml.includes('MIN_DISPLAY_THRESHOLD'), 'result.html must respect MIN_DISPLAY_THRESHOLD');
+assert(appJs.includes('registered in total'), 'app.js must show "registered in total"');
+assert(appJs.includes('MIN_DISPLAY_THRESHOLD'), 'app.js must respect MIN_DISPLAY_THRESHOLD');
+console.log('✅ result.html and app.js update counter to "X registered in total" only at or above threshold');
+
 console.log("==================================================");
-console.log("ALL FLOW VERIFICATION CHECKS PASSED SUCCESSFULLY!");
+console.log("ALL FLOW & COUNTER THRESHOLD CHECKS PASSED SUCCESSFULLY!");
 console.log("==================================================");

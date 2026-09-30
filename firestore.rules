@@ -125,6 +125,15 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // ───────────────────────────────────────────────────────────────────
+    // 4. PUBLIC AGGREGATED STATS (Live registration counter)
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_stats/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.totalRegistered is number;
+      allow delete: if false;
+    }
+
     // Explicitly deny access to any other collections
     match /{document=**} {
       allow read, write: if false;

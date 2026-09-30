@@ -333,6 +333,9 @@ async function saveTestSubmission(submissionData) {
       // Attempt to flush any earlier queued submissions in the background
       setTimeout(flushSyncQueue, 1000);
 
+      // Increment registered student counter
+      incrementRegistrationCounter().catch(() => {});
+
       return {
         success: true,
         id: documentReference.id,
@@ -350,6 +353,7 @@ async function saveTestSubmission(submissionData) {
             6000
           );
           _lastSubmissionId = legacyRef.id;
+          incrementRegistrationCounter().catch(() => {});
           return {
             success: true,
             id: legacyRef.id,
@@ -372,6 +376,7 @@ async function saveTestSubmission(submissionData) {
       // The student will NOT lose their score and will seamlessly see their results!
       const queuedId = queuePendingSync(payload, targetCollection);
       _lastSubmissionId = queuedId;
+      incrementRegistrationCounter().catch(() => {});
 
       return {
         success: true,
@@ -390,6 +395,7 @@ async function saveTestSubmission(submissionData) {
     const demoId = queuePendingSync(payload, targetCollection) || ("pdc_local_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7));
     console.log(`Assessment safely recorded in local session for [${targetCollection}]:`, demoId);
     _lastSubmissionId = demoId;
+    incrementRegistrationCounter().catch(() => {});
     return {
       success: true,
       id: demoId,
@@ -398,6 +404,7 @@ async function saveTestSubmission(submissionData) {
     };
   } catch (localErr) {
     console.warn("Local storage fallback warning:", localErr);
+    incrementRegistrationCounter().catch(() => {});
     return {
       success: true,
       id: "pdc_session_" + Date.now(),
@@ -408,11 +415,84 @@ async function saveTestSubmission(submissionData) {
   }
 }
 
+/**
+ * Atomically increments the total registered count in Firestore and updates localStorage cache.
+ */
+async function incrementRegistrationCounter() {
+  let localCount = 0;
+  try {
+    const raw = typeof localStorage !== "undefined" ? localStorage.getItem("pdc_total_registered_count") : null;
+    localCount = raw ? parseInt(raw, 10) : 0;
+    if (isNaN(localCount)) localCount = 0;
+    localCount++;
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("pdc_total_registered_count", String(localCount));
+    }
+  } catch (e) {}
+
+  if (isFirebaseConfigured && db && typeof firebase !== "undefined" && firebase.firestore) {
+    try {
+      const statsRef = db.collection("pdc_stats").doc("registrations");
+      await statsRef.set({
+        totalRegistered: firebase.firestore.FieldValue.increment(1),
+        lastUpdated: new Date().toISOString()
+      }, { merge: true });
+    } catch (err) {
+      console.warn("Could not increment Firestore registration stats:", err.message);
+    }
+  }
+
+  return localCount;
+}
+
+/**
+ * Retrieves the total registered student count from Firestore with local fallback.
+ */
+async function getRegistrationCount() {
+  let count = 0;
+  try {
+    if (typeof localStorage !== "undefined") {
+      const cached = localStorage.getItem("pdc_total_registered_count");
+      if (cached) {
+        const parsed = parseInt(cached, 10);
+        if (!isNaN(parsed)) count = parsed;
+      }
+    }
+  } catch (e) {}
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const doc = await withTimeout(
+        db.collection("pdc_stats").doc("registrations").get(),
+        4000,
+        "Fetch stats timeout"
+      );
+      if (doc.exists) {
+        const remoteCount = doc.data()?.totalRegistered;
+        if (typeof remoteCount === "number" && !isNaN(remoteCount)) {
+          count = Math.max(count, remoteCount);
+          try {
+            if (typeof localStorage !== "undefined") {
+              localStorage.setItem("pdc_total_registered_count", String(count));
+            }
+          } catch (e) {}
+        }
+      }
+    } catch (err) {
+      console.info("Using cached registration count:", count, err.message);
+    }
+  }
+
+  return count;
+}
+
 if (typeof window !== "undefined") {
   window.PDCBackend = {
     COLLECTIONS,
     getTargetCollection,
     saveTestSubmission,
+    incrementRegistrationCounter,
+    getRegistrationCount,
     isFirebaseConfigured: () => isFirebaseConfigured,
     getFirebaseConfig,
     flushSyncQueue
@@ -427,6 +507,8 @@ if (typeof module !== "undefined" && module.exports) {
     getTargetCollection,
     firebaseConfig,
     saveTestSubmission,
+    incrementRegistrationCounter,
+    getRegistrationCount,
     flushSyncQueue
   };
 }

@@ -728,8 +728,12 @@
 
   </div>
 
+  <!-- Firebase Compatibility SDK via CDN -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
   <script src="js/security.js"></script>
   <script src="js/content.js"></script>
+  <script src="js/firebase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const config = window.PDC_CONFIG || window.DHRUVA_CONFIG || {};
@@ -1301,10 +1305,42 @@
         if (!widgetCard) return;
 
         let currentIndex = 0;
-        let baseCount = 47 + Math.floor(Math.random() * 8);
         let isDismissed = false;
         let cycleTimer = null;
         let hideTimer = null;
+        const MIN_DISPLAY_THRESHOLD = (config.stats && config.stats.minDisplayThreshold) || 50;
+
+        // Fetch real registration count and update counter pill
+        async function updateRegistrationCounterDisplay() {
+          if (!liveCounter) return;
+          const backend = window.PDCBackend || window.DhruvaBackend;
+          let count = 0;
+          try {
+            const raw = localStorage.getItem("pdc_total_registered_count");
+            count = raw ? parseInt(raw, 10) : 0;
+          } catch (e) {}
+
+          const renderPill = (val) => {
+            if (val >= MIN_DISPLAY_THRESHOLD) {
+              liveCounter.style.display = "inline-block";
+              liveCounter.textContent = `${val} registered in total`;
+            } else {
+              liveCounter.style.display = "none";
+              liveCounter.textContent = "";
+            }
+          };
+
+          renderPill(count);
+
+          if (backend && typeof backend.getRegistrationCount === "function") {
+            try {
+              const remoteCount = await backend.getRegistrationCount();
+              renderPill(remoteCount);
+            } catch (err) {}
+          }
+        }
+
+        updateRegistrationCounterDisplay();
 
         function updateWidgetContent(person) {
           if (liveAvatar) {
@@ -1314,20 +1350,13 @@
           if (liveName) liveName.textContent = person.name;
           if (liveTag) liveTag.textContent = `${person.branch} (${person.year})`;
           if (liveTime) liveTime.textContent = person.time;
-          if (liveCounter) {
-            liveCounter.textContent = `${baseCount} joined today`;
-          }
+          updateRegistrationCounterDisplay();
         }
 
         function showNotification() {
           if (isDismissed) return;
           const person = SIMULATED_JOINERS[currentIndex];
           currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
-
-          // Occasionally increment baseCount by 1
-          if (Math.random() > 0.6) {
-            baseCount++;
-          }
 
           updateWidgetContent(person);
           widgetCard.classList.add("visible");
@@ -1375,7 +1404,7 @@
       <div class="live-join-pulse-header">
         <span class="live-pulse-dot"></span>
         <span class="live-pulse-title">LIVE PDC ACTIVITY</span>
-        <span class="live-counter-pill" id="liveCounterPill">48 joined today</span>
+        <span class="live-counter-pill" id="liveCounterPill" style="display: none;"></span>
       </div>
       <div class="live-join-content">
         <div class="live-avatar-wrap">

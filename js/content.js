@@ -545,6 +545,12 @@ window.PDC_CONFIG = {
     buttonText: "Join WhatsApp Community"
   },
 
+  // ── Registration Counter & Display Threshold Configuration ───────
+  stats: {
+    minDisplayThreshold: 50, // Only display total registered count once registrations reach 50+
+    defaultBaselineCount: 0
+  },
+
   // ── Actionable Score Insights & Personalized Guidance ─────────────
   scoreInsights: {
     pq: {

@@ -817,7 +817,38 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     let currentIndex = 0;
-    let baseCount = 47 + Math.floor(Math.random() * 8);
+    const MIN_DISPLAY_THRESHOLD = (config.stats && config.stats.minDisplayThreshold) || 50;
+
+    async function updateRegistrationCounterDisplay() {
+      if (!liveCounter) return;
+      const backend = window.PDCBackend || window.DhruvaBackend;
+      let count = 0;
+      try {
+        const raw = localStorage.getItem("pdc_total_registered_count");
+        count = raw ? parseInt(raw, 10) : 0;
+      } catch (e) {}
+
+      const renderPill = (val) => {
+        if (val >= MIN_DISPLAY_THRESHOLD) {
+          liveCounter.style.display = "inline-block";
+          liveCounter.textContent = `${val} registered in total`;
+        } else {
+          liveCounter.style.display = "none";
+          liveCounter.textContent = "";
+        }
+      };
+
+      renderPill(count);
+
+      if (backend && typeof backend.getRegistrationCount === "function") {
+        try {
+          const remoteCount = await backend.getRegistrationCount();
+          renderPill(remoteCount);
+        } catch (err) {}
+      }
+    }
+
+    updateRegistrationCounterDisplay();
 
     function updateWidgetContent(person) {
       if (liveAvatar) {
@@ -827,19 +858,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (liveName) liveName.textContent = person.name;
       if (liveTag) liveTag.textContent = `${person.branch} (${person.year})`;
       if (liveTime) liveTime.textContent = person.time;
-      if (liveCounter) {
-        liveCounter.textContent = `${baseCount} joined today`;
-      }
+      updateRegistrationCounterDisplay();
     }
 
     function showNotification() {
       if (appLiveDismissed) return;
       const person = SIMULATED_JOINERS[currentIndex];
       currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
-
-      if (Math.random() > 0.6) {
-        baseCount++;
-      }
 
       updateWidgetContent(person);
       widgetCard.classList.add("visible");
