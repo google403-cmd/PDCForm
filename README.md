@@ -1,18 +1,27 @@
-# Dhruva Club — PQ IQ SQ Personality Assessment Webpage
+# Personality Development Club (PDC) — PQ · IQ · EQ Assessment
 
-A responsive, high-performance static assessment web application designed for **Dhruva Club** student assessments and character development initiatives. Built with pure HTML5, Vanilla CSS, and JavaScript, ready for direct deployment on **GitHub Pages** with a **Firebase Firestore** cloud database backend.
+A responsive, high-performance web application designed for the **Personality Development Club (PDC)** of VIT Pune. Built with pure HTML5, Vanilla CSS, and JavaScript, ready for direct deployment on **GitHub Pages**, **Vercel**, or any static hosting platform with a **Firebase Firestore** cloud database backend.
 
 ---
 
 ## 🌟 Key Features
 
-- **Direct Assessment Experience**: Clean, single-page multi-step flow without unnecessary landing page friction.
-- **Brand Integrated Luxury UI**: Glassmorphic dark theme (`#0B0F19`), gold & amber accents (`#F59E0B`), responsive layout, and Google Fonts (`Space Grotesk` + `Inter`).
-- **Collapsible About Us**: Interactive accordion introducing the club's mission and the 4 quotients (PQ, IQ, EQ, SQ).
-- **Single-File Content Customization (`js/content.js`)**: Update questions, options, WhatsApp links, or About Us copy in one place without touching HTML or CSS.
-- **Smart Gender-Based Community Redirect**: Automatically forwards participants to their respective Male/Female WhatsApp community group on `result.html`.
-- **Firebase Firestore Backend**: Securely records student registration details, year, branch, division, and all test answers with offline preview fallback.
-- **GitHub Pages Ready**: Zero build steps, zero node modules required for deployment.
+- **PDC Visual Identity**: Designed around the official PDC logo palette: vibrant PDC Coral (`#F96340`), Deep Obsidian (`#11141A`), and Warm Amber accents (`#D97706`).
+- **Comprehensive Assessment Flow**: 20 carefully calibrated questions covering:
+  - **Personality Quotient (PQ)**: Character, social confidence, and communication (Max 35)
+  - **Intellectual Quotient (IQ)**: Logic, pattern recognition, and critical thinking (Max 30)
+  - **Emotional Quotient (EQ)**: Self-awareness, empathy, and emotional poise (Max 35)
+  - **Total**: 100 Marks
+- **Actionable & Personalized Report**: Concise snapshot detailing demonstrated strengths, growth areas, specific PDC developmental activities, and concrete ways PDC elevates each quality.
+- **Rich Activity Showcase**: Large, high-visibility photographs highlighting key PDC programs:
+  1. Software Training Workshops (STWs) at IIT Bombay
+  2. Personality Development Workshops (PDWs)
+  3. Personalized Mentor Meets
+  4. Edutainment Outings & Camps
+  5. Timeless Wisdom Sessions
+- **Unified WhatsApp Community CTA**: Single, prominent **"Join WhatsApp Community"** call to action with no gender segregation.
+- **Dedicated Kondhwa Campus Pathway**: Standalone `kondhwa.html` portal featuring dedicated Kondhwa Club branding and independent quiz routing.
+- **Firebase Firestore Backend**: Submits to the `pdc_test_submissions` collection with strict security validation rules and local offline fallback.
 
 ---
 
@@ -20,104 +29,78 @@ A responsive, high-performance static assessment web application designed for **
 
 ```
 .
-├── index.html              # Main assessment page with multi-step test
-├── result.html             # Submission confirmation & WhatsApp redirect
-├── README.md               # Documentation & setup guide
+├── index.html              # Main assessment page with multi-step test (Bibwewadi)
+├── kondhwa.html            # Dedicated Kondhwa Campus assessment route
+├── result.html             # Actionable score report, activity gallery & community CTA
+├── firestore.rules         # Production Firestore security rules for pdc_test_submissions
+├── vercel.json             # Vercel deployment headers & cache-control policies
+├── .env.example            # Environment variables template for Firebase & URLs
+├── package.json            # Scripts & dependencies
 ├── assets/
-│   ├── logo.png            # Dhruva Club logo
-│   └── Dhruva Club logo.png
+│   ├── pdc-logo.png        # Official PDC square logo
+│   └── kondhwa-logo.svg    # Official Kondhwa Club emblem
+├── Stories/
+│   ├── PDC Banner.png      # Official activities header banner
+│   ├── pdclogo1.png        # PDC Logo asset
+│   ├── iitstw.png          # STW at IIT Bombay
+│   ├── pdw.png             # Personality Development Workshops
+│   ├── mmc.png             # Personalized Mentor Meets
+│   ├── camps.png           # Edutainment Outings
+│   └── wisdom.png          # Timeless Wisdom Sessions
 ├── css/
-│   └── styles.css          # Design system, glassmorphism, responsive styles
-└── js/
-    ├── content.js          # ⭐ All questions, text & WhatsApp links (EDIT HERE)
-    ├── firebase-config.js  # ⭐ Firebase credentials & Firestore connector
-    └── app.js              # Multi-step state, validation & submission logic
+│   └── styles.css          # Design system, PDC tokens, responsive layouts
+├── js/
+│   ├── content.js          # Master configuration (copy, scoring, questions, links)
+│   ├── firebase-config.js  # PDC Firebase credentials & Firestore connector
+│   ├── security.js         # Checksum signature & session encryption
+│   └── app.js              # Multi-step state, validation & submission logic
+└── test/
+    ├── validate-assessment.js         # Question & structure validation suite
+    └── test-scoring-and-submission.js # Scoring engine & payload schema tests
 ```
 
 ---
 
 ## 🚀 Quick Start (Running Locally)
 
-Because this is a pure static site, you can run it with any local web server:
+Because this is a pure static web application, you can run it with any local server:
 
-### Option 1: VS Code / IDE Live Server
-Right-click `index.html` and click **"Open with Live Server"**.
-
-### Option 2: Python HTTP Server
+### Option 1: Python HTTP Server
 ```bash
 python -m http.server 8000
 ```
 Open [http://localhost:8000](http://localhost:8000) in your browser.
 
-### Option 3: Node `npx serve`
+### Option 2: Node `npx serve`
 ```bash
 npx serve .
 ```
+
+### Option 3: VS Code / IDE Live Server
+Right-click `index.html` and select **"Open with Live Server"**.
+
+---
+
+## 🧪 Running Automated Tests
+
+```bash
+npm test
+```
+Validates question structures, maximum marks (PQ: 35, IQ: 30, EQ: 35, Total: 100), option keys, and payload schema constraints.
 
 ---
 
 ## ⚙️ Configuration Guide
 
-### 1. Connecting Firebase Firestore (Database)
+All club configuration is centralized in [`js/content.js`](file:///c:/Users/ADMIN/Downloads/PDC/DhruvaClub/js/content.js):
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project (e.g. `dhruva-club-assessment`).
-2. Under **Project Settings** > **General** > **Your apps**, click the **Web `</>`** icon to register a web app.
-3. Open [`js/firebase-config.js`](file:///d:/Dhurva%20Club%20PQ%20IQ%20SQ%20Test%20Webpage/js/firebase-config.js) and replace the placeholders:
-   ```javascript
-   const firebaseConfig = {
-     apiKey: "AIzaSy...",
-     authDomain: "dhruva-assessment.firebaseapp.com",
-     projectId: "dhruva-assessment",
-     storageBucket: "dhruva-assessment.appspot.com",
-     messagingSenderId: "123456789",
-     appId: "1:123456789:web:abcdef"
-   };
-   ```
-4. In Firebase Console, go to **Firestore Database** > **Create database** (start in Test mode, or configure write permissions for the collection `dhruva_test_submissions`).
-
-*Note: Until real credentials are added, the app automatically runs in Demo Mode and logs responses to local storage and browser console without crashing.*
+- **PDC WhatsApp Community URL**: Update `whatsappLinks.COMMUNITY_URL`.
+- **Kondhwa Quiz URL**: Update `campusAccess.KONDHWA_QUIZ_URL`.
+- **Firebase Project**: Update `firebase` in `js/content.js` or via environment variables in `js/firebase-config.js`.
 
 ---
 
-### 2. Updating WhatsApp Links & Questions
+## 📄 License & Attribution
 
-Open [`js/content.js`](file:///d:/Dhurva%20Club%20PQ%20IQ%20SQ%20Test%20Webpage/js/content.js):
-
-#### WhatsApp Community Links:
-```javascript
-whatsappLinks: {
-  male: "https://chat.whatsapp.com/YOUR_MALE_GROUP_INVITE_CODE",
-  female: "https://chat.whatsapp.com/YOUR_FEMALE_GROUP_INVITE_CODE",
-  default: "https://chat.whatsapp.com/YOUR_DEFAULT_GROUP_INVITE_CODE"
-}
-```
-
-#### Adding / Editing Questions:
-Simply add or modify objects in the `steps` array in `content.js`:
-```javascript
-{
-  id: "mbti_q1",
-  question: "When you have to make an important decision, you mostly prioritize…",
-  options: [
-    "Rules, objectivity, and what is fair for everyone",
-    "Logical reasoning, hard facts, and calculated outcomes",
-    "Empathy, people's personal feelings, and values",
-    "Keeping peace, balance, and group harmony"
-  ]
-}
-```
-
----
-
-## 🌐 Deploying to GitHub Pages
-
-1. Push your repository to GitHub:
-   ```bash
-   git add .
-   git commit -m "Initialize Dhruva Club assessment webpage"
-   git push origin main
-   ```
-2. On GitHub, navigate to your repository **Settings** > **Pages**.
-3. Under **Branch**, select `main` (or `master`) and `/ (root)` folder.
-4. Click **Save**. Within 1–2 minutes, your website will be live at:
-   `https://<your-username>.github.io/<repo-name>/`
+&copy; Personality Development Club (PDC) • VIT Pune. All rights reserved.
+Character | Competence | Culture

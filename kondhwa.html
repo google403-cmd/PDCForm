@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kondhwa Campus Assessment — Personality Development Club (PDC)</title>
+  <meta name="description" content="Official Personality Development Club (PDC) student assessment portal for Kondhwa Campus students. Character | Competence | Culture.">
+  <meta name="theme-color" content="#F96340">
+  <link rel="icon" type="image/png" href="assets/pdc-logo.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .kondhwa-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+    .kondhwa-header {
+      text-align: center;
+      margin-bottom: 26px;
+      padding: 32px 24px 28px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 8px 30px rgba(249, 99, 64, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .kondhwa-header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 5px;
+      background: linear-gradient(90deg, #F96340 0%, #FF8566 50%, #F96340 100%);
+    }
+    .kondhwa-logo-wrap {
+      width: 104px;
+      height: 104px;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      background: #F96340;
+      border: 3px solid #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: 0 8px 26px rgba(249, 99, 64, 0.32);
+    }
+    .kondhwa-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .kondhwa-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #111111;
+      color: #FFFFFF;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 5px 18px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+      border: 1.5px solid #F96340;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+    .kondhwa-badge::before {
+      content: "★";
+      color: #F96340;
+      font-size: 0.8rem;
+    }
+    .kondhwa-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: #111111;
+      margin-bottom: 6px;
+    }
+    .kondhwa-subtitle {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #F96340;
+      max-width: 580px;
+      margin: 0 auto 12px;
+    }
+    .kondhwa-campus-tag {
+      display: inline-block;
+      background: #FFF2ED;
+      color: #E04F2E;
+      border: 1px solid #FFBEAD;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: var(--radius-full);
+    }
+    .kondhwa-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: clamp(28px, 5vw, 48px);
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(249, 99, 64, 0.08);
+      margin-bottom: 28px;
+    }
+    .kondhwa-route-info {
+      background: #FFF8F6;
+      border: 1.5px solid #FFD5C6;
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin: 22px 0 28px;
+      text-align: left;
+    }
+    .kondhwa-route-info h3 {
+      font-size: 1.05rem;
+      color: #111111;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+    }
+    .kondhwa-route-info p {
+      color: #334155;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .kondhwa-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 34px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #FF6F4C 0%, #F96340 50%, #E24822 100%);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-decoration: none;
+      box-shadow: 0 6px 22px rgba(249, 99, 64, 0.38);
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kondhwa-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(249, 99, 64, 0.5);
+      color: #FFFFFF;
+    }
+    .kondhwa-return-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: #64748B;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .kondhwa-return-link:hover {
+      color: #F96340;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="kondhwa-container">
+    
+    <!-- PDC Header for Kondhwa Route -->
+    <header class="kondhwa-header">
+      <div class="kondhwa-logo-wrap">
+        <img src="assets/pdc-logo.png" alt="PDC Club Logo" class="kondhwa-logo-img"
+             onerror="this.src='Stories/pdclogo1.png'">
+      </div>
+      <div class="kondhwa-badge">Kondhwa Campus Student Portal</div>
+      <h1 class="kondhwa-title">Personality Development Club</h1>
+      <p class="kondhwa-subtitle">Character | Competence | Culture • VIT Pune</p>
+      <span class="kondhwa-campus-tag">📍 Kondhwa Campus Official Route</span>
+    </header>
+
+    <!-- Main Card -->
+    <main class="kondhwa-card">
+      <h2 style="font-size:1.45rem;color:#111111;margin-bottom:12px;font-weight:800;">Welcome Kondhwa Campus Students</h2>
+      <p style="color:#475569;font-size:0.96rem;line-height:1.65;max-width:540px;margin:0 auto;">
+        You have reached the official PDC evaluation route for students of VIT Pune — Kondhwa Campus. Please use the assessment button below to participate in your campus quiz.
+      </p>
+
+      <div class="kondhwa-route-info">
+        <h3>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F96340" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Important Notice for Kondhwa Students
+        </h3>
+        <p>
+          PDC organizes specialized campus batches and mentor cohorts for Bibwewadi and Kondhwa. Completing your evaluation through this portal ensures you are connected with the designated PDC coordinators and activities for the Kondhwa campus.
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <a class="kondhwa-cta-btn" id="kondhwaQuizBtn" href="#" target="_blank" rel="noopener noreferrer">
+        <span>Take Kondhwa Quiz</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+
+      <div>
+        <a class="kondhwa-return-link" href="index.html">
+          ← Taking the Bibwewadi Campus assessment instead? Return here
+        </a>
+      </div>
+    </main>
+
+    <footer class="footer-text">
+      <p>&copy; Personality Development Club • Character | Competence | Culture. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <script src="js/content.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Configuration Point for Kondhwa Quiz URL
+      const config = window.PDC_CONFIG || {};
+      const KONDHWA_QUIZ_URL = config.campusAccess?.KONDHWA_QUIZ_URL || "REPLACE_WITH_KONDHWA_LINK";
+
+      const quizBtn = document.getElementById("kondhwaQuizBtn");
+      const isPlaceholder = !KONDHWA_QUIZ_URL || 
+                            KONDHWA_QUIZ_URL.includes("REPLACE_WITH") || 
+                            KONDHWA_QUIZ_URL.includes("placeholder") || 
+                            KONDHWA_QUIZ_URL.includes("kondhwa-pdc-assessment");
+
+      if (quizBtn) {
+        if (!isPlaceholder) {
+          quizBtn.href = KONDHWA_QUIZ_URL;
+        } else {
+          quizBtn.href = "javascript:void(0);";
+        }
+        
+        quizBtn.addEventListener("click", (e) => {
+          if (isPlaceholder) {
+            e.preventDefault();
+            const existingNotice = document.getElementById("kondhwaNoticeBox");
+            if (existingNotice) {
+              existingNotice.scrollIntoView({ behavior: "smooth", block: "center" });
+              return;
+            }
+
+            const noticeBox = document.createElement("div");
+            noticeBox.id = "kondhwaNoticeBox";
+            noticeBox.style.cssText = "margin-top:20px;padding:16px 20px;background:#FFF6F3;border:1.5px solid #FFBEAD;border-radius:12px;color:#C2410C;text-align:left;font-size:0.92rem;line-height:1.6;";
+            noticeBox.innerHTML = `
+              <strong>ℹ️ Kondhwa Quiz Link Pending</strong><br>
+              The official Kondhwa Quiz URL has not been provided yet. Please supply the active Kondhwa assessment link so it can be connected directly to this button.
+            `;
+            quizBtn.parentElement.appendChild(noticeBox);
+            noticeBox.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

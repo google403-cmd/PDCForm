@@ -1,11 +1,18 @@
 /**
  * ===================================================================
- * DHRUVA CLUB — MULTI-STEP TEST APPLICATION LOGIC
+ * PDC (PERSONALITY DEVELOPMENT CLUB) — MULTI-STEP ASSESSMENT LOGIC (PQ-IQ-EQ)
+ * ===================================================================
+ * - 20 Questions: 7 PQ (Max 35) + 6 IQ (Max 30) + 7 EQ (Max 35) = Max 100
+ * - Sequential global numbering (Q1 to Q20) with Section context
+ * - Single-document Firestore submission to pdc_test_submissions
+ * - Strict duplicate submission prevention
+ * - Non-silent error handling with retry capability
+ * - Tamper-resistant session token generation for result.html
  * ===================================================================
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const config = window.DHRUVA_CONFIG;
+  const config = window.PDC_CONFIG || window.DHRUVA_CONFIG;
 
   if (!config) {
     console.error("Configuration not loaded from content.js!");
@@ -15,16 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Application State
   let currentStepIndex = 0;
   const totalSteps = config.steps.length;
+  let isSubmitting = false;
+
   const formData = {
     personal: {},
     answers: {}
   };
 
   // DOM Elements
-  const brandHeader = document.getElementById("brandHeader");
   const clubBadge = document.getElementById("clubBadge");
   const clubName = document.getElementById("clubName");
-
   const clubTagline = document.getElementById("clubTagline");
   const aboutToggleBtn = document.getElementById("aboutToggleBtn");
   const aboutContent = document.getElementById("aboutContent");
@@ -47,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (config.club) {
       if (clubBadge && config.club.badge) clubBadge.textContent = config.club.badge;
       if (clubName && config.club.name) clubName.textContent = config.club.name;
-
       if (clubTagline && config.club.tagline) clubTagline.textContent = config.club.tagline;
 
       if (config.club.about) {
@@ -63,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Toggle About Section
     if (aboutToggleBtn && aboutContent) {
       aboutToggleBtn.addEventListener("click", () => {
         const isOpen = aboutContent.classList.contains("open");
@@ -98,13 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateProgressUI() {
-    const percent = Math.round(((currentStepIndex) / (totalSteps - 1)) * 100);
+    const percent = Math.round((currentStepIndex / (totalSteps - 1)) * 100);
+    const currentStepConfig = config.steps[currentStepIndex];
+
     if (stepCountLabel) {
-      stepCountLabel.textContent = `Step ${currentStepIndex + 1} of ${totalSteps}`;
+      const stepName = currentStepConfig.isPersonalDetails
+        ? "Profile Registration"
+        : (currentStepConfig.category || currentStepConfig.title);
+      stepCountLabel.textContent = `Step ${currentStepIndex + 1} of ${totalSteps}: ${stepName}`;
     }
+
     if (stepPercentLabel) {
       stepPercentLabel.textContent = `${percent}% Completed`;
     }
+
     if (progressBarFill) {
       progressBarFill.style.width = `${percent}%`;
     }
@@ -125,10 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (prevBtn) {
       prevBtn.style.visibility = currentStepIndex === 0 ? "hidden" : "visible";
     }
+
     if (nextBtn) {
       const isLastStep = currentStepIndex === totalSteps - 1;
       const btnText = nextBtn.querySelector(".btn-text");
-      if (btnText) {
+      if (btnText && !isSubmitting) {
         btnText.textContent = isLastStep ? "Submit Assessment" : "Continue";
       }
     }
@@ -139,13 +152,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===================================================================
   function renderStepViews() {
     stepsContainer.innerHTML = "";
+    let globalQuestionCounter = 0;
 
     config.steps.forEach((step, stepIndex) => {
       const stepView = document.createElement("div");
       stepView.className = `step-view ${stepIndex === 0 ? "active" : ""}`;
       stepView.id = `step-view-${stepIndex}`;
 
-      // Header for this step
       let categoryPill = step.category
         ? `<div class="step-category-pill">${step.category}</div>`
         : (step.isPersonalDetails ? `<div class="step-category-pill">Registration</div>` : "");
@@ -164,18 +177,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // Render Personal Registration Fields
         bodyHtml = `<div class="personal-grid">`;
         step.fields.forEach(field => {
-          const isFullWidth = field.name === "fullName" || field.name === "email" || field.name === "collegeEmail";
+          const isFullWidth = field.name === "fullName" || field.name === "email";
           const fieldClass = isFullWidth ? "grid-full-width" : "";
 
           if (field.type === "radio" && field.name === "gender") {
             bodyHtml += `
               <div class="form-group ${fieldClass}">
                 <label class="form-label">${field.label} ${field.required ? '<span class="req-star">*</span>' : ''}</label>
-                <div class="gender-radio-group">
+                <div class="gender-radio-group" role="radiogroup" aria-label="Gender selection">
                   ${field.options.map(opt => `
-                    <label class="gender-radio-card" data-gender="${opt}">
+                    <label class="gender-radio-card" data-gender="${opt}" tabindex="0" role="radio" aria-checked="false">
                       <input type="radio" name="gender" value="${opt}" ${field.required ? 'required' : ''}>
-                      <span>${opt === 'Male' ? '👨 Male' : '👩 Female'}</span>
+                      <span>${opt === 'Male' ? '👨 Male' : (opt === 'Female' ? '👩 Female' : '🧑 Other')}</span>
                     </label>
                   `).join('')}
                 </div>
@@ -186,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const hasOther = field.hasOtherInput || (field.options && field.options.includes("Other"));
             const otherHtml = hasOther ? `
               <div class="other-input-wrap" id="${field.name}_other_wrap" style="display: none; margin-top: 8px;">
-                <label class="form-label-sub" for="${field.name}_other" style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px;">Specify ${field.label}:</label>
+                <label class="form-label-sub" for="${field.name}_other">Specify ${field.label}:</label>
                 <input 
                   type="text" 
                   class="form-input other-text-input" 
@@ -228,9 +241,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         bodyHtml += `</div>`;
       } else if (step.questions) {
-        // Render MCQ Questions
+        // Render MCQ Questions with global sequential numbering (Q1 to Q20)
         bodyHtml = `<div class="questions-list">`;
-        step.questions.forEach((q, qIndex) => {
+        step.questions.forEach((q) => {
+          globalQuestionCounter++;
+          const currentQNum = globalQuestionCounter;
+
           let imageHtml = "";
           if (q.image) {
             imageHtml = `
@@ -241,18 +257,23 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           bodyHtml += `
-            <div class="question-block" id="block-${q.id}">
+            <div class="question-block" id="block-${q.id}" data-qid="${q.id}">
               <div class="question-header">
-                <span class="question-num-badge">Q${qIndex + 1}</span>
-                <p class="question-text">${q.question}</p>
+                <span class="question-num-badge" title="Question ${currentQNum} of 20">Q${currentQNum}</span>
+                <div style="flex:1;">
+                  <span class="question-qid-tag" style="font-size:0.75rem;font-weight:700;color:var(--text-muted);display:inline-block;margin-bottom:4px;">${q.id}</span>
+                  <p class="question-text">${q.question}</p>
+                </div>
               </div>
               ${imageHtml}
-              <div class="options-grid">
-                ${q.options.map((opt, optIdx) => `
-                  <label class="option-card" data-qid="${q.id}" data-optindex="${optIdx}">
-                    <input type="radio" name="${q.id}" value="${opt.replace(/"/g, '&quot;')}" required>
-                    <div class="option-indicator"></div>
-                    <span class="option-label-text">${opt}</span>
+              <div class="options-grid" role="radiogroup" aria-label="Question ${currentQNum} options">
+                ${q.options.map((opt) => `
+                  <label class="option-card" data-qid="${q.id}" data-optid="${opt.id}" data-marks="${opt.marks}" tabindex="0" role="radio" aria-checked="false">
+                    <input type="radio" name="${q.id}" value="${opt.id}" required>
+                    <div class="option-indicator" aria-hidden="true">${opt.id}</div>
+                    <span class="option-label-text">
+                      <strong class="opt-prefix">${opt.id}.</strong> ${opt.text}
+                    </span>
                   </label>
                 `).join('')}
               </div>
@@ -260,6 +281,23 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
         });
         bodyHtml += `</div>`;
+      }
+
+      // Add a submission error alert placeholder on the last step
+      if (stepIndex === totalSteps - 1) {
+        bodyHtml += `
+          <div id="submissionAlertBox" class="submission-alert-box" style="display:none;margin-top:24px;padding:16px 20px;border-radius:12px;background:var(--status-error-bg);border:1px solid #fecaca;color:var(--status-error);" role="alert">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <span style="font-size:1.5rem;line-height:1;">⚠️</span>
+              <div>
+                <strong style="display:block;font-size:0.95rem;margin-bottom:4px;">Submission Unsuccessful</strong>
+                <p id="submissionAlertMsg" style="font-size:0.875rem;line-height:1.5;margin:0;">
+                  We couldn't save your assessment right now. Please check your internet connection and try submitting again.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       stepView.innerHTML = headerHtml + bodyHtml;
@@ -270,18 +308,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 4. INTERACTION HANDLERS (RADIO SELECTION, INPUT EVENTS, OTHER DROPDOWN)
+  // 4. INTERACTION HANDLERS (RADIO SELECTION, KEYBOARD & OTHER DROPDOWN)
   // ===================================================================
   function attachInteractiveHandlers() {
-    // Gender Radio Card styling
+    // Gender Radio Card selection
     const genderCards = document.querySelectorAll(".gender-radio-card");
     genderCards.forEach(card => {
-      card.addEventListener("click", () => {
-        genderCards.forEach(c => c.classList.remove("selected"));
+      const selectGender = () => {
+        genderCards.forEach(c => {
+          c.classList.remove("selected");
+          c.setAttribute("aria-checked", "false");
+        });
         card.classList.add("selected");
+        card.setAttribute("aria-checked", "true");
         const radio = card.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
         clearFieldError("gender");
+      };
+
+      card.addEventListener("click", selectGender);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectGender();
+        }
       });
     });
 
@@ -303,22 +353,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // MCQ Option Card selection styling
+    // MCQ Option Card selection & keyboard navigation
     const optionCards = document.querySelectorAll(".option-card");
     optionCards.forEach(card => {
-      card.addEventListener("click", () => {
+      const selectOption = () => {
         const qid = card.dataset.qid;
+        const optid = card.dataset.optid;
         const siblingCards = document.querySelectorAll(`.option-card[data-qid="${qid}"]`);
-        siblingCards.forEach(c => c.classList.remove("selected"));
+        siblingCards.forEach(c => {
+          c.classList.remove("selected");
+          c.setAttribute("aria-checked", "false");
+        });
         card.classList.add("selected");
+        card.setAttribute("aria-checked", "true");
         const radio = card.querySelector('input[type="radio"]');
         if (radio) {
           radio.checked = true;
-          formData.answers[qid] = radio.value;
+          formData.answers[qid] = optid;
         }
-        // Remove unanswered alert on question block
+        // Remove error alert on question block
         const block = document.getElementById(`block-${qid}`);
         if (block) block.classList.remove("unanswered-highlight");
+      };
+
+      card.addEventListener("click", selectOption);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectOption();
+        }
       });
     });
 
@@ -398,21 +461,13 @@ document.addEventListener("DOMContentLoaded", () => {
             showFieldError(field.name, `${field.label} is required`);
             if (!firstErrorElement) firstErrorElement = el;
           } else if (val && field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-            if (field.required) {
-              isValid = false;
-              showFieldError(field.name, `Please enter a valid email address`);
-              if (!firstErrorElement) firstErrorElement = el;
-            } else {
-              formData.personal[field.name] = val;
-            }
-          } else if (val && field.name === "whatsappg" && !/^[0-9]{10}$/.test(val.replace(/[^0-9]/g, ''))) {
-            if (field.required) {
-              isValid = false;
-              showFieldError(field.name, `Please enter a valid 10-digit mobile number`);
-              if (!firstErrorElement) firstErrorElement = el;
-            } else {
-              formData.personal[field.name] = val;
-            }
+            isValid = false;
+            showFieldError(field.name, `Please enter a valid email address`);
+            if (!firstErrorElement) firstErrorElement = el;
+          } else if (val && field.name === "whatsappNumber" && !/^[0-9]{10}$/.test(val.replace(/[^0-9]/g, ''))) {
+            isValid = false;
+            showFieldError(field.name, `Please enter a valid 10-digit mobile number`);
+            if (!firstErrorElement) firstErrorElement = el;
           } else if (val) {
             formData.personal[field.name] = val;
           }
@@ -420,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (!isValid) {
-        showToast("Please fill in all required fields accurately.", "error");
+        showToast("Please complete all required profile fields accurately.", "error");
         if (firstErrorElement) {
           firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
           if (firstErrorElement.focus) firstErrorElement.focus();
@@ -460,23 +515,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 6. NAVIGATION & SUBMISSION
+  // 6. NAVIGATION
   // ===================================================================
   function goToStep(newIndex) {
     if (newIndex < 0 || newIndex >= totalSteps) return;
 
-    // Hide all step views
     const views = document.querySelectorAll(".step-view");
     views.forEach(v => v.classList.remove("active"));
 
-    // Show target view
     const targetView = document.getElementById(`step-view-${newIndex}`);
     if (targetView) targetView.classList.add("active");
 
     currentStepIndex = newIndex;
     updateProgressUI();
 
-    // Scroll smoothly to top of form card
     const formCard = document.getElementById("formCard");
     if (formCard) {
       formCard.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -484,133 +536,208 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 6. DYNAMIC SCORE CALCULATION ENGINE (AUTHENTIC & FUTURE-PROOF)
+  // 7. SCORE CALCULATION ENGINE (PQ, IQ, EQ)
+  // ===================================================================
+  // PQ: 7 questions × max 5 marks = 35
+  // IQ: 6 questions × max 5 marks = 30
+  // EQ: 7 questions × max 5 marks = 35 (Emotional Quotient)
+  // Total = 35 + 30 + 35 = 100
   // ===================================================================
   function calculateScores() {
-    const totals = {
-      pq: { earned: 0, max: 0 },
-      iq: { earned: 0, max: 0 },
-      sq: { earned: 0, max: 0 }
-    };
+    let pqEarned = 0;
+    let iqEarned = 0;
+    let eqEarned = 0;
 
-    // Dynamically iterate over all steps and questions configured in content.js
     (config.steps || []).forEach(step => {
       if (!step.questions || !step.questions.length) return;
 
-      // Determine step dimension: 'pq', 'iq', or 'sq'
-      let dim = step.dimension;
-      if (!dim) {
-        const idLower = (step.id || "").toLowerCase();
-        const catLower = (step.category || "").toLowerCase();
-        if (idLower.includes("iq") || catLower.includes("iq") || catLower.includes("aptitude")) {
-          dim = "iq";
-        } else if (idLower.includes("sq") || catLower.includes("sq") || catLower.includes("wisdom")) {
-          dim = "sq";
-        } else {
-          dim = "pq";
-        }
-      }
+      const dim = (step.dimension || (step.id.includes("iq") ? "iq" : (step.id.includes("eq") || step.id.includes("sq") ? "eq" : "pq"))).toLowerCase();
 
       step.questions.forEach(q => {
-        const qDim = q.dimension || dim;
-        if (!totals[qDim]) totals[qDim] = { earned: 0, max: 0 };
+        const userSelectedOptId = formData.answers[q.id];
+        if (!userSelectedOptId) return;
 
-        const userAns = formData.answers[q.id];
+        const selectedOpt = q.options.find(o => o.id === userSelectedOptId);
+        const marks = selectedOpt ? selectedOpt.marks : 0;
 
-        if (Array.isArray(q.optionScores) && q.optionScores.length) {
-          const qMax = Math.max(...q.optionScores);
-          totals[qDim].max += qMax;
-
-          const radio = document.querySelector(`input[name="${q.id}"]:checked`);
-          const card = radio ? radio.closest(".option-card") : null;
-          const optIdx = card && card.dataset.optindex ? parseInt(card.dataset.optindex, 10) : 0;
-          const pts = q.optionScores[optIdx] !== undefined ? q.optionScores[optIdx] : (qMax * 0.5);
-          totals[qDim].earned += pts;
-        } else if (q.correctAnswer) {
-          totals[qDim].max += 5.0;
-          if (userAns && userAns.trim() === q.correctAnswer.trim()) {
-            totals[qDim].earned += 5.0;
-          } else {
-            totals[qDim].earned += 2.5; // Encouraging minimum base
-          }
-        } else {
-          totals[qDim].max += 5.0;
-          const radio = document.querySelector(`input[name="${q.id}"]:checked`);
-          const card = radio ? radio.closest(".option-card") : null;
-          const optIdx = card && card.dataset.optindex ? parseInt(card.dataset.optindex, 10) : 0;
-          const pts = 2.5 + ((optIdx % 4) * 0.83);
-          totals[qDim].earned += Math.min(5.0, pts);
+        if (dim === "pq") {
+          pqEarned += marks;
+        } else if (dim === "iq") {
+          iqEarned += marks;
+        } else if (dim === "eq" || dim === "sq") {
+          eqEarned += marks;
         }
       });
     });
 
-    // Helper: Computes authentic percentage guaranteed >= 50%
-    const scale = (earned, max) => {
-      if (!max || max <= 0) return 75;
-      const rawPct = Math.round((earned / max) * 100);
-      return Math.min(100, Math.max(50, rawPct));
-    };
+    const roundScore = (val) => Math.round(val * 10) / 10;
+
+    const pq = roundScore(pqEarned);
+    const iq = roundScore(iqEarned);
+    const eq = roundScore(eqEarned);
+    const total = roundScore(pq + iq + eq);
 
     return {
-      pq: scale(totals.pq.earned, totals.pq.max),
-      iq: scale(totals.iq.earned, totals.iq.max),
-      sq: scale(totals.sq.earned, totals.sq.max)
+      pq,
+      iq,
+      eq,
+      sq: eq, // backwards compatibility
+      total
     };
   }
 
   // ===================================================================
-  // 7. SUBMISSION & REDIRECTION
+  // 8. SUBMISSION & REDIRECTION (RELIABLE & ERROR-PROTECTED)
   // ===================================================================
   async function handleFormSubmit() {
+    if (isSubmitting) {
+      console.warn("Submission already in progress. Ignoring duplicate click.");
+      return;
+    }
+
     if (!validateCurrentStep()) return;
 
-    // Disable button & show spinner
+    // Hide any previous error banner
+    const alertBox = document.getElementById("submissionAlertBox");
+    if (alertBox) alertBox.style.display = "none";
+
+    // Lock submission state
+    isSubmitting = true;
     nextBtn.disabled = true;
     prevBtn.disabled = true;
     nextBtn.classList.add("submitting");
+    const btnText = nextBtn.querySelector(".btn-text");
+    if (btnText) btnText.textContent = "Submitting Assessment...";
 
     const userGender = (formData.personal.gender || "male").toLowerCase();
     const studentName = formData.personal.fullName || "Student";
     const computedScores = calculateScores();
+    const selectedCampus = String(formData.personal.campus || "").trim();
+    const selectedDivision = String(formData.personal.division || "").trim();
 
-    const totalScore = Math.round((computedScores.pq + computedScores.iq + computedScores.sq) / 3);
+    if (selectedCampus === "Kondhwa") {
+      const blockedMessage = "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Redirecting you to the Kondhwa page...";
+      showToast(blockedMessage, "info");
+      setTimeout(() => {
+        window.location.href = "kondhwa.html";
+      }, 1000);
+      return;
+    }
 
+    // Payload strictly conforms to Firestore schema
+    const submissionTimestamp = new Date().toISOString();
     const payload = {
-      ...formData.personal,
-      totalScore,
-      timestamp: new Date().toISOString()
+      fullName: String(formData.personal.fullName || "").trim(),
+      email: String(formData.personal.email || "").trim(),
+      whatsappNumber: String(formData.personal.whatsappNumber || "").replace(/[^0-9]/g, ""),
+      gender: String(formData.personal.gender || "").trim(),
+      homeTown: String(formData.personal.homeTown || "").trim(),
+      campus: selectedCampus,
+      branch: String(formData.personal.branch || "").trim(),
+      division: selectedDivision,
+      year: String(formData.personal.year || "").trim(),
+      answers: { ...formData.answers },
+      scores: {
+        pq: computedScores.pq,
+        iq: computedScores.iq,
+        eq: computedScores.eq,
+        sq: computedScores.eq
+      },
+      totalScore: computedScores.total,
+      timestamp: submissionTimestamp,
+      submittedAt: submissionTimestamp,
+      userAgent: (navigator.userAgent || "Unknown Browser").substring(0, 500)
     };
 
-    console.log("Submitting test payload with scores:", payload);
+    console.log("Submitting PDC assessment payload:", payload);
 
     try {
-      await window.DhruvaBackend.saveTestSubmission(payload);
+      const backend = window.PDCBackend || window.DhruvaBackend;
+      const result = await backend.saveTestSubmission(payload);
 
-      // SECURITY: Encrypt session payload containing gender, studentName, and scores
-      // Stored in sessionStorage only — tampering URL does nothing.
+      // NEVER redirect if submission explicitly failed with an error
+      if (!result || (!result.success && !result.id)) {
+        console.error("Submission failed:", result ? result.error : "Unknown error");
+
+        const userMessage = (result && result.error)
+          ? result.error
+          : "We couldn't save your assessment right now. Please check your internet connection and click Submit Assessment again.";
+
+        const alertMsg = document.getElementById("submissionAlertMsg");
+        if (alertMsg) alertMsg.textContent = userMessage;
+        if (alertBox) {
+          alertBox.style.display = "block";
+          alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        showToast(userMessage, "error");
+
+        isSubmitting = false;
+        nextBtn.disabled = false;
+        prevBtn.disabled = false;
+        nextBtn.classList.remove("submitting");
+        if (btnText) btnText.textContent = "Submit Assessment";
+        return;
+      }
+
+      // Submission Succeeded: prepare encrypted session data for result.html
       const sessionData = {
         gender: userGender,
         fullName: studentName,
-        scores: computedScores,
-        totalScore
+        scores: {
+          pq: computedScores.pq,
+          iq: computedScores.iq,
+          eq: computedScores.eq,
+          sq: computedScores.eq
+        },
+        totalScore: computedScores.total,
+        percentages: {
+          pq: Math.round((computedScores.pq / 35) * 100),
+          iq: Math.round((computedScores.iq / 30) * 100),
+          eq: Math.round((computedScores.eq / 35) * 100),
+          sq: Math.round((computedScores.eq / 35) * 100),
+          total: Math.round((computedScores.total / 100) * 100)
+        },
+        maxScores: {
+          pq: 35,
+          iq: 30,
+          eq: 35,
+          sq: 35,
+          total: 100
+        }
       };
 
-      const authToken = window.DhruvaSecurity
-        ? window.DhruvaSecurity.encryptSessionPayload(sessionData)
+      const security = window.PDCSecurity || window.DhruvaSecurity;
+      const authToken = security
+        ? security.encryptSessionPayload(sessionData)
         : btoa(JSON.stringify(sessionData));
 
       if (authToken) {
-        sessionStorage.setItem("dhruva_auth_token", authToken);
+        sessionStorage.setItem("pdc_auth_token", authToken);
       }
 
-      // Redirect to result page
+      // Redirect directly to results
       window.location.href = "result.html";
+
     } catch (err) {
-      console.error("Submission error:", err);
-      showToast("There was an error submitting your test. Please try again.", "error");
+      console.error("Unexpected error during submission:", err);
+
+      const catchMessage = "An unexpected error occurred while saving your assessment. Please check your internet connection and try again.";
+
+      const alertMsg = document.getElementById("submissionAlertMsg");
+      if (alertMsg) alertMsg.textContent = catchMessage;
+      if (alertBox) {
+        alertBox.style.display = "block";
+        alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      showToast("Submission encountered an error. Please try again.", "error");
+
+      isSubmitting = false;
       nextBtn.disabled = false;
       prevBtn.disabled = false;
       nextBtn.classList.remove("submitting");
+      if (btnText) btnText.textContent = "Submit Assessment";
     }
   }
 
@@ -620,6 +747,10 @@ document.addEventListener("DOMContentLoaded", () => {
       handleFormSubmit();
     } else {
       if (validateCurrentStep()) {
+        if (currentStepIndex === 0 && (formData.personal.campus || "").trim() === "Kondhwa") {
+          window.location.href = "kondhwa.html";
+          return;
+        }
         goToStep(currentStepIndex + 1);
       }
     }
@@ -627,13 +758,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Previous button click
   prevBtn.addEventListener("click", () => {
+    if (isSubmitting) return;
     if (currentStepIndex > 0) {
       goToStep(currentStepIndex - 1);
     }
   });
 
   // ===================================================================
-  // 7. TOAST NOTIFICATIONS
+  // 9. TOAST NOTIFICATIONS
   // ===================================================================
   function showToast(message, type = "info") {
     if (!toastContainer) return;
@@ -655,7 +787,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000);
   }
 
-  // Initialize
+  // Initialize Application
   initBranding();
   initStepper();
   renderStepViews();

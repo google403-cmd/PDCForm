@@ -1,16 +1,16 @@
 /**
  * ===================================================================
- * DHRUVA CLUB — TAMPER-RESISTANT REDIRECT & SESSION TOKEN HANDLER
+ * PDC CLUB — TAMPER-RESISTANT REDIRECT & SESSION TOKEN HANDLER
  * ===================================================================
  * Protects against URL/storage tampering.
  * Generates obfuscated, checksum-verified tokens for result navigation
- * and preserves calculated PQ/IQ/SQ scores securely.
+ * and preserves calculated PQ/IQ/EQ scores securely.
  * ===================================================================
  */
 
 (function (window) {
   // Secret salt for signature generation
-  const SALT = "DHRUVA_CLUB_PQ_IQ_SQ_SECURE_SALT_2026_@v3";
+  const SALT = "PDC_CLUB_PQ_IQ_EQ_SECURE_SALT_2026_@v3";
 
   // Fast, deterministic checksum
   function generateChecksum(str) {
@@ -23,7 +23,7 @@
   }
 
   /**
-   * Encrypt arbitrary session object (gender, fullName, scores: { pq, iq, sq })
+   * Encrypt arbitrary session object (gender, fullName, scores: { pq, iq, eq })
    */
   function encryptSessionPayload(data) {
     const jsonStr = JSON.stringify(data || {});
@@ -89,7 +89,7 @@
     }
   }
 
-  // Backward-compatible wrappers for gender token
+  // Helper wrappers
   function encryptGenderToken(gender) {
     return encryptSessionPayload({ gender: (gender || "male").toLowerCase().trim() });
   }
@@ -99,11 +99,13 @@
     return data && data.gender ? data.gender.toLowerCase() : null;
   }
 
-  window.DhruvaSecurity = {
+  window.PDCSecurity = {
     encryptSessionPayload,
     decryptSessionPayload,
     encryptGenderToken,
     decryptGenderToken
   };
-})(window);
 
+  // Backwards compatibility alias
+  window.DhruvaSecurity = window.PDCSecurity;
+})(window);

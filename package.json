@@ -1,4 +1,9 @@
 {
+  "name": "pdc-assessment",
+  "version": "2.0.0",
+  "scripts": {
+    "test": "node test/validate-assessment.js && node test/test-scoring-and-submission.js"
+  },
   "dependencies": {
     "firebase": "^12.19.0"
   }

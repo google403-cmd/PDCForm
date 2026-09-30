@@ -1,4 +1,14 @@
-# Keep credentials out of version control
-js/firebase-config.js
+# Secrets & private credentials
 .env
-.env.local
+.env.*
+*.local
+*service-account*.json
+*.pem
+*.key
+
+# Dependencies & Build
+node_modules/
+.vercel/
+dist/
+.DS_Store
+Thumbs.db

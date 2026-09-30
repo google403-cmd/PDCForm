@@ -1,67 +1,149 @@
 /**
  * ===================================================================
- * DHRUVA CLUB — WEBSITE CONTENT CONFIGURATION
+ * PDC (PERSONALITY DEVELOPMENT CLUB) — MASTER CONTENT CONFIGURATION
  * ===================================================================
- * 
- * Edit this file to update any text, questions, options, images, WhatsApp links,
- * or club information without touching any HTML/CSS logic.
- *
- * Simply change the values below and commit/push to GitHub.
+ * Single source of truth for:
+ * - PDC Branding, Logo & Theme Details
+ * - WhatsApp Official Community URL
+ * - Kondhwa Campus Routing & Quiz URL
+ * - Firebase Project Credentials
+ * - Assessment Structure (PQ, IQ, EQ)
+ * - Activity Data & Direct Quality Linkages
+ * - Concise, Actionable Evaluation Report Content
  * ===================================================================
  */
 
-window.DHRUVA_CONFIG = {
-  // Brand & Club Information
-  club: {
-    name: "Dhruva Club",
-    tagline: "An Official Student Club of PVGCOET",
-    badge: "PQ-IQ-SQ Assessment",
-    badge: "Official Assessment 2026",
-    logoPath: "assets/logo.png",
+if (typeof window === "undefined") {
+  global.window = {};
+}
 
-    // About Us Content (Displays in the collapsible info bar)
+window.PDC_CONFIG = {
+  // ── Brand & Club Information ─────────────────────────────────────
+  club: {
+    name: "Personality Development Club",
+    shortName: "PDC",
+    motto: "Character | Competence | Culture",
+    tagline: "Official Personality & Aptitude Assessment (PQ · IQ · EQ) • VIT Pune",
+    badge: "Official PDC Assessment 2026",
+    logoPath: "assets/pdc-logo.png",
+    bannerPath: "Stories/PDC Banner.png",
+
+    // About Us Content (Collapsible accordion)
     about: {
-      title: "About Dhruva Club",
-      shortDescription: "Dhruva Club is a student youth initiative dedicated to holistic personality development, combining physical discipline (PQ), intellectual sharpness (IQ), emotional resilience (EQ), and spiritual wisdom (SQ).",
-      mission: "To inspire, mentor, and cultivate grounded leaders equipped with character, competence, and compassion for modern challenges.",
+      title: "About PDC",
+      shortDescription: "The Personality Development Club (PDC) of VIT Pune empowers engineering students to excel across character, intellectual sharpness, and emotional poise through experiential workshops, premier mentorship, and leadership outings.",
+      mission: "To inspire students to unlock their authentic potential, cultivate resolute character, and lead with confidence and compassion in every sphere of life.",
       pillars: [
         {
-          title: "Physical Quotient (PQ)",
-          desc: "Health, energy, disciplined daily habits, and vitality."
+          title: "Character (PQ)",
+          desc: "Develop resilience, integrity, articulate communication, and confidence under pressure."
         },
         {
-          title: "Emotional Quotient (EQ)",
-          desc: "Self-awareness, resilience, empathy, and interpersonal balance."
+          title: "Competence (IQ)",
+          desc: "Sharpen logical structuring, technical problem-solving, and decisive analytical thinking."
         },
         {
-          title: "Intellectual Quotient (IQ)",
-          desc: "Analytical reasoning, clarity of thought, and engineering acumen."
+          title: "Culture (EQ)",
+          desc: "Cultivate self-awareness, empathy, emotional equilibrium, and enduring ethical clarity."
         },
         {
-          title: "Spiritual Quotient (SQ)",
-          desc: "Values, purpose, inner strength, and value-based living."
+          title: "Leadership",
+          desc: "Gain real-world leadership experience by organizing campus events, mentorship circles, and retreats."
         }
       ]
     }
   },
 
-
-
-
-  // WhatsApp Community Links (Redirect target based on verified token)
-  whatsappLinks: {
-    male: "https://chat.whatsapp.com/KScAduT2RdrFiI0nhAHwim",
-    female: "https://chat.whatsapp.com/IqOcPV8pDrODJBVh6HJYFV",
-    default: "https://chat.whatsapp.com/YOUR_DEFAULT_COMMUNITY_LINK"
+  // ── Kondhwa Campus Routing & Quiz Configuration ───────────────────
+  campusAccess: {
+    blockedMessage: "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Please proceed to the Kondhwa assessment below.",
+    supportNote: "Please use the official Kondhwa pathway shared by the club coordinators.",
+    KONDHWA_QUIZ_URL: "REPLACE_WITH_KONDHWA_LINK",
+    kondhwaQuizUrl: "REPLACE_WITH_KONDHWA_LINK",
+    kondhwaLogoPath: "assets/kondhwa-logo.svg"
   },
 
-  // Test Structure Configuration
-  // Each section represents a step in the multi-step form
+  // ── WhatsApp Official Community Link ──────────────────────────────
+  // Unified single CTA — no boys/girls distinction visible to users
+  whatsappLinks: {
+    COMMUNITY_URL: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    default: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    BOYS_WHATSAPP_LINK: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    GIRLS_WHATSAPP_LINK: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    male: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    female: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl"
+  },
+
+  // ── Firebase Configuration Placeholder for PDC Project ───────────
+  firebase: {
+    apiKey: "AIzaSy_PDC_OFFICIAL_FIREBASE_KEY_PLACEHOLDER",
+    authDomain: "pdc-club-assessment.firebaseapp.com",
+    projectId: "pdc-club-assessment",
+    storageBucket: "pdc-club-assessment.firebasestorage.app",
+    messagingSenderId: "102938475612",
+    appId: "1:102938475612:web:pdc9876543210abcdef"
+  },
+
+  // ── 5 Core PDC Activities with Direct Quality Mappings ────────────
+  activities: [
+    {
+      id: "activity_stw",
+      image: "Stories/iitstw.png",
+      title: "Software Training Workshops (STWs) at IIT Bombay",
+      subtitle: "Technical Masterclasses & Hands-On Engineering Skills",
+      desc: "High-impact technical workshops in collaboration with premier institutes like IIT Bombay, covering modern development tools, system architecture, and industry problem-solving.",
+      qualityKey: "iq",
+      relevantQuality: "Intellectual Quotient (IQ)",
+      howItHelps: "Sharpens structured logic, analytical problem-solving, and translates aptitude into high-level engineering competence."
+    },
+    {
+      id: "activity_pdw",
+      image: "Stories/pdw.png",
+      title: "Personality Development Workshops (PDWs)",
+      subtitle: "Public Speaking, Presence & Interpersonal Mastery",
+      desc: "Dynamic live sessions focused on eliminating stage fright, mastering expressive speech, body language, assertiveness, and commanding boardroom communication.",
+      qualityKey: "pq",
+      relevantQuality: "Personality Quotient (PQ)",
+      howItHelps: "Transforms natural thoughts into articulate, persuasive communication and builds grounded social confidence in group settings."
+    },
+    {
+      id: "activity_mmc",
+      image: "Stories/mmc.png",
+      title: "Personalized Mentor Meets",
+      subtitle: "One-on-One Mentorship Circles & Emotional Guidance",
+      desc: "Small-group and 1-on-1 mentorship circles with experienced seniors and faculty mentors, providing a confidential environment to navigate college stress, habits, and career paths.",
+      qualityKey: "eq",
+      relevantQuality: "Emotional Quotient (EQ)",
+      howItHelps: "Builds deep self-awareness, emotional resilience under pressure, and provides actionable personal habit frameworks."
+    },
+    {
+      id: "activity_camps",
+      image: "Stories/camps.png",
+      title: "Edutainment Outings & Camps",
+      subtitle: "Adventure Obstacles, Team Synergy & Practical Leadership",
+      desc: "Expedition retreats featuring adventure high-ropes, outdoor problem-solving challenges, team bonfire discussions, and collaborative games.",
+      qualityKey: "pq",
+      relevantQuality: "Personality Quotient (PQ) & Team Leadership",
+      howItHelps: "Tests character, adaptability, teamwork, and calm decision-making outside academic comfort zones."
+    },
+    {
+      id: "activity_wisdom",
+      image: "Stories/wisdom.png",
+      title: "Timeless Wisdom Sessions",
+      subtitle: "Universal Principles for Modern Mental Mastery & Purpose",
+      desc: "Engaging interactive dialogues extracting timeless principles for managing overthinking, maintaining inner composure, resolving ethical dilemmas, and discovering long-term purpose.",
+      qualityKey: "eq",
+      relevantQuality: "Emotional Quotient (EQ)",
+      howItHelps: "Provides profound mental clarity, empathy, and emotional equilibrium that keeps you grounded regardless of external circumstances."
+    }
+  ],
+
+  // ── Multi-Step Assessment Form (20 Questions: 7 PQ + 6 IQ + 7 EQ) ──
   steps: [
     {
       id: "personal_details",
       title: "Student Profile & Registration",
-      subtitle: "Please provide your basic details to personalize your assessment evaluation.",
+      subtitle: "Please provide your basic details to personalize your PDC assessment report.",
       isPersonalDetails: true,
       fields: [
         {
@@ -108,37 +190,43 @@ window.DHRUVA_CONFIG = {
           hasOtherInput: true,
           otherPlaceholder: "e.g. Chemical, Civil, Robotics, Instrumentation, etc.",
           options: [
+            "Question Type",
             "Computer Engineering",
-            "Information Technology (IT)",
-            "Artificial Intelligence & Data Science (AI & DS)",
-            "Electronics & Telecommunication (E&TC)",
+            "Information Technology",
+            "Electronics and Telecommunication Engineering",
+            "Computer Science and Engineering (Artificial Intelligence and Machine Learning)",
+            "Computer Science and Engineering (Artificial Intelligence)",
+            "Artificial Intelligence and Data Science",
             "Mechanical Engineering",
-            "Electrical Engineering",
-            "Printing and Packaging",
+            "Chemical Engineering",
+            "Instrumentation and Control Engineering",
             "Other"
           ]
         },
         {
-          name: "year",
-          label: "Current Year & Division",
+          name: "campus",
+          label: "Campus",
           type: "select",
           required: true,
-          hasOtherInput: true,
-          otherPlaceholder: "e.g. SE-A, TE-B, BE-C",
+          options: ["Bibwewadi", "Kondhwa"]
+        },
+        {
+          name: "division",
+          label: "Division",
+          type: "select",
+          required: true,
+          options: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "SEDA"]
+        },
+        {
+          name: "year",
+          label: "Current Year",
+          type: "select",
+          required: true,
           options: [
-            "FY - Div A",
-            "FY - Div B",
-            "FY - Div C",
-            "FY - Div D",
-            "FY - Div E",
-            "FY - Div F",
-            "FY - Div G",
-            "FY - Div H",
-            "FY - Div I",
-            "FY - Div J",
-            "FY - Div K",
-            "FY - Div L",
-            "Other"
+            "FY",
+            "SY",
+            "TY",
+            "Final Year"
           ]
         }
       ]
@@ -146,713 +234,448 @@ window.DHRUVA_CONFIG = {
     {
       id: "section_pq",
       dimension: "pq",
-      title: "Section 1 — Personality Quotient",
-      subtitle: "Choose the option that is closest to how you would normally respond.",
+      section: "PQ",
+      title: "Section 1 — Personality Quotient (PQ)",
+      subtitle: "7 Questions · Maximum 35 Marks. Choose the option closest to how you would normally respond.",
       category: "Personality Quotient (PQ)",
       questions: [
         {
-          id: "pq_q1",
+          id: "PQ1",
+          section: "PQ",
+          dimension: "pq",
           question: "Someone points out your mistake in front of others. You:",
           options: [
-            "Accept it and learn from it.",
-            "Feel hurt and upset.",
-            "Think about it later.",
-            "Defend yourself immediately.",
-            "Ignore what they say."
-          ],
-          optionScores: [5, 4, 3.5, 3, 2.5]
+            { id: "A", text: "Accept it and learn from it.", marks: 5 },
+            { id: "B", text: "Feel hurt and upset.", marks: 4 },
+            { id: "C", text: "Think about it later.", marks: 3.5 },
+            { id: "D", text: "Defend yourself immediately.", marks: 3 },
+            { id: "E", text: "Ignore what they say.", marks: 2.5 }
+          ]
         },
         {
-          id: "pq_q2",
+          id: "PQ2",
+          section: "PQ",
+          dimension: "pq",
           question: "You work hard but fail. You:",
           options: [
-            "Blame the circumstances.",
-            "Learn and try again.",
-            "Think about what went wrong.",
-            "Move on without thinking much.",
-            "Lose motivation."
-          ],
-          optionScores: [2.5, 5, 4, 3.5, 3]
+            { id: "A", text: "Blame the circumstances.", marks: 2.5 },
+            { id: "B", text: "Learn and try again.", marks: 5 },
+            { id: "C", text: "Think about what went wrong.", marks: 4 },
+            { id: "D", text: "Move on without thinking much.", marks: 3.5 },
+            { id: "E", text: "Lose motivation.", marks: 3 }
+          ]
         },
         {
-          id: "pq_q3",
+          id: "PQ3",
+          section: "PQ",
+          dimension: "pq",
           question: "You have a heated disagreement with someone close. You:",
           options: [
-            "Avoid the person afterward.",
-            "Say things you may regret.",
-            "Listen and explain your point calmly.",
-            "Take a break and return later.",
-            "Keep arguing."
-          ],
-          optionScores: [3, 2.5, 5, 4, 3.5]
+            { id: "A", text: "Avoid the person afterward.", marks: 3 },
+            { id: "B", text: "Say things you may regret.", marks: 2.5 },
+            { id: "C", text: "Listen and explain your point calmly.", marks: 5 },
+            { id: "D", text: "Take a break and return later.", marks: 4 },
+            { id: "E", text: "Keep arguing.", marks: 3.5 }
+          ]
         },
         {
-          id: "pq_q4",
+          id: "PQ4",
+          section: "PQ",
+          dimension: "pq",
           question: "Someone achieves what you wanted. You:",
           options: [
-            "Feel inspired to work harder.",
-            "Feel genuinely happy for them.",
-            "Look for reasons their success isn't impressive.",
-            "Compare yourself with them.",
-            "Feel uncomfortable about your own progress."
-          ],
-          optionScores: [3.5, 3, 2.5, 5, 4]
+            { id: "A", text: "Feel inspired to work harder.", marks: 3.5 },
+            { id: "B", text: "Feel genuinely happy for them.", marks: 3 },
+            { id: "C", text: "Look for reasons their success isn't impressive.", marks: 2.5 },
+            { id: "D", text: "Compare yourself with them.", marks: 5 },
+            { id: "E", text: "Feel uncomfortable about your own progress.", marks: 4 }
+          ]
         },
         {
-          id: "pq_q5",
+          id: "PQ5",
+          section: "PQ",
+          dimension: "pq",
           question: "An important plan suddenly gets cancelled. You:",
           options: [
-            "Look for another option.",
-            "Feel frustrated.",
-            "Blame whoever caused the change.",
-            "Accept the change and decide what to do next.",
-            "Complain but eventually accept it."
-          ],
-          optionScores: [4, 3, 2.5, 3.5, 5]
+            { id: "A", text: "Look for another option.", marks: 4 },
+            { id: "B", text: "Feel frustrated.", marks: 3 },
+            { id: "C", text: "Blame whoever caused the change.", marks: 2.5 },
+            { id: "D", text: "Accept the change and decide what to do next.", marks: 3.5 },
+            { id: "E", text: "Complain but eventually accept it.", marks: 5 }
+          ]
         },
         {
-          id: "pq_q6",
-          question: "Someone asks for your help when you are busy. You:",
-          options: [
-            "Help immediately.",
-            "Tell them you are too busy.",
-            "See if you can help without neglecting your work.",
-            "Help only if they will help you later.",
-            "Feel irritated."
-          ],
-          optionScores: [5, 4, 3.5, 3, 2.5]
-        },
-        {
-          id: "pq_q7",
-          question: "You receive an angry message. You:",
-          options: [
-            "Write a reply but wait before sending.",
-            "Ignore it.",
-            "Ask someone else what to do.",
-            "Calm down and respond thoughtfully.",
-            "Reply immediately."
-          ],
-          optionScores: [4, 3, 3.5, 5, 2.5]
-        },
-        {
-          id: "pq_q8",
+          id: "PQ8",
+          section: "PQ",
+          dimension: "pq",
           question: "You realise that your decision hurt someone. You:",
           options: [
-            "Explain why you did it.",
-            "Accept your mistake and apologise.",
-            "Try to correct the situation first.",
-            "Avoid discussing it.",
-            "Apologise if they were reasonable."
-          ],
-          optionScores: [3, 5, 4, 2.5, 3.5]
+            { id: "A", text: "Explain why you did it.", marks: 3 },
+            { id: "B", text: "Accept your mistake and apologise.", marks: 5 },
+            { id: "C", text: "Try to correct the situation first.", marks: 4 },
+            { id: "D", text: "Avoid discussing it.", marks: 2.5 },
+            { id: "E", text: "Apologise if they were reasonable.", marks: 3.5 }
+          ]
         },
         {
-          id: "pq_q9",
-          question: "You are making very slow progress toward an important goal. You:",
-          options: [
-            "Doubt your ability.",
-            "Consider giving up.",
-            "Change your approach and continue.",
-            "Remember your purpose and keep going.",
-            "Continue, but lose motivation sometimes."
-          ],
-          optionScores: [2.5, 3, 4, 5, 3.5]
-        },
-        {
-          id: "pq_q10",
+          id: "PQ10",
+          section: "PQ",
+          dimension: "pq",
           question: "Someone behaves rudely toward you for no obvious reason. You:",
           options: [
-            "Respond firmly.",
-            "Feel upset about it.",
-            "Avoid them afterward.",
-            "Consider that something may be troubling them.",
-            "Ask if something is bothering them."
-          ],
-          optionScores: [3, 2.5, 3.5, 4, 5]
+            { id: "A", text: "Respond firmly.", marks: 3 },
+            { id: "B", text: "Feel upset about it.", marks: 2.5 },
+            { id: "C", text: "Avoid them afterward.", marks: 3.5 },
+            { id: "D", text: "Consider that something may be troubling them.", marks: 4 },
+            { id: "E", text: "Ask if something is bothering them.", marks: 5 }
+          ]
         }
       ]
     },
     {
       id: "section_iq",
       dimension: "iq",
-      title: "Section 2 — Intellectual Quotient",
-      subtitle: "Choose the correct answer for each problem.",
+      section: "IQ",
+      title: "Section 2 — Intellectual Quotient (IQ)",
+      subtitle: "6 Questions · Maximum 30 Marks. Choose the best answer for each problem.",
       category: "Intellectual Quotient (IQ)",
       questions: [
         {
-          id: "iq_q1",
+          id: "IQ1",
+          section: "IQ",
+          dimension: "iq",
           question: "What comes next in the sequence?\n3, 7, 15, 31, 63, ?",
           options: [
-            "95",
-            "111",
-            "125",
-            "127",
-            "129"
-          ],
-          correctAnswer: "127",
-          optionScores: [3, 3.5, 4, 5, 2.5]
+            { id: "A", text: "95", marks: 3 },
+            { id: "B", text: "111", marks: 3.5 },
+            { id: "C", text: "125", marks: 4 },
+            { id: "D", text: "127", marks: 5 },
+            { id: "E", text: "129", marks: 2.5 }
+          ]
         },
         {
-          id: "iq_q2",
+          id: "IQ2",
+          section: "IQ",
+          dimension: "iq",
           question: "A product is marked 25% above its cost price and then sold at a 10% discount. What is the profit percentage?",
           options: [
-            "10%",
-            "12.5%",
-            "15%",
-            "17.5%",
-            "20%"
-          ],
-          correctAnswer: "12.5%",
-          optionScores: [3, 5, 3.5, 4, 2.5]
+            { id: "A", text: "10%", marks: 3 },
+            { id: "B", text: "12.5%", marks: 5 },
+            { id: "C", text: "15%", marks: 3.5 },
+            { id: "D", text: "17.5%", marks: 4 },
+            { id: "E", text: "20%", marks: 2.5 }
+          ]
         },
         {
-          id: "iq_q3",
+          id: "IQ3",
+          section: "IQ",
+          dimension: "iq",
           question: "All doctors are educated. Some educated people are writers. Which statement must be true?",
           options: [
-            "Some doctors are writers.",
-            "All writers are doctors.",
-            "Some writers are doctors.",
-            "All doctors are educated.",
-            "No doctors are writers."
-          ],
-          correctAnswer: "All doctors are educated.",
-          optionScores: [3.5, 2.5, 4, 5, 3]
+            { id: "A", text: "Some doctors are writers.", marks: 3.5 },
+            { id: "B", text: "All writers are doctors.", marks: 2.5 },
+            { id: "C", text: "Some writers are doctors.", marks: 4 },
+            { id: "D", text: "All doctors are educated.", marks: 5 },
+            { id: "E", text: "No doctors are writers.", marks: 3 }
+          ]
         },
         {
-          id: "iq_q4",
+          id: "IQ4",
+          section: "IQ",
+          dimension: "iq",
           question: "A can complete a job in 12 days and B in 18 days. How long will they take together?",
           options: [
-            "7.2 days",
-            "8 days",
-            "9 days",
-            "10 days",
-            "12 days"
-          ],
-          correctAnswer: "7.2 days",
-          optionScores: [5, 3, 3.5, 2.5, 4]
+            { id: "A", text: "7.2 days", marks: 5 },
+            { id: "B", text: "8 days", marks: 3 },
+            { id: "C", text: "9 days", marks: 3.5 },
+            { id: "D", text: "10 days", marks: 2.5 },
+            { id: "E", text: "12 days", marks: 4 }
+          ]
         },
         {
-          id: "iq_q5",
-          question: "Find the missing number:\n2, 6, 12, 20, 30, ?",
-          options: [
-            "36",
-            "40",
-            "42",
-            "44",
-            "48"
-          ],
-          correctAnswer: "42",
-          optionScores: [3, 4, 5, 3.5, 2.5]
-        },
-        {
-          id: "iq_q6",
-          question: "A father is 3 times as old as his son. In 12 years, he will be twice his son's age. How old is the son now?",
-          options: [
-            "8",
-            "12",
-            "14",
-            "16",
-            "18"
-          ],
-          correctAnswer: "12",
-          optionScores: [3.5, 5, 2.5, 4, 3]
-        },
-        {
-          id: "iq_q7",
+          id: "IQ7",
+          section: "IQ",
+          dimension: "iq",
           question: "Five people are standing in a line. Ravi is ahead of Amit. Sameer is behind Amit. Neha is ahead of Ravi. Who must be ahead of Sameer?",
           options: [
-            "Only Amit",
-            "Only Ravi",
-            "Both Ravi and Amit",
-            "Neha only",
-            "Cannot be determined"
-          ],
-          correctAnswer: "Both Ravi and Amit",
-          optionScores: [3, 3.5, 5, 4, 2.5]
+            { id: "A", text: "Only Amit", marks: 3 },
+            { id: "B", text: "Only Ravi", marks: 3.5 },
+            { id: "C", text: "Both Ravi and Amit", marks: 5 },
+            { id: "D", text: "Neha only", marks: 4 },
+            { id: "E", text: "Cannot be determined", marks: 2.5 }
+          ]
         },
         {
-          id: "iq_q8",
-          question: "A number is first increased by 25% and then decreased by 20%. What is the overall change?",
-          options: [
-            "5% increase",
-            "5% decrease",
-            "10% increase",
-            "No change",
-            "10% decrease"
-          ],
-          correctAnswer: "No change",
-          optionScores: [3.5, 3, 4, 5, 2.5]
-        },
-        {
-          id: "iq_q9",
+          id: "IQ9",
+          section: "IQ",
+          dimension: "iq",
           question: "If BOOK is coded as CPPL, how is MIND coded?",
           options: [
-            "NJOE",
-            "NJPE",
-            "NHMC",
-            "OJPF",
-            "NJPD"
-          ],
-          correctAnswer: "NJOE",
-          optionScores: [5, 3, 2.5, 4, 3.5]
-        },
-        {
-          id: "iq_q10",
-          question: "A clock gains 5 minutes every hour. If it is set correctly at 8:00 AM, what will it show at 2:00 PM?",
-          options: [
-            "2:05 PM",
-            "2:10 PM",
-            "2:15 PM",
-            "2:30 PM",
-            "3:00 PM"
-          ],
-          correctAnswer: "2:30 PM",
-          optionScores: [3, 3.5, 4, 5, 2.5]
+            { id: "A", text: "NJPE", marks: 3 },
+            { id: "B", text: "NJOE", marks: 5 },
+            { id: "C", text: "NHMC", marks: 2.5 },
+            { id: "D", text: "OJPF", marks: 4 },
+            { id: "E", text: "NJPD", marks: 3.5 }
+          ]
         }
       ]
     },
     {
-      id: "section_sq",
-      dimension: "sq",
-      title: "Section 3 — Spiritual Quotient",
-      subtitle: "Choose the option that most closely reflects your understanding or approach.",
-      category: "Spiritual Quotient (SQ)",
+      id: "section_eq",
+      dimension: "eq",
+      section: "EQ",
+      title: "Section 3 — Emotional Quotient (EQ)",
+      subtitle: "7 Questions · Maximum 35 Marks. Choose the option that most closely reflects your approach.",
+      category: "Emotional Quotient (EQ)",
       questions: [
         {
-          id: "sq_q1",
+          id: "EQ1",
+          section: "EQ",
+          dimension: "eq",
           question: "When something difficult happens unexpectedly, what is the most constructive approach?",
           options: [
-            "Look at what the situation can teach me.",
-            "Accept that some things are simply beyond my control.",
-            "Focus on getting through it as quickly as possible.",
-            "Look for someone or something to blame.",
-            "Assume that life is generally unfair."
-          ],
-          optionScores: [5, 4, 3.5, 3, 2.5]
+            { id: "A", text: "Look at what the situation can teach me.", marks: 5 },
+            { id: "B", text: "Accept that some things are simply beyond my control.", marks: 4 },
+            { id: "C", text: "Focus on getting through it as quickly as possible.", marks: 3.5 },
+            { id: "D", text: "Look for someone or something to blame.", marks: 3 },
+            { id: "E", text: "Assume that life is generally unfair.", marks: 2.5 }
+          ]
         },
         {
-          id: "sq_q2",
+          id: "EQ2",
+          section: "EQ",
+          dimension: "eq",
           question: "Two people perform the same action, but with very different intentions. What matters more?",
           options: [
-            "The action itself.",
-            "Both the action and the intention behind it.",
-            "The result that follows.",
-            "Whether other people approve of it.",
-            "Whether the person benefits from it."
-          ],
-          optionScores: [2.5, 5, 4, 3.5, 3]
+            { id: "A", text: "The action itself.", marks: 2.5 },
+            { id: "B", text: "Both the action and the intention behind it.", marks: 5 },
+            { id: "C", text: "The result that follows.", marks: 4 },
+            { id: "D", text: "Whether other people approve of it.", marks: 3.5 },
+            { id: "E", text: "Whether the person benefits from it.", marks: 3 }
+          ]
         },
         {
-          id: "sq_q3",
-          question: "A person repeatedly gets opportunities that another person does not. How would you understand this?",
-          options: [
-            "Life is simply unequal.",
-            "Everything depends on luck.",
-            "Circumstances may be influenced by causes beyond what we currently see.",
-            "People always get exactly what they deserve.",
-            "Opportunities have little connection with past actions."
-          ],
-          optionScores: [3, 2.5, 5, 4, 3.5]
-        },
-        {
-          id: "sq_q4",
+          id: "EQ4",
+          section: "EQ",
+          dimension: "eq",
           question: "Someone hurts you deeply but later sincerely regrets it. What is the wiser response?",
           options: [
-            "Forgive immediately and forget everything.",
-            "Continue holding the hurt so that you don't get hurt again.",
-            "Make sure they experience the same pain.",
-            "Forgive while still learning from what happened and maintaining appropriate boundaries.",
-            "Completely remove the person from your life regardless of their change."
-          ],
-          optionScores: [3.5, 3, 2.5, 5, 4]
+            { id: "A", text: "Forgive immediately and forget everything.", marks: 3.5 },
+            { id: "B", text: "Continue holding the hurt so that you don't get hurt again.", marks: 3 },
+            { id: "C", text: "Make sure they experience the same pain.", marks: 2.5 },
+            { id: "D", text: "Forgive while still learning from what happened and maintaining appropriate boundaries.", marks: 5 },
+            { id: "E", text: "Completely remove the person from your life regardless of their change.", marks: 4 }
+          ]
         },
         {
-          id: "sq_q5",
+          id: "EQ5",
+          section: "EQ",
+          dimension: "eq",
           question: "Which statement comes closest to your understanding of happiness?",
           options: [
-            "Happiness mainly comes from achieving what I want.",
-            "Happiness depends largely on favourable circumstances.",
-            "Happiness comes from having fewer problems.",
-            "Happiness is mainly about having good relationships.",
-            "Lasting happiness depends more on inner understanding than on external circumstances."
-          ],
-          optionScores: [4, 3.5, 3, 2.5, 5]
+            { id: "A", text: "Happiness mainly comes from achieving what I want.", marks: 4 },
+            { id: "B", text: "Happiness depends largely on favourable circumstances.", marks: 3.5 },
+            { id: "C", text: "Happiness comes from having fewer problems.", marks: 3 },
+            { id: "D", text: "Happiness is mainly about having good relationships.", marks: 2.5 },
+            { id: "E", text: "Lasting happiness depends more on inner understanding than on external circumstances.", marks: 5 }
+          ]
         },
         {
-          id: "sq_q6",
+          id: "EQ6",
+          section: "EQ",
+          dimension: "eq",
           question: "If a person keeps repeating the same harmful behaviour despite knowing its consequences, what is most likely missing?",
           options: [
-            "Better circumstances.",
-            "Greater self-awareness and inner discipline.",
-            "More appreciation from others.",
-            "Better luck.",
-            "More material success."
-          ],
-          optionScores: [2.5, 5, 4, 3.5, 3]
+            { id: "A", text: "Better circumstances.", marks: 2.5 },
+            { id: "B", text: "Greater self-awareness and inner discipline.", marks: 5 },
+            { id: "C", text: "More appreciation from others.", marks: 4 },
+            { id: "D", text: "Better luck.", marks: 3.5 },
+            { id: "E", text: "More material success.", marks: 3 }
+          ]
         },
         {
-          id: "sq_q7",
-          question: "What does genuine personal growth most often involve?",
-          options: [
-            "Understanding myself more deeply and changing my patterns.",
-            "Becoming successful and respected.",
-            "Avoiding difficult situations.",
-            "Getting more control over other people and circumstances.",
-            "Proving that my beliefs are correct."
-          ],
-          optionScores: [5, 4, 3.5, 3, 2.5]
-        },
-        {
-          id: "sq_q8",
+          id: "EQ8",
+          section: "EQ",
+          dimension: "eq",
           question: "If our body, roles and circumstances keep changing throughout life, what might this suggest?",
           options: [
-            "Nothing meaningful can be concluded from change.",
-            "Our identity is completely determined by our circumstances.",
-            "We should avoid thinking about such questions.",
-            "There may be a deeper aspect of identity beyond our changing roles and circumstances.",
-            "Our identity is simply whatever we currently feel it is."
-          ],
-          optionScores: [3.5, 3, 2.5, 5, 4]
+            { id: "A", text: "Nothing meaningful can be concluded from change.", marks: 3.5 },
+            { id: "B", text: "Our identity is completely determined by our circumstances.", marks: 3 },
+            { id: "C", text: "We should avoid thinking about such questions.", marks: 2.5 },
+            { id: "D", text: "There may be a deeper aspect of identity beyond our changing roles and circumstances.", marks: 5 },
+            { id: "E", text: "Our identity is simply whatever we currently feel it is.", marks: 4 }
+          ]
         },
         {
-          id: "sq_q9",
-          question: "If a person believes that life continues beyond one lifetime, what would that view most strongly encourage?",
+          id: "EQ9",
+          section: "EQ",
+          dimension: "eq",
+          question: "If a person believes that actions have deeper, long-term impacts beyond immediate outcomes, what would that view most strongly encourage?",
           options: [
-            "Focusing mainly on the present life.",
-            "Trying to enjoy life as much as possible.",
-            "Avoiding all worldly responsibilities.",
-            "Believing that present actions have little importance.",
-            "Taking greater responsibility for one's actions and their longer-term consequences."
-          ],
-          optionScores: [4, 3, 3.5, 2.5, 5]
-        },
-        {
-          id: "sq_q10",
-          question: "A person achieves almost everything they wanted, yet still feels empty. What might this indicate?",
-          options: [
-            "They simply need more achievements.",
-            "They need more recognition from others.",
-            "External success alone may not satisfy deeper needs.",
-            "They have chosen the wrong career.",
-            "They should avoid having ambitions altogether."
-          ],
-          optionScores: [3, 2.5, 5, 4, 3.5]
+            { id: "A", text: "Focusing mainly on the present life.", marks: 4 },
+            { id: "B", text: "Trying to enjoy life as much as possible.", marks: 3 },
+            { id: "C", text: "Avoiding all worldly responsibilities.", marks: 3.5 },
+            { id: "D", text: "Believing that present actions have little importance.", marks: 2.5 },
+            { id: "E", text: "Taking greater responsibility for one's actions and their longer-term consequences.", marks: 5 }
+          ]
         }
       ]
     }
   ],
 
-  // Result Page Configuration
+  // ── Result Page Configuration ─────────────────────────────────────
   resultPage: {
     title: "Assessment Successfully Submitted!",
-    badge: "Evaluation Complete",
-    greeting: "Here is your personalized PQ-IQ-SQ holistic score analysis.",
-    instruction: "Join your official student community group below to receive mentor guidance and workshop updates:",
-    buttonText: "Join WhatsApp Community",
-    fallbackNotice: "If the button above does not open directly, please contact the Dhruva Club coordinators.",
-    followSteps: [
-      {
-        icon: "💬",
-        title: "Join Community",
-        desc: "Connect with like-minded peers and experienced mentors."
-      },
-      {
-        icon: "🌟",
-        title: "Exclusive Workshops",
-        desc: "Access upcoming leadership, aptitude, and wisdom sessions."
-      }
-    ],
-    // Combined CTA based on overall average score
-    ctaTiers: [
-      {
-        min: 90, max: 100,
-        heading: "Realise Your Potential",
-        body: "You have a strong combination of qualities and potential. Join the Dhruva WhatsApp Community to channel your strengths, contribute your ideas and turn your potential into meaningful impact.",
-        buttonText: "Realise My Potential"
-      },
-      {
-        min: 80, max: 89,
-        heading: "Channel Your Potential",
-        body: "You have strong qualities to build upon. Join the Dhruva WhatsApp Community to channel your potential, explore opportunities and turn your strengths into meaningful action.",
-        buttonText: "Channel My Potential"
-      },
-      {
-        min: 70, max: 79,
-        heading: "Take Your Growth Further",
-        body: "In Dhruva Club we work on bringing out the best in you. We conduct different personality development, technical and spiritual programs. You will be updated about these in the community.",
-        buttonText: "Take the Next Step"
-      },
-      {
-        min: 60, max: 69,
-        heading: "There's More to Build",
-        body: "You already have a foundation to build on. Join the Dhruva WhatsApp Community to develop your strengths, discover new perspectives and keep moving forward.",
-        buttonText: "Keep Growing"
-      },
-      {
-        min: 50, max: 59,
-        heading: "Your Next Step Starts Here",
-        body: "Everyone has areas they can strengthen. Join the Dhruva WhatsApp Community to learn, grow and take meaningful steps toward becoming your best self.",
-        buttonText: "Start Your Growth"
-      }
-    ]
+    badge: "Official PDC Evaluation",
+    greeting: "Here is your personalized PQ · IQ · EQ score analysis.",
+    instruction: "Join the official PDC WhatsApp Community below to receive mentor guidance and workshop updates:",
+    buttonText: "Join WhatsApp Community"
   },
 
-  // ─────────────────────────────────────────────────────────────────
-  // SCORE INSIGHTS — Full Word-doc content, 5 tiers per dimension
-  // Each tier: intro + 8 bullet points (5 strengths + 3 constructive)
-  // ─────────────────────────────────────────────────────────────────
+  // ── Actionable Score Insights & Personalized Guidance ─────────────
   scoreInsights: {
     pq: {
-      name: "Personality Quotient",
+      name: "Personality Quotient (PQ)",
       shortName: "PQ",
       tag: "Character, Resilience & Communication",
       icon: "⚡",
-      color: "#1A50BF",
+      color: "#F96340",
+      description: "Measures social confidence, composure under pressure, and how you articulate ideas in group settings.",
+      strongActivity: "Personality Development Workshops (PDWs) & Outings",
+      improveActivity: "Personality Development Workshops (PDWs)",
       tiers: [
         {
-          min: 90, max: 100,
-          label: "Leading with Purpose",
-          intro: "Your responses show consistently constructive patterns across different situations. You demonstrate strong self-awareness, resilience and empathy.",
-          bullets: [
-            "You understand your own responses and learn from experience.",
-            "You remain resilient when facing setbacks.",
-            "You approach difficult conversations thoughtfully.",
-            "You show empathy toward people around you.",
-            "You stay focused on meaningful goals.",
-            "It would be valuable to continue seeking honest feedback to refine your strengths.",
-            "You could use your strengths to support and mentor others.",
-            "It would be beneficial to keep challenging yourself with new experiences."
-          ]
-        },
-        {
-          min: 80, max: 89,
+          min: 80, max: 100,
           label: "Strong Personal Presence",
-          intro: "Your responses show strong self-awareness, resilience and emotional control. The points below highlight the qualities you already demonstrate and ways to channel them further.",
-          bullets: [
-            "You think carefully before reacting to difficult situations.",
-            "You treat setbacks as opportunities to learn.",
-            "You stay focused when working toward important goals.",
-            "You consider different perspectives and feelings.",
-            "You adapt well to changing circumstances.",
-            "It would be valuable to challenge yourself outside your comfort zone.",
-            "You could continue developing your ability to support and influence others.",
-            "It would be helpful to remain open to feedback even when you feel confident."
-          ]
+          observation: "Your responses demonstrate solid self-awareness, composure under scrutiny, and constructive resilience.",
+          strengthAction: "You naturally treat setbacks as feedback and maintain composure during disagreements.",
+          pdcHelpStrength: "Taking responsibility in PDC event teams and coordinating student initiatives will turn your natural composure into high-impact leadership.",
+          activityStrength: "Edutainment Outings & Event Coordination",
+          growthArea: "Refining nuanced communication and public speaking under large-audience pressure.",
+          pdcHelpImprove: "Participating in advanced PDW presentation rounds gives you safe, repeated practice speaking before 200+ students.",
+          activityImprove: "Personality Development Workshops (PDWs)"
         },
         {
-          min: 70, max: 79,
-          label: "Finding Your Balance",
-          intro: "Your responses show a strong set of constructive personality qualities. The points below highlight what is working well and a few ways you could continue developing.",
-          bullets: [
-            "You learn from setbacks instead of letting them hold you back.",
-            "You try to handle disagreements thoughtfully.",
-            "You adapt well when plans change.",
-            "You consider the feelings and needs of others.",
-            "You remain committed to meaningful goals.",
-            "It would be helpful to stay calm and consistent when under pressure.",
-            "You could continue building confidence in your own journey.",
-            "It would be beneficial to take more initiative when opportunities arise."
-          ]
-        },
-        {
-          min: 60, max: 69,
+          min: 60, max: 79,
           label: "Growing with Awareness",
-          intro: "Your responses show that you have developed several positive qualities and are moving in a positive direction. The points below give a quick view of your current strengths and areas where further growth could help.",
-          bullets: [
-            "You are willing to learn from your mistakes.",
-            "You can consider different perspectives during difficult situations.",
-            "You show flexibility when circumstances change.",
-            "You care about how your actions affect others.",
-            "You can stay committed to important goals.",
-            "It would help you to focus more on your own progress than on comparisons.",
-            "You could benefit from becoming more consistent in managing difficult emotions.",
-            "It would be helpful to turn your reflections into clear actions."
-          ]
+          observation: "You have developed positive interpersonal awareness and show genuine willingness to learn from setbacks.",
+          strengthAction: "You care about mutual understanding and adapt when situations demand flexibility.",
+          pdcHelpStrength: "Engaging in PDC group discussions will help you articulate your perspectives with greater consistency.",
+          activityStrength: "Personality Development Workshops (PDWs)",
+          growthArea: "Expressing thoughts with confident clarity without self-doubt in unfamiliar groups.",
+          pdcHelpImprove: "PDC's structured speaking drills and supportive peer feedback help you overcome hesitation and speak with authority.",
+          activityImprove: "Personality Development Workshops (PDWs) & Camps"
         },
         {
-          min: 50, max: 59,
+          min: 0, max: 59,
           label: "Building Your Foundation",
-          intro: "Your responses show that you are developing qualities such as resilience, confidence and adaptability. The points below highlight your current strengths and a few areas that could support your growth.",
-          bullets: [
-            "You are willing to help others when they need support.",
-            "You can reflect on your experiences and learn from them.",
-            "You recognise when situations affect you emotionally.",
-            "You continue working toward your goals despite difficulties.",
-            "You can adapt when plans change unexpectedly.",
-            "It would help you to view criticism as an opportunity to learn.",
-            "It would be helpful to stay motivated even after setbacks.",
-            "You could benefit from pausing before reacting in stressful situations."
-          ]
+          observation: "You are becoming more conscious of your social reactions and how external stress influences your decisions.",
+          strengthAction: "You show empathy toward others and recognise when an environment demands patience.",
+          pdcHelpStrength: "Small PDC mentorship circles provide an encouraging forum to practice expressing your thoughts without judgement.",
+          activityStrength: "Personalized Mentor Meets",
+          growthArea: "Building steady resilience so constructive criticism does not feel discouraging.",
+          pdcHelpImprove: "Step-by-step roleplay exercises and supportive mentor feedback in PDC gradually build confident emotional armor.",
+          activityImprove: "Personality Development Workshops (PDWs)"
         }
       ]
     },
     iq: {
-      name: "Intellectual Quotient",
+      name: "Intellectual Quotient (IQ)",
       shortName: "IQ",
       tag: "Logic, Aptitude & Critical Thinking",
       icon: "💡",
-      color: "#0A1628",
+      color: "#2563EB",
+      description: "Evaluates pattern recognition, mathematical reasoning, and structured problem-solving under time constraints.",
+      strongActivity: "Software Training Workshops (STWs) at IIT Bombay",
+      improveActivity: "Software Training Workshops (STWs) & Aptitude Circles",
       tiers: [
         {
-          min: 90, max: 100,
-          label: "Exceptional Reasoning",
-          intro: "Your responses demonstrate highly developed analytical and problem-solving abilities. The points below highlight your strengths and ways to keep stretching your thinking.",
-          bullets: [
-            "You identify underlying structures quickly.",
-            "You approach unfamiliar problems with flexible reasoning.",
-            "You combine different pieces of information effectively.",
-            "You can distinguish relevant information from distractions.",
-            "You look beyond the obvious approach when solving problems.",
-            "It would be valuable to keep exploring challenging problems without predefined methods.",
-            "You could apply your reasoning to more creative and real-world challenges.",
-            "It would be helpful to develop solutions that others can easily understand and use."
-          ]
+          min: 80, max: 100,
+          label: "Advanced Analytical Thinker",
+          observation: "You quickly identify underlying patterns and solve multi-step problems with structured logical precision.",
+          strengthAction: "You break complex data into clear parts and avoid superficial shortcuts.",
+          pdcHelpStrength: "Applying your analytical sharpness to real-world engineering projects and technical workshops at IIT Bombay.",
+          activityStrength: "Software Training Workshops (STWs) at IIT Bombay",
+          growthArea: "Explaining intricate logical solutions simply so team members can follow easily.",
+          pdcHelpImprove: "Leading technical discussions and peer code-reviews in PDC software tracks sharpens your technical communication.",
+          activityImprove: "Technical Team Coordination & STWs"
         },
         {
-          min: 80, max: 89,
-          label: "Advanced Thinker",
-          intro: "Your responses show strong analytical ability across different types of problems. The points below highlight your reasoning strengths and ways to apply them more broadly.",
-          bullets: [
-            "You recognise underlying patterns rather than just surface similarities.",
-            "You break complex problems into manageable parts.",
-            "You connect different concepts to reach solutions.",
-            "You adapt your reasoning when a straightforward approach fails.",
-            "You can make logical decisions using limited information.",
-            "It would be valuable to explore problems with multiple valid approaches.",
-            "You could apply your reasoning more often to real-world and open-ended situations.",
-            "It would be helpful to develop clearer ways of communicating complex ideas."
-          ]
+          min: 60, max: 79,
+          label: "Structured Problem Solver",
+          observation: "You possess a workable analytical foundation and follow logical deductions effectively when paths are clear.",
+          strengthAction: "You understand common quantitative relationships and reason through structured questions well.",
+          pdcHelpStrength: "Collaborating with high-performing engineering peers in PDC expands your speed and problem-solving flexibility.",
+          activityStrength: "Software Training Workshops (STWs)",
+          growthArea: "Solving non-standard problems with multiple valid approaches without getting stuck.",
+          pdcHelpImprove: "PDC's aptitude masterclasses and software bootcamps expose you to diverse algorithmic patterns and competitive problem solving.",
+          activityImprove: "Software Training Workshops (STWs)"
         },
         {
-          min: 70, max: 79,
-          label: "Thinking in Action",
-          intro: "Your responses demonstrate solid reasoning skills and an ability to approach problems independently. The points below highlight your current strengths and ways to sharpen them further.",
-          bullets: [
-            "You can identify patterns beyond obvious sequences.",
-            "You connect multiple pieces of information effectively.",
-            "You can apply concepts to reach practical solutions.",
-            "You approach problems with reasonable confidence.",
-            "You can adjust your approach when the first method does not work.",
-            "It would be valuable to challenge yourself with problems requiring deeper analysis.",
-            "You could continue improving your speed without compromising accuracy.",
-            "It would be helpful to practise explaining the reasoning behind your answers."
-          ]
-        },
-        {
-          min: 60, max: 69,
-          label: "Sharpening Your Edge",
-          intro: "Your responses show a workable foundation in reasoning and problem-solving. The points below highlight what you can already do and where additional practice could make you more consistent.",
-          bullets: [
-            "You can connect information to reach a logical conclusion.",
-            "You understand common mathematical relationships.",
-            "You can follow multi-step reasoning when the path is clear.",
-            "You show developing accuracy in analytical questions.",
-            "You are capable of learning new problem-solving approaches.",
-            "It would help you to handle questions that allow multiple approaches.",
-            "You could benefit from improving accuracy while solving quickly.",
-            "It would be helpful to practise applying concepts rather than simply remembering methods."
-          ]
-        },
-        {
-          min: 50, max: 59,
-          label: "Building Your Thinking",
-          intro: "Your responses suggest that your basic reasoning skills are still developing. The points below highlight your current abilities and a few ways regular practice could strengthen them.",
-          bullets: [
-            "You can solve questions when the underlying method is clear.",
-            "You show basic understanding of numerical relationships.",
-            "You can recognise some straightforward patterns.",
-            "You are able to work with structured information.",
-            "You have a foundation that can improve through practice.",
-            "It would help you to strengthen your fundamentals in mathematics and logical reasoning.",
-            "You could benefit from practising unfamiliar problems rather than relying only on familiar patterns.",
-            "It would be helpful to slow down and verify your reasoning before answering."
-          ]
+          min: 0, max: 59,
+          label: "Developing Fundamentals",
+          observation: "Your analytical abilities are developing and improve significantly with methodical, step-by-step practice.",
+          strengthAction: "You make honest attempts at numerical reasoning and show potential to recognize patterns.",
+          pdcHelpStrength: "Structured study groups and senior guidance help you master fundamental problem-solving frameworks.",
+          activityStrength: "Mentor-guided Aptitude Sessions",
+          growthArea: "Verifying reasoning systematically before committing to conclusions.",
+          pdcHelpImprove: "PDC software training workshops break complex problems into intuitive building blocks, giving you confidence.",
+          activityImprove: "Software Training Workshops (STWs)"
         }
       ]
     },
-    sq: {
-      name: "Spiritual Quotient",
-      shortName: "SQ",
-      tag: "Inner Resilience, Ethics & Purpose",
+    eq: {
+      name: "Emotional Quotient (EQ)",
+      shortName: "EQ",
+      tag: "Self-Awareness, Empathy & Inner Resilience",
       icon: "🌿",
-      color: "#B8960A",
+      color: "#D97706",
+      description: "Measures emotional regulation, empathy, mindfulness, and your ability to maintain purpose during adversity.",
+      strongActivity: "Personalized Mentor Meets & Wisdom Sessions",
+      improveActivity: "Timeless Wisdom Sessions & Mentor Meets",
       tiers: [
         {
-          min: 90, max: 100,
-          label: "A Deeper Sense of Purpose",
-          intro: "Your responses show a deep and consistent approach to questions of purpose, responsibility and personal growth. The points below highlight this perspective and ways to keep deepening it.",
-          bullets: [
-            "You naturally look for deeper lessons in difficult experiences.",
-            "You distinguish external actions from the intentions behind them.",
-            "You take a long-term view of responsibility and consequences.",
-            "You see personal growth as an ongoing process of inner change.",
-            "You understand that fulfilment cannot depend entirely on external success.",
-            "It would be valuable to continue deepening your perspective through experience and reflection.",
-            "You could remain open when others present perspectives different from your own.",
-            "It would be meaningful to turn your understanding into actions that positively affect others."
-          ]
+          min: 80, max: 100,
+          label: "Mature Emotional Balance",
+          observation: "You maintain deep composure, evaluate intentions rather than surface reactions, and stay anchored in purpose.",
+          strengthAction: "You look for deeper lessons in setbacks and maintain healthy boundaries with empathy.",
+          pdcHelpStrength: "Serving as a mentor in student circles and leading meaningful campus initiatives through your natural stability.",
+          activityStrength: "Personalized Mentor Meets & Student Mentoring",
+          growthArea: "Consistently applying your calm inner perspective during intense deadline crunches.",
+          pdcHelpImprove: "PDC's advanced wisdom retreats provide quiet spaces to deepen self-mastery and align long-term priorities.",
+          activityImprove: "Timeless Wisdom Sessions"
         },
         {
-          min: 80, max: 89,
-          label: "Deepening Your Perspective",
-          intro: "Your responses indicate a mature approach to self-awareness, responsibility and meaning. The points below highlight this perspective and ways to carry it further.",
-          bullets: [
-            "You look at challenges as opportunities for deeper learning.",
-            "You consider motives rather than judging actions alone.",
-            "You recognise your responsibility for the consequences of your choices.",
-            "You understand that lasting fulfilment involves more than achievement.",
-            "You can maintain perspective when circumstances are difficult.",
-            "It would be valuable to continue questioning perspectives you may take for granted.",
-            "You could bring your deeper understanding more consistently into everyday decisions.",
-            "It would be helpful to use your perspective to build stronger relationships."
-          ]
+          min: 60, max: 79,
+          label: "Growing in Self-Awareness",
+          observation: "You understand that choices carry deeper consequences and value genuine empathy and ethical responsibility.",
+          strengthAction: "You consider others' feelings and recognize that lasting fulfilment requires inner balance.",
+          pdcHelpStrength: "Regular participation in PDC discussions provides constant reinforcement of positive mental habits.",
+          activityStrength: "Timeless Wisdom Sessions",
+          growthArea: "Preventing momentary frustration or peer pressure from clouding long-term goals.",
+          pdcHelpImprove: "Interactive mentor meets in PDC offer actionable mental models to manage academic stress and peer comparison.",
+          activityImprove: "Personalized Mentor Meets"
         },
         {
-          min: 70, max: 79,
-          label: "Growing in Awareness",
-          intro: "Your responses show that you think beyond immediate results and consider deeper meaning. The points below highlight your perspective and ways to continue developing it.",
-          bullets: [
-            "You consider both intention and action when judging situations.",
-            "You understand that difficult experiences can lead to growth.",
-            "You recognise the importance of taking responsibility for your choices.",
-            "You understand that personal growth requires changing patterns.",
-            "You can distinguish external achievement from deeper fulfilment.",
-            "It would help you to examine your own assumptions more carefully.",
-            "You could practise applying your values consistently during difficult situations.",
-            "It would be beneficial to create space for deeper reflection before important choices."
-          ]
-        },
-        {
-          min: 60, max: 69,
-          label: "Exploring Deeper Perspectives",
-          intro: "Your responses show a growing awareness of the connection between your choices, experiences and personal growth. The points below offer a quick view of this perspective and ways to deepen it.",
-          bullets: [
-            "You recognise that experiences can teach valuable lessons.",
-            "You understand that intentions influence the value of actions.",
-            "You recognise that choices have consequences.",
-            "You can see that external success does not guarantee fulfilment.",
-            "You are becoming more aware of your inner motivations.",
-            "It would be valuable to become more curious about the reasons behind your thoughts and actions.",
-            "You could practise accepting situations without immediately judging them.",
-            "It would be helpful to develop a clearer understanding of the values that guide you."
-          ]
-        },
-        {
-          min: 50, max: 59,
-          label: "Beginning the Journey Within",
-          intro: "Your responses suggest that you are beginning to explore questions about meaning, responsibility and personal growth. The points below highlight your current perspective and areas where reflection could help.",
-          bullets: [
-            "You are open to thinking about difficult experiences.",
-            "You recognise that situations can affect people differently.",
-            "You show some awareness of personal responsibility.",
-            "You are willing to consider questions beyond immediate circumstances.",
-            "You have an opportunity to develop greater self-awareness.",
-            "It would help you to reflect more on why you respond to situations differently.",
-            "You could benefit from looking beyond immediate emotions during difficulties.",
-            "It would be helpful to explore what gives your actions meaning and direction."
-          ]
+          min: 0, max: 59,
+          label: "Beginning Inner Awareness",
+          observation: "You are beginning to reflect on how daily pressures affect your mood, relationships, and focus.",
+          strengthAction: "You are open to honest reflection and recognise that personal growth starts from within.",
+          pdcHelpStrength: "Having dedicated mentors in PDC provides an anchor to discuss personal dilemmas and emotional challenges safely.",
+          activityStrength: "Personalized Mentor Meets",
+          growthArea: "Pausing before reacting emotionally to difficult people or sudden setbacks.",
+          pdcHelpImprove: "PDC wisdom sessions offer timeless philosophical tools to steady the mind, conquer anxiety, and build clarity.",
+          activityImprove: "Timeless Wisdom Sessions & Mentor Meets"
         }
       ]
     }
   }
 };
+
+// Aliases for backward compatibility
+window.PDC_CONFIG.scoreInsights.sq = window.PDC_CONFIG.scoreInsights.eq;
+window.DHRUVA_CONFIG = window.PDC_CONFIG;
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = window.PDC_CONFIG;
+}

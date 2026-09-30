@@ -3,299 +3,602 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Assessment Submitted — Dhruva Club</title>
-  <meta name="description" content="Thank you for taking the Dhruva Club PQ IQ SQ Assessment. Join your official student community group.">
-  <meta name="theme-color" content="#0A1628">
-  <!-- Prevent any page caching so auth token cannot be replayed via back button -->
+  <title>Your Assessment Report — Personality Development Club (PDC)</title>
+  <meta name="description" content="Personalized PQ · IQ · EQ Assessment Report and actionable personal development recommendations from PDC, VIT Pune.">
+  <meta name="theme-color" content="#F96340">
+
+  <!-- Prevent page caching so session token is protected -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <link rel="icon" type="image/png" href="assets/pdc-logo.png">
   <link rel="stylesheet" href="css/styles.css">
+
   <style>
-    /* ── Result-page specific styles ── */
-    .result-score-grid {
+    /* ── Custom Result Page & Activity Showcase Styles ── */
+    .result-container {
+      max-width: 820px;
+      margin: 0 auto 48px;
+    }
+
+    /* Overall score summary */
+    .overall-score-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0 28px;
+    }
+
+    .overall-score-chip {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      margin: 28px 0;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 8px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .overall-score-chip:hover {
+      transform: translateY(-2px);
+    }
+
+    .overall-score-chip.chip-highlight {
+      background: linear-gradient(135deg, #F96340 0%, #E24B24 100%);
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(249, 99, 64, 0.25);
+    }
+
+    .overall-score-chip .chip-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .overall-score-chip.chip-highlight .chip-val {
+      color: #FFFFFF;
+    }
+
+    .overall-score-chip .chip-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .overall-score-chip.chip-highlight .chip-label {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Dimensions Score Grid */
+    .result-score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0 32px;
     }
 
     .score-card {
-      background: var(--surface-2, #f8f9fc);
-      border: 1px solid var(--border, #e2e8f0);
-      border-radius: 16px;
-      padding: 22px 22px 18px;
-      transition: box-shadow 0.2s;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
       text-align: left;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
-    .score-card:hover { box-shadow: 0 6px 24px rgba(10,22,40,0.10); }
+
+    .score-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+    }
+
+    .score-card-pq::before { background: #F96340; }
+    .score-card-iq::before { background: #2563EB; }
+    .score-card-eq::before { background: #D97706; }
 
     .score-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
-      text-align: left;
-    }
-    .score-card-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .score-dimension-icon { font-size: 1.6rem; }
-    .score-dimension-name {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-primary, #0A1628);
-      margin: 0 0 2px;
-    }
-    .score-dimension-tag {
-      font-size: 0.72rem;
-      color: var(--text-secondary, #64748b);
-      font-weight: 500;
-    }
-    .score-badge-value {
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: var(--primary, #1A50BF);
-      letter-spacing: -1px;
-    }
-
-    .score-progress-track {
-      height: 7px;
-      background: var(--border, #e2e8f0);
-      border-radius: 99px;
-      overflow: hidden;
       margin-bottom: 10px;
     }
+
+    .score-dim-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-badge-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-card-pq .score-badge-val { color: #F96340; }
+    .score-card-iq .score-badge-val { color: #2563EB; }
+    .score-card-eq .score-badge-val { color: #D97706; }
+
+    .score-progress-track {
+      height: 6px;
+      background: #F1F3F5;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 10px 0 8px;
+    }
+
     .score-progress-fill {
       height: 100%;
       border-radius: 99px;
-      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .score-card-pq .score-progress-fill { background: linear-gradient(90deg, #1A50BF, #3b82f6); }
-    .score-card-iq .score-progress-fill { background: linear-gradient(90deg, #0A1628, #1A50BF); }
-    .score-card-sq .score-progress-fill { background: linear-gradient(90deg, #B8960A, #f59e0b); }
 
-    .score-tier-pill {
+    .score-card-pq .score-progress-fill { background: linear-gradient(90deg, #FF8A65, #F96340); }
+    .score-card-iq .score-progress-fill { background: linear-gradient(90deg, #60A5FA, #2563EB); }
+    .score-card-eq .score-progress-fill { background: linear-gradient(90deg, #FBBF24, #D97706); }
+
+    .score-tier-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
       display: inline-block;
+      margin-top: auto;
+    }
+
+    .score-card-pq .score-tier-tag { background: rgba(249, 99, 64, 0.1); color: #E04F2E; }
+    .score-card-iq .score-tier-tag { background: rgba(37, 99, 235, 0.1); color: #1D4ED8; }
+    .score-card-eq .score-tier-tag { background: rgba(217, 119, 6, 0.12); color: #B45309; }
+
+    /* ── Concise Actionable Report Sections ── */
+    .report-block {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px 22px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-sm);
+      text-align: left;
+    }
+
+    .report-block-heading {
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .snapshot-lead {
+      font-size: 0.96rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* Structured Quality Cards */
+    .quality-action-card {
+      border: 1px solid #ECEFF2;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-top: 14px;
+      background: #FAFBFC;
+      transition: border-color 0.2s;
+    }
+
+    .quality-action-card:hover {
+      border-color: #CBD5E1;
+    }
+
+    .quality-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .quality-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .quality-badge {
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: var(--primary-faint, rgba(26,80,191,0.08));
-      color: var(--primary, #1A50BF);
-      border-radius: 99px;
-      padding: 3px 12px;
-      margin-bottom: 14px;
-    }
-    .score-card-sq .score-tier-pill {
-      background: rgba(184,150,10,0.1);
-      color: #8a6f00;
-    }
-    .score-card-iq .score-tier-pill {
-      background: rgba(10,22,40,0.07);
-      color: #0A1628;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
     }
 
-    /* Intro text */
-    .score-intro-text {
-      font-size: 0.88rem;
-      color: var(--text-secondary, #64748b);
+    .badge-strength {
+      background: #ECFDF5;
+      color: #047857;
+      border: 1px solid #A7F3D0;
+    }
+
+    .badge-growth {
+      background: #FFF7ED;
+      color: #C2410C;
+      border: 1px solid #FFEDD5;
+    }
+
+    .quality-desc {
+      font-size: 0.9rem;
+      color: #475569;
       line-height: 1.6;
-      margin-bottom: 14px;
-      font-style: italic;
-      text-align: left;
+      margin: 0 0 10px;
     }
 
-    /* Bullet list */
-    .score-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .pdc-solution-box {
+      background: #FFFFFF;
+      border-left: 3px solid #F96340;
+      border-radius: 4px 8px 8px 4px;
+      padding: 10px 14px;
+      margin-top: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .pdc-solution-text {
+      font-size: 0.88rem;
+      color: #1E293B;
+      line-height: 1.55;
+      margin: 0 0 6px;
+    }
+
+    .pdc-activity-try {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #F96340;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Activities Showcase Section (Large Visible Photos) ── */
+    .activities-section {
+      background: linear-gradient(135deg, #181C26 0%, #10121A 100%);
+      border-radius: var(--radius-xl);
+      padding: clamp(22px, 4vw, 36px);
+      margin: 32px 0;
+      color: #FFFFFF;
+      box-shadow: 0 16px 40px rgba(18, 21, 29, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .activities-kicker {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #FFA588;
+      margin-bottom: 6px;
+    }
+
+    .activities-heading {
+      font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 24px;
+      line-height: 1.2;
+    }
+
+    /* Large Photo Activity Card Layout */
+    .activity-display-card {
+      background: #1C2230;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      text-align: left;
     }
-    .score-bullets li {
+
+    .activity-photo-wrap {
+      width: 100%;
+      height: 380px;
       position: relative;
-      padding-left: 18px;
-      font-size: 0.875rem;
-      color: var(--text-primary, #0A1628);
-      line-height: 1.55;
+      background: #0E121B;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .activity-photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: #121622;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .activity-display-card:hover .activity-photo-img {
+      transform: scale(1.02);
+    }
+
+    .activity-card-body {
+      padding: 22px 24px;
       text-align: left;
-      word-break: break-word;
+      background: #181D29;
     }
-    .score-bullets li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      top: -0.05em;
-      color: var(--primary, #1A50BF);
-      font-weight: 900;
-      font-size: 1.2rem;
-      line-height: 1.55;
-    }
-    .score-card-pq .score-bullets li::before { color: #1A50BF; }
-    .score-card-iq .score-bullets li::before { color: #0A1628; }
-    .score-card-sq .score-bullets li::before { color: #B8960A; }
 
-
-    /* ── Combined CTA Box ── */
-    .cta-box {
-      border-radius: 18px;
-      padding: 28px 24px;
-      margin: 28px 0 0;
-      text-align: center;
-      background: linear-gradient(135deg, #0A1628 0%, #1A50BF 100%);
-      color: #fff;
-    }
-    .cta-box-badge {
+    .activity-quality-badge {
       display: inline-block;
-      font-size: 0.68rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #FFA588;
+      background: rgba(249, 99, 64, 0.15);
+      border: 1px solid rgba(249, 99, 64, 0.3);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+    }
+
+    .activity-card-title {
+      font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 10px;
+      line-height: 1.25;
+    }
+
+    .activity-card-desc {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.65;
+      margin: 0 0 12px;
+    }
+
+    .activity-how-it-helps {
+      font-size: 0.88rem;
+      color: #FFD5C6;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid #F96340;
+      padding: 8px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Carousel / Navigation Bar */
+    .activity-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .activity-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      font-size: 0.85rem;
       font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .activity-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .activity-nav-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .act-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s;
+    }
+
+    .act-dot.active {
+      width: 26px;
+      border-radius: 99px;
+      background: #F96340;
+    }
+
+    /* ── Section 8: Strong PDC Value Proposition & WhatsApp CTA ── */
+    .pdc-benefit-section {
+      background: linear-gradient(135deg, #FFF6F3 0%, #FFFFFF 60%, #FFF2EC 100%);
+      border: 2px solid #FFD5C6;
+      border-radius: var(--radius-xl);
+      padding: clamp(28px, 5vw, 42px);
+      margin: 32px 0 0;
+      box-shadow: 0 12px 32px rgba(249, 99, 64, 0.12);
+      text-align: left;
+    }
+
+    .benefit-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      background: rgba(255,255,255,0.15);
-      border-radius: 99px;
-      padding: 3px 12px;
+      color: #E04F2E;
+      background: rgba(249, 99, 64, 0.12);
+      border: 1px solid rgba(249, 99, 64, 0.25);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
       margin-bottom: 12px;
-      color: #fff;
     }
-    .cta-box h3 {
-      font-size: 1.25rem;
+
+    .benefit-heading {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
       font-weight: 800;
+      color: var(--text-primary);
       margin: 0 0 10px;
-      color: #fff;
+      line-height: 1.25;
     }
-    .cta-box p {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.82);
+
+    .benefit-subtext {
+      font-size: 0.98rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
       margin: 0 0 20px;
-      line-height: 1.6;
     }
+
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 18px;
+      margin: 0 0 28px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #1E293B;
+      line-height: 1.5;
+    }
+
+    .benefit-check {
+      color: #F96340;
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Final CTA Box */
+    .final-cta-wrap {
+      background: linear-gradient(135deg, #181C26 0%, #10121A 100%);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      color: #FFFFFF;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .final-cta-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 8px;
+    }
+
+    .final-cta-desc {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto 20px;
+    }
+
+    /* Single Prominent WhatsApp CTA Button */
     .whatsapp-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       background: #25D366;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.95rem;
-      padding: 13px 26px;
-      border-radius: 99px;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 14px 34px;
+      border-radius: var(--radius-full);
       text-decoration: none;
-      transition: transform 0.18s, box-shadow 0.18s;
-      box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .whatsapp-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(37,211,102,0.45);
-    }
-    .whatsapp-icon { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
-
-    /* Score summary row */
-    .overall-score-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      margin: 0 0 24px;
-      flex-wrap: wrap;
-    }
-    .overall-score-chip {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--surface-2, #f8f9fc);
-      border: 1px solid var(--border, #e2e8f0);
-      border-radius: 12px;
-      padding: 10px 16px;
-      min-width: 80px;
-    }
-    .overall-score-chip .chip-val {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--primary, #1A50BF);
-    }
-    .overall-score-chip .chip-label {
-      font-size: 0.68rem;
-      color: var(--text-secondary, #64748b);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
+      box-shadow: 0 10px 28px rgba(37, 211, 102, 0.55);
+      color: #FFFFFF;
     }
 
-    .result-title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--text-primary, #0A1628);
-      text-align: center;
-      margin: 0 0 6px;
-    }
-    .result-greeting {
-      text-align: center;
-      color: var(--text-secondary, #64748b);
-      font-size: 0.9rem;
-      margin: 0 0 22px;
-      line-height: 1.6;
-    }
-    .celebration-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1A50BF, #3b82f6);
-      color: #fff;
-      margin: 0 auto 16px;
-      box-shadow: 0 6px 20px rgba(26,80,191,0.3);
+    .whatsapp-icon {
+      width: 22px;
+      height: 22px;
+      fill: #FFFFFF;
+      flex-shrink: 0;
     }
 
-    .invalid-session-notice {
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
-      border-radius: 12px;
-      padding: 20px;
-      color: #dc2626;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    @media (max-width: 480px) {
-      .score-card { padding: 18px 16px 14px; }
-      .score-badge-value { font-size: 1.4rem; }
-      .cta-box { padding: 22px 16px; }
-      .cta-box h3 { font-size: 1.1rem; }
+    @media (max-width: 640px) {
+      .overall-score-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .result-score-grid {
+        grid-template-columns: 1fr;
+      }
+      .benefit-grid {
+        grid-template-columns: 1fr;
+      }
+      .activity-photo-wrap {
+        height: 260px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    
+  <div class="app-container result-container">
+
     <!-- Brand Header -->
     <header class="brand-header">
       <div class="header-top">
         <div class="brand-logo-wrap">
-          <img src="assets/logo.png" alt="Dhruva Club Logo" class="brand-logo" onerror="this.style.display='none'">
+          <img src="assets/pdc-logo.png" alt="PDC Logo" class="brand-logo" onerror="this.src='Stories/pdclogo1.png'">
         </div>
       </div>
-      <div class="brand-badge" id="resultBadge">Assessment Complete</div>
-      <h1 class="brand-title">Dhruva Club</h1>
-      <p class="brand-tagline">Navigating Success with Wisdom</p>
+      <div class="brand-badge" id="resultBadge">Official PDC Assessment Complete</div>
+      <h1 class="brand-title">Personality Development Club</h1>
+      <p class="brand-tagline">Character | Competence | Culture • VIT Pune</p>
     </header>
 
-    <!-- Result Card -->
-    <main class="result-card form-card" id="resultCard" style="max-width:680px;margin:0 auto 32px;">
-      <!-- Content injected by script below -->
+    <!-- Main Result Card -->
+    <main class="form-card" id="resultCard">
+      <!-- Dynamic Report Injected by JavaScript Below -->
     </main>
 
+    <!-- Footer -->
     <footer class="footer-text">
-      <p>&copy; 2026 Dhruva Club. All rights reserved. Cultivating Character, Competence &amp; Compassion.</p>
+      <p>&copy; Personality Development Club. Character | Competence | Culture • All rights reserved.</p>
     </footer>
 
   </div>
@@ -304,182 +607,438 @@
   <script src="js/content.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const config = window.DHRUVA_CONFIG || {};
-      const resultConf = config.resultPage || {};
+      const config = window.PDC_CONFIG || window.DHRUVA_CONFIG || {};
       const resultCard = document.getElementById("resultCard");
       const resultBadge = document.getElementById("resultBadge");
 
       // ──────────────────────────────────────────────────────────────
-      // SECURITY GATE: Read ONLY from sessionStorage — never from URL.
+      // SECURITY GATE: Read ONLY from sessionStorage
       // ──────────────────────────────────────────────────────────────
-      const authToken = sessionStorage.getItem("dhruva_auth_token");
-      sessionStorage.removeItem("dhruva_auth_token"); // immediate clear
+      const authToken = sessionStorage.getItem("pdc_auth_token");
+      
+      // Clean up session token after reading to prevent replay attacks
+      sessionStorage.removeItem("pdc_auth_token");
 
       let sessionData = null;
-      if (window.DhruvaSecurity && authToken) {
-        sessionData = window.DhruvaSecurity.decryptSessionPayload(authToken);
+      const security = window.PDCSecurity || window.DhruvaSecurity;
+
+      if (security && authToken) {
+        sessionData = security.decryptSessionPayload(authToken);
       }
 
-      let verifiedGender = sessionData?.gender || null;
-      if (!verifiedGender && window.DhruvaSecurity && authToken) {
-        verifiedGender = window.DhruvaSecurity.decryptGenderToken(authToken);
+      if (!sessionData && authToken) {
+        try {
+          sessionData = JSON.parse(atob(authToken));
+        } catch (e) {
+          sessionData = null;
+        }
       }
 
-      // If no valid session token, show rejection
-      if (!verifiedGender) {
-        if (resultBadge) resultBadge.textContent = "Access Denied";
+      // If no valid session token exists, display access notice
+      if (!sessionData) {
+        if (resultBadge) resultBadge.textContent = "Evaluation Session Expired";
         resultCard.innerHTML = `
-          <div class="invalid-session-notice">
-            <strong>⚠️ Invalid or Expired Session</strong><br><br>
-            This evaluation dashboard is accessible only immediately upon submitting the assessment.<br>
-            Please go back and complete the assessment to view your personalized score analysis.
+          <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:24px;text-align:center;color:#B91C1C;margin:12px 0;">
+            <strong style="font-size:1.1rem;display:block;margin-bottom:8px;">⚠️ Direct Access Restricted</strong>
+            This evaluation dashboard is securely generated immediately after completing the assessment.<br>
+            Please return to the assessment form and complete your evaluation.
           </div>
-          <a href="index.html" class="btn btn-primary" style="display:inline-flex;margin-top:16px;">
-            ← Go Back to Assessment
-          </a>
+          <div style="text-align:center;margin-top:20px;">
+            <a href="index.html" class="btn btn-primary" style="display:inline-flex;">
+              ← Take Assessment Now
+            </a>
+          </div>
         `;
         return;
       }
 
-      const studentName = sessionData?.fullName && sessionData.fullName !== "Student"
+      const studentName = sessionData.fullName && sessionData.fullName !== "Student"
         ? sessionData.fullName
         : "";
 
-      const scores = sessionData?.scores || { pq: 75, iq: 75, sq: 75 };
-      const totalScore = sessionData?.totalScore || Math.round((scores.pq + scores.iq + scores.sq) / 3);
+      // Scores (Normalized with EQ as the official 3rd dimension)
+      const scores = {
+        pq: Number(sessionData.scores?.pq || 0),
+        iq: Number(sessionData.scores?.iq || 0),
+        eq: Number(sessionData.scores?.eq !== undefined ? sessionData.scores.eq : (sessionData.scores?.sq || 0))
+      };
 
-      // ── Helper: find tier for a dimension and score ──
-      function getTier(dimensionKey, score) {
-        const dimConf = config.scoreInsights?.[dimensionKey];
-        if (!dimConf) return null;
-        return dimConf.tiers.find(t => score >= t.min && score <= t.max)
-          || dimConf.tiers[dimConf.tiers.length - 1];
+      const maxScores = {
+        pq: 35,
+        iq: 30,
+        eq: 35,
+        total: 100
+      };
+
+      const totalScore = sessionData.totalScore !== undefined
+        ? Number(sessionData.totalScore)
+        : Math.round(scores.pq + scores.iq + scores.eq);
+
+      const percentages = {
+        pq: Math.min(100, Math.round((scores.pq / maxScores.pq) * 100)),
+        iq: Math.min(100, Math.round((scores.iq / maxScores.iq) * 100)),
+        eq: Math.min(100, Math.round((scores.eq / maxScores.eq) * 100)),
+        total: Math.min(100, Math.round((totalScore / maxScores.total) * 100))
+      };
+
+      // ──────────────────────────────────────────────────────────────
+      // SINGLE COMMUNITY WHATSAPP CTA
+      // Unified community URL — no boys/girls distinction visible
+      // ──────────────────────────────────────────────────────────────
+      const targetCommunityLink = config.whatsappLinks?.COMMUNITY_URL ||
+        config.whatsappLinks?.default ||
+        config.whatsappLinks?.BOYS_WHATSAPP_LINK ||
+        "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
+
+      // ──────────────────────────────────────────────────────────────
+      // EVALUATION REPORT ENGINE: Identify Strengths & Growth Areas
+      // ──────────────────────────────────────────────────────────────
+      const dimensions = [
+        { key: "pq", name: "Personality Quotient (PQ)", score: scores.pq, max: maxScores.pq, pct: percentages.pq, conf: config.scoreInsights?.pq },
+        { key: "iq", name: "Intellectual Quotient (IQ)", score: scores.iq, max: maxScores.iq, pct: percentages.iq, conf: config.scoreInsights?.iq },
+        { key: "eq", name: "Emotional Quotient (EQ)", score: scores.eq, max: maxScores.eq, pct: percentages.eq, conf: config.scoreInsights?.eq }
+      ];
+
+      // Sort by percentage descending
+      dimensions.sort((a, b) => b.pct - a.pct);
+
+      let strongDims = [];
+      let growthDims = [];
+
+      // Balanced classification ensuring both sections are rich and personalized
+      if (dimensions[0].pct >= 70 && dimensions[1].pct >= 70 && dimensions[2].pct >= 70) {
+        strongDims = [dimensions[0], dimensions[1]];
+        growthDims = [dimensions[2]];
+      } else if (dimensions[0].pct < 65 && dimensions[1].pct < 65 && dimensions[2].pct < 65) {
+        strongDims = [dimensions[0]];
+        growthDims = [dimensions[1], dimensions[2]];
+      } else {
+        strongDims = dimensions.filter(d => d.pct >= 65);
+        growthDims = dimensions.filter(d => d.pct < 65);
+        if (strongDims.length === 0) strongDims.push(dimensions[0]);
+        if (growthDims.length === 0) growthDims.push(dimensions[dimensions.length - 1]);
       }
 
-      function getDimConf(dimensionKey) {
-        return config.scoreInsights?.[dimensionKey] || {};
+      function getTierData(dimObj) {
+        if (!dimObj.conf || !dimObj.conf.tiers) return {};
+        const tiers = dimObj.conf.tiers;
+        return tiers.find(t => dimObj.pct >= t.min && dimObj.pct <= t.max) || tiers[tiers.length - 1];
       }
 
-      // ── Helper: render bullet list ──
-      function buildBullets(bullets) {
-        if (!bullets || !bullets.length) return "";
-        return bullets.map(b => `<li>${b}</li>`).join("");
-      }
-
-      // ── Build a score card for one dimension ──
-      function buildScoreCard(dimKey, score) {
-        const dimConf = getDimConf(dimKey);
-        const tier = getTier(dimKey, score);
-        if (!tier) return "";
-
-        const cardClass = `score-card score-card-${dimKey}`;
-        const bulletsHtml = buildBullets(tier.bullets || []);
-        const introHtml = tier.intro
-          ? `<p class="score-intro-text">${tier.intro}</p>`
-          : "";
-
-        return `
-          <div class="${cardClass}">
-            <div class="score-card-header">
-              <div class="score-card-title-group">
-                <span class="score-dimension-icon">${dimConf.icon || ""}</span>
-                <div>
-                  <h4 class="score-dimension-name">${dimConf.name || dimKey.toUpperCase()}</h4>
-                  <span class="score-dimension-tag">${dimConf.tag || ""}</span>
-                </div>
-              </div>
-              <div class="score-badge-value">${score}%</div>
-            </div>
-            <div class="score-progress-track">
-              <div class="score-progress-fill" style="width: ${score}%"></div>
-            </div>
-            <div class="score-tier-pill">${tier.label}</div>
-            ${introHtml}
-            <ul class="score-bullets">${bulletsHtml}</ul>
-          </div>
-        `;
-      }
-
-      // ── Find CTA tier based on overall average score ──
-      function getCTATier(overall) {
-        const tiers = resultConf.ctaTiers || [];
-        return tiers.find(t => overall >= t.min && overall <= t.max)
-          || tiers[tiers.length - 1]
-          || { heading: "Join Your Community", body: "Connect with Dhruva Club to keep growing.", buttonText: "Join Now" };
-      }
-
-      // ── Determine WhatsApp link by verified gender ──
-      let targetLink = config.whatsappLinks?.default || "#";
-      if (verifiedGender === "female") {
-        targetLink = config.whatsappLinks?.female || config.whatsappLinks?.default || "#";
-      } else if (verifiedGender === "male") {
-        targetLink = config.whatsappLinks?.male || config.whatsappLinks?.default || "#";
-      }
-
-      const ctaTier = getCTATier(totalScore);
-
-      // ── Personalized greeting ──
-      const personalizedGreeting = studentName
-        ? `Congratulations, <strong>${studentName}</strong>! Here is your personalized PQ · IQ · SQ score analysis.`
-        : "Here is your personalized PQ · IQ · SQ score analysis.";
-
-      // ── Overall score chips ──
-      const overallChips = `
+      // ── Build Overall Score Summary Chips ──
+      const overallChipsHtml = `
         <div class="overall-score-bar">
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.pq}%</span>
-            <span class="chip-label">PQ</span>
+            <span class="chip-val">${scores.pq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
+            <span class="chip-label">PQ (Max 35)</span>
           </div>
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.iq}%</span>
-            <span class="chip-label">IQ</span>
+            <span class="chip-val">${scores.iq} <span style="font-size:0.75rem;opacity:0.65;">/ 30</span></span>
+            <span class="chip-label">IQ (Max 30)</span>
           </div>
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.sq}%</span>
-            <span class="chip-label">SQ</span>
+            <span class="chip-val">${scores.eq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
+            <span class="chip-label">EQ (Max 35)</span>
           </div>
-          <div class="overall-score-chip" style="background:linear-gradient(135deg,#1A50BF,#3b82f6);border-color:transparent;">
-            <span class="chip-val" style="color:#fff;">${totalScore}%</span>
-            <span class="chip-label" style="color:rgba(255,255,255,0.8);">Overall</span>
+          <div class="overall-score-chip chip-highlight">
+            <span class="chip-val">${totalScore} <span style="font-size:0.75rem;opacity:0.85;">/ 100</span></span>
+            <span class="chip-label">Total Score</span>
           </div>
         </div>
       `;
 
-      // ── Assemble result card HTML ──
-      resultCard.innerHTML = `
-        <div class="celebration-icon">
-          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-
-        <h2 class="result-title">${resultConf.title || "Assessment Submitted!"}</h2>
-        <p class="result-greeting">${personalizedGreeting}</p>
-
-        ${overallChips}
-
-        <!-- 3-Part Score Cards with Bullet Analysis -->
+      // ── Build Dimensions Overview Cards ──
+      const dimCardsHtml = `
         <div class="result-score-grid">
-          ${buildScoreCard("pq", scores.pq)}
-          ${buildScoreCard("iq", scores.iq)}
-          ${buildScoreCard("sq", scores.sq)}
-        </div>
-
-        <!-- Dynamic Combined CTA -->
-        <div class="cta-box">
-          <div class="cta-box-badge">Community Invitation</div>
-          <h3>${ctaTier.heading}</h3>
-          <p>${ctaTier.body}</p>
-          <a href="${targetLink}" id="whatsappRedirectBtn" target="_blank" rel="noopener noreferrer" class="whatsapp-btn">
-            <svg class="whatsapp-icon" viewBox="0 0 24 24">
-              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-            </svg>
-            <span>${ctaTier.buttonText}</span>
-          </a>
+          ${dimensions.map(dim => {
+            const tier = getTierData(dim);
+            return `
+              <div class="score-card score-card-${dim.key}">
+                <div class="score-card-header">
+                  <h4 class="score-dim-title">
+                    <span>${dim.conf?.icon || "★"}</span>
+                    <span>${dim.conf?.shortName || dim.key.toUpperCase()}</span>
+                  </h4>
+                  <span class="score-badge-val">${dim.score} <span style="font-size:0.75rem;color:var(--text-muted);font-weight:600;">/${dim.max}</span></span>
+                </div>
+                <div class="score-progress-track">
+                  <div class="score-progress-fill" style="width: ${dim.pct}%"></div>
+                </div>
+                <span class="score-tier-tag">${tier.label || "Evaluated"} • ${dim.pct}%</span>
+              </div>
+            `;
+          }).join("")}
         </div>
       `;
 
-      if (resultBadge) resultBadge.textContent = resultConf.badge || "Evaluation Complete";
+      // ── Section 6 & 7: Concise, Actionable, Personalized Report ──
+      const topStrengthNames = strongDims.map(d => d.name.replace(/ \(.*\)/, "")).join(" and ");
+      const topGrowthNames = growthDims.map(d => d.name.replace(/ \(.*\)/, "")).join(" and ");
+
+      const snapshotHtml = `
+        <section class="report-block" aria-labelledby="snapshotHeading">
+          <h3 class="report-block-heading" id="snapshotHeading">
+            <span style="color:#F96340;">📋</span> Your PDC Personality Snapshot
+          </h3>
+          <p class="snapshot-lead">
+            ${studentName ? `Hello <strong>${studentName}</strong>, your` : "Your"} assessment highlights clear natural strengths in 
+            <strong>${topStrengthNames}</strong>, demonstrating a strong foundation to build upon. At the same time, targeted practice in 
+            <strong>${topGrowthNames}</strong> will provide the highest leverage to accelerate your personal confidence, articulate leadership, and professional readiness.
+          </p>
+        </section>
+      `;
+
+      // Qualities You Can Improve Section
+      const improveSectionHtml = `
+        <section class="report-block" aria-labelledby="improveHeading">
+          <h3 class="report-block-heading" id="improveHeading">
+            <span style="color:#E04F2E;">🎯</span> Qualities You Can Improve
+          </h3>
+          <p style="font-size:0.88rem;color:#64748B;margin:0 0 10px;">
+            Targeted growth areas where guided practice and club activities deliver maximum positive change:
+          </p>
+          ${growthDims.map(dim => {
+            const tier = getTierData(dim);
+            return `
+              <div class="quality-action-card">
+                <div class="quality-card-header">
+                  <span class="quality-name">${dim.name}</span>
+                  <span class="quality-badge badge-growth">Growth Area (${dim.pct}%)</span>
+                </div>
+                <p class="quality-desc">
+                  <strong>Current observation:</strong> ${tier.observation || "You are building awareness in this area."}<br>
+                  <strong>What can improve:</strong> ${tier.growthArea || "Developing greater consistency through repeated practical exposure."}
+                </p>
+                <div class="pdc-solution-box">
+                  <p class="pdc-solution-text">
+                    <strong>How PDC can help:</strong> ${tier.pdcHelpImprove || "PDC provides supportive group sessions and mentorship circles designed to develop this quality through practice."}
+                  </p>
+                  <div class="pdc-activity-try">
+                    <span>⚡ Try:</span>
+                    <span>${tier.activityImprove || dim.conf?.improveActivity || "Personality Development Workshops (PDWs)"}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </section>
+      `;
+
+      // Qualities You Already Do Well Section
+      const strongSectionHtml = `
+        <section class="report-block" aria-labelledby="strongHeading">
+          <h3 class="report-block-heading" id="strongHeading">
+            <span style="color:#059669;">✨</span> Qualities You Already Do Well
+          </h3>
+          <p style="font-size:0.88rem;color:#64748B;margin:0 0 10px;">
+            Demonstrated strengths you can leverage and advance to higher levels of leadership:
+          </p>
+          ${strongDims.map(dim => {
+            const tier = getTierData(dim);
+            return `
+              <div class="quality-action-card">
+                <div class="quality-card-header">
+                  <span class="quality-name">${dim.name}</span>
+                  <span class="quality-badge badge-strength">Demonstrated Strength (${dim.pct}%)</span>
+                </div>
+                <p class="quality-desc">
+                  <strong>What the assessment indicates:</strong> ${tier.strengthAction || tier.observation || "Your responses indicate a solid natural capability in this dimension."}
+                </p>
+                <div class="pdc-solution-box">
+                  <p class="pdc-solution-text">
+                    <strong>How PDC can help:</strong> ${tier.pdcHelpStrength || "PDC provides campus coordination roles and advanced tracks to turn your natural strength into demonstrable leadership experience."}
+                  </p>
+                  <div class="pdc-activity-try">
+                    <span>🌟 Try:</span>
+                    <span>${tier.activityStrength || dim.conf?.strongActivity || "Edutainment Outings & Event Coordination"}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </section>
+      `;
+
+      // ── Section 5: Activities Showcase with Large, Visible Photos ──
+      const activitiesList = config.activities || [];
+      const activitiesShowcaseHtml = `
+        <section class="activities-section" id="activitiesSection" aria-labelledby="actHeading">
+          <p class="activities-kicker">PDC Activities & Growth Experiences</p>
+          <h3 class="activities-heading" id="actHeading">Where Character, Competence & Culture Come Alive</h3>
+
+          <div id="activityContainer">
+            ${activitiesList.map((act, idx) => `
+              <article class="activity-display-card" id="actCard-${idx}" style="display: ${idx === 0 ? 'flex' : 'none'};">
+                <div class="activity-photo-wrap">
+                  <img class="activity-photo-img" src="${act.image}" alt="${act.title}" loading="${idx === 0 ? 'eager' : 'lazy'}">
+                </div>
+                <div class="activity-card-body">
+                  <span class="activity-quality-badge">${act.relevantQuality || "Personal Growth"}</span>
+                  <h4 class="activity-card-title">${act.title}</h4>
+                  <p class="activity-card-desc">${act.desc}</p>
+                  <p class="activity-how-it-helps">
+                    <strong>How this helps you:</strong> ${act.howItHelps}
+                  </p>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+
+          <!-- Carousel Controls -->
+          <div class="activity-nav-bar">
+            <button type="button" class="activity-btn" id="actPrevBtn" aria-label="Previous activity">
+              ← Previous
+            </button>
+            <div class="activity-nav-dots" id="actDots">
+              ${activitiesList.map((_, idx) => `
+                <button type="button" class="act-dot ${idx === 0 ? 'active' : ''}" data-act-idx="${idx}" aria-label="Go to activity ${idx + 1}"></button>
+              `).join("")}
+            </div>
+            <button type="button" class="activity-btn" id="actNextBtn" aria-label="Next activity">
+              Next →
+            </button>
+          </div>
+        </section>
+      `;
+
+      // ── Section 8: Strong PDC Value Proposition & WhatsApp CTA ──
+      const benefitSectionHtml = `
+        <section class="pdc-benefit-section" aria-labelledby="benefitHeading">
+          <span class="benefit-badge">Your Journey Beyond This Assessment</span>
+          <h3 class="benefit-heading" id="benefitHeading">Why PDC Can Help You</h3>
+          <p class="benefit-subtext">
+            Your assessment highlights that you have valuable strengths in <strong>${topStrengthNames}</strong>, while also revealing 
+            practical opportunities to elevate your <strong>${topGrowthNames}</strong>. PDC is designed specifically to provide engineering students 
+            with an encouraging environment to practice, lead, and develop beyond textbooks.
+          </p>
+
+          <div class="benefit-grid">
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Develop qualities where you currently need improvement through structured workshops</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Practice your existing strengths in real-world leadership and campus events</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Participate in high-impact workshops (IIT Bombay STWs, PDWs, Outings)</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Meet and interact with proactive engineering students across all branches</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Take part in live group discussions, presentation drills, and debriefs</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Build authentic, unshakeable confidence through regular participation</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Gain opportunities to lead initiatives, teams, and student cohorts</span>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-check">✓</span>
+              <span>Receive continuous guidance and mentorship throughout your engineering years</span>
+            </div>
+          </div>
+
+          <!-- Final High-Impact Call to Action -->
+          <div class="final-cta-wrap">
+            <h4 class="final-cta-title">Take the next step with PDC.</h4>
+            <p class="final-cta-desc">
+              Join the PDC WhatsApp Community to stay connected with upcoming workshops, mentorship sessions, and exclusive opportunities to participate.
+            </p>
+            <a href="${targetCommunityLink}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" id="joinCommunityBtn">
+              <svg class="whatsapp-icon" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              <span>Join WhatsApp Community</span>
+            </a>
+          </div>
+        </section>
+      `;
+
+      // ── Assemble Full Results View ──
+      resultCard.innerHTML = `
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F96340,#FF8A65);color:#fff;box-shadow:0 6px 20px rgba(249,99,64,0.3);margin-bottom:12px;">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 style="font-size:clamp(1.6rem, 3.5vw, 2.2rem);font-weight:800;color:var(--text-primary);margin:0 0 6px;">Assessment Submitted!</h2>
+          <p style="font-size:0.96rem;color:var(--text-secondary);margin:0;">
+            ${studentName ? `Congratulations, <strong>${studentName}</strong>! ` : ""}Here is your personalized PQ · IQ · EQ evaluation.
+          </p>
+        </div>
+
+        ${overallChipsHtml}
+        ${dimCardsHtml}
+        ${snapshotHtml}
+        ${improveSectionHtml}
+        ${strongSectionHtml}
+        ${activitiesShowcaseHtml}
+        ${benefitSectionHtml}
+      `;
+
+      // ── Initialize Interactive Activity Carousel ──
+      let activeActIndex = 0;
+      const totalActivities = activitiesList.length;
+
+      function showActivityIndex(idx) {
+        if (idx < 0) idx = totalActivities - 1;
+        if (idx >= totalActivities) idx = 0;
+        activeActIndex = idx;
+
+        for (let i = 0; i < totalActivities; i++) {
+          const card = document.getElementById(`actCard-${i}`);
+          if (card) card.style.display = i === activeActIndex ? "flex" : "none";
+        }
+
+        const dots = document.querySelectorAll(".act-dot");
+        dots.forEach((d, i) => {
+          d.classList.toggle("active", i === activeActIndex);
+        });
+      }
+
+      document.getElementById("actPrevBtn")?.addEventListener("click", () => {
+        showActivityIndex(activeActIndex - 1);
+      });
+
+      document.getElementById("actNextBtn")?.addEventListener("click", () => {
+        showActivityIndex(activeActIndex + 1);
+      });
+
+      document.querySelectorAll(".act-dot").forEach(dot => {
+        dot.addEventListener("click", () => {
+          const idx = parseInt(dot.getAttribute("data-act-idx"), 10);
+          showActivityIndex(idx);
+        });
+      });
+
+      // Keyboard & touch navigation for activities
+      const actSection = document.getElementById("activitiesSection");
+      if (actSection) {
+        let touchStart = 0;
+        actSection.addEventListener("touchstart", (e) => {
+          touchStart = e.changedTouches[0].clientX;
+        }, { passive: true });
+
+        actSection.addEventListener("touchend", (e) => {
+          const touchEnd = e.changedTouches[0].clientX;
+          if (touchStart - touchEnd > 50) {
+            showActivityIndex(activeActIndex + 1); // Swipe left -> next
+          } else if (touchEnd - touchStart > 50) {
+            showActivityIndex(activeActIndex - 1); // Swipe right -> prev
+          }
+        }, { passive: true });
+      }
+
     });
   </script>
 </body>

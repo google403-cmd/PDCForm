@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="kondhwaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1A30" />
+      <stop offset="50%" stop-color="#162746" />
+      <stop offset="100%" stop-color="#091222" />
+    </linearGradient>
+    <linearGradient id="kondhwaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F6D365" />
+      <stop offset="50%" stop-color="#FDA085" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E335A" />
+      <stop offset="100%" stop-color="#101D33" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="200" cy="200" r="185" fill="url(#kondhwaBg)" stroke="url(#kondhwaGold)" stroke-width="6" filter="url(#shadow)" />
+  <circle cx="200" cy="200" r="172" fill="none" stroke="rgba(246, 211, 101, 0.4)" stroke-width="1.5" stroke-dasharray="4 4" />
+
+  <!-- Shield -->
+  <path d="M200 80 L280 120 V210 C280 270 200 310 200 310 C200 310 120 270 120 210 V120 Z" 
+        fill="url(#shieldGrad)" stroke="url(#kondhwaGold)" stroke-width="3.5" />
+
+  <!-- Central Crest / Torch & Star -->
+  <!-- Torch Handle -->
+  <path d="M194 220 L206 220 L203 260 L197 260 Z" fill="#D4AF37" />
+  <!-- Torch Bowl -->
+  <path d="M185 205 L215 205 L208 220 L192 220 Z" fill="#F6D365" />
+  <!-- Flame -->
+  <path d="M200 145 C190 170 182 185 186 200 C190 206 210 206 214 200 C218 185 210 170 200 145 Z" fill="#FDA085" />
+  <path d="M200 160 C194 175 190 188 193 198 C196 202 204 202 207 198 C210 188 206 175 200 160 Z" fill="#FFF275" />
+
+  <!-- Star Embellishments -->
+  <polygon points="200,98 203,107 212,107 205,112 207,121 200,116 193,121 195,112 188,107 197,107" fill="#F6D365" />
+  <polygon points="155,140 157,146 163,146 158,150 160,156 155,152 150,156 152,150 147,146 153,146" fill="#F6D365" opacity="0.8" />
+  <polygon points="245,140 247,146 253,146 248,150 250,156 245,152 240,156 242,150 237,146 243,146" fill="#F6D365" opacity="0.8" />
+
+  <!-- Ribbon Banner -->
+  <path d="M70 260 L120 250 L200 255 L280 250 L330 260 L320 295 L280 285 L200 292 L120 285 L80 295 Z" 
+        fill="#0E1A30" stroke="url(#kondhwaGold)" stroke-width="2.5" filter="url(#shadow)" />
+  
+  <!-- Banner Text -->
+  <text x="200" y="278" font-family="'Space Grotesk', 'Inter', -apple-system, sans-serif" font-size="19" font-weight="800" 
+        letter-spacing="2.5" fill="#FFFFFF" text-anchor="middle">
+    KONDHWA CLUB
+  </text>
+
+  <!-- Subtitle Text -->
+  <text x="200" y="340" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="600" 
+        letter-spacing="3" fill="#D4AF37" text-anchor="middle">
+    CAMPUS STUDENT INITIATIVE
+  </text>
+  <text x="200" y="358" font-family="'Inter', -apple-system, sans-serif" font-size="10" font-weight="500" 
+        letter-spacing="1.5" fill="rgba(255,255,255,0.7)" text-anchor="middle">
+    VIT PUNE • KONDHWA CAMPUS
+  </text>
+</svg>
