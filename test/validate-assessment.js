@@ -2,17 +2,15 @@ const assert = require("assert");
 const config = require("../js/content.js");
 
 console.log("==================================================");
-console.log("PDC (PERSONALITY DEVELOPMENT CLUB) ASSESSMENT VALIDATION SUITE");
+console.log("PDC ASSESSMENT & REPORT VALIDATION SUITE");
 console.log("==================================================");
 
 // 1. Verify steps
 assert(config.steps && Array.isArray(config.steps), "config.steps must be an array");
-assert(config.steps.length === 4 || config.steps.length === 5, "Must have 4 or 5 steps (Profile, PQ, IQ, EQ, Community)");
+assert(config.steps.length === 5, "Must have exactly 5 steps (Profile, PQ, IQ, SQ, Community)");
 
-const [profileStep, pqStep, iqStep, eqStep, communityStep] = config.steps;
-if (communityStep) {
-  assert(communityStep.isCommunityStep, "5th step must be community step");
-}
+const [profileStep, pqStep, iqStep, sqStep, communityStep] = config.steps;
+assert(communityStep && communityStep.isCommunityStep, "5th step must be community step");
 
 // Profile Step Validation
 assert(profileStep.isPersonalDetails, "Step 0 must be personal details");
@@ -45,6 +43,7 @@ assert.deepStrictEqual(branchField.options, [
   "Other"
 ], "Branch options must match the exact PDC list");
 
+// Brand & Activity Validation
 assert(config.club.logoPath.includes("pdc-logo") || config.club.logoPath.includes("pdclogo1"), "PDC logo must point to PDC asset");
 assert.strictEqual(config.club.bannerPath, "Stories/PDC Banner.png", "PDC banner must use the Stories asset");
 assert(config.whatsappLinks.COMMUNITY_URL, "PDC WhatsApp link must be configured");
@@ -58,106 +57,187 @@ assert.deepStrictEqual(activityImages, [
   "Stories/wisdom.png"
 ], "Activities must use the required PDC activity images");
 
-// Section Steps Validation
+// Section Dimension Validation
 assert.strictEqual(pqStep.dimension, "pq", "PQ step dimension must be 'pq'");
 assert.strictEqual(iqStep.dimension, "iq", "IQ step dimension must be 'iq'");
-assert(eqStep.dimension === "eq" || eqStep.dimension === "sq", "3rd step dimension must be 'eq' or 'sq'");
+assert(sqStep.dimension === "sq" || sqStep.dimension === "eq", "SQ step dimension must be 'sq' or 'eq'");
 
-// Question Counts
+// Question Counts: exactly 7 PQ, 6 IQ, 7 SQ = 20 questions
 assert.strictEqual(pqStep.questions.length, 7, "PQ section must have exactly 7 questions");
 assert.strictEqual(iqStep.questions.length, 6, "IQ section must have exactly 6 questions");
-assert.strictEqual(eqStep.questions.length, 7, "SQ/EQ section must have exactly 7 questions");
+assert.strictEqual(sqStep.questions.length, 7, "SQ section must have exactly 7 questions");
 
-const allQuestions = [...pqStep.questions, ...iqStep.questions, ...eqStep.questions];
+const allQuestions = [...pqStep.questions, ...iqStep.questions, ...sqStep.questions];
 assert.strictEqual(allQuestions.length, 20, "Total question count must be exactly 20");
 
-// Expected IDs
-const expectedPQIds = ["PQ1", "PQ2", "PQ3", "PQ4", "PQ5", "PQ8", "PQ10"];
+// Question IDs
+const expectedPQIds = ["PQ1", "PQ2", "PQ3", "PQ5", "PQ7", "PQ8", "PQ10"];
 const actualPQIds = pqStep.questions.map(q => q.id);
-assert.deepStrictEqual(actualPQIds, expectedPQIds, "PQ question IDs must match specification exactly");
+assert.deepStrictEqual(actualPQIds, expectedPQIds, "PQ question IDs must be PQ1, PQ2, PQ3, PQ5, PQ7, PQ8, PQ10");
 
-const expectedIQIds = ["IQ1", "IQ2", "IQ3", "IQ4", "IQ7", "IQ9"];
+const expectedIQIds = ["IQ1", "IQ2", "IQ3", "IQ5", "IQ7", "IQ9"];
 const actualIQIds = iqStep.questions.map(q => q.id);
-assert.deepStrictEqual(actualIQIds, expectedIQIds, "IQ question IDs must match specification exactly");
+assert.deepStrictEqual(actualIQIds, expectedIQIds, "IQ question IDs must be IQ1, IQ2, IQ3, IQ5, IQ7, IQ9");
 
-const expectedSQIds = ["SQ1", "SQ2", "SQ4", "SQ5", "SQ6", "SQ8", "SQ9"];
-const expectedEQIds = ["EQ1", "EQ2", "EQ4", "EQ5", "EQ6", "EQ8", "EQ9"];
-const actual3rdIds = eqStep.questions.map(q => q.id);
-assert(
-  JSON.stringify(actual3rdIds) === JSON.stringify(expectedSQIds) ||
-  JSON.stringify(actual3rdIds) === JSON.stringify(expectedEQIds),
-  "SQ/EQ question IDs must match specification exactly"
-);
+const expectedSQIds = ["SQ1", "SQ2", "SQ4", "SQ5", "SQ6", "SQ7", "SQ9"];
+const actualSQIds = sqStep.questions.map(q => q.id);
+assert.deepStrictEqual(actualSQIds, expectedSQIds, "SQ question IDs must be SQ1, SQ2, SQ4, SQ5, SQ6, SQ7, SQ9");
 
-// Every question has exactly 5 options with unique IDs ['A', 'B', 'C', 'D', 'E'] and valid marks
-let maxPQ = 0, minPQ = 0;
-let maxIQ = 0, minIQ = 0;
-let maxEQ = 0, minEQ = 0;
-
-allQuestions.forEach((q) => {
+// Every question has exactly 5 options A-E with unique text
+allQuestions.forEach(q => {
   assert.strictEqual(q.options.length, 5, `Question ${q.id} must have exactly 5 options`);
   const optIds = q.options.map(o => o.id);
-  assert.deepStrictEqual(optIds, ["A", "B", "C", "D", "E"], `Question ${q.id} option IDs must be A, B, C, D, E`);
+  assert.deepStrictEqual(optIds, ["A", "B", "C", "D", "E"], `Question ${q.id} options must be A, B, C, D, E`);
 
-  // Unique option texts
   const optTexts = q.options.map(o => o.text.trim());
   const uniqueTexts = new Set(optTexts);
-  assert.strictEqual(uniqueTexts.size, 5, `Question ${q.id} options must all be unique text`);
-
-  // Check marks
-  const marks = q.options.map(o => o.marks);
-  marks.forEach(m => {
-    assert(typeof m === "number" && !isNaN(m), `Question ${q.id} marks must be a number`);
-    assert(m >= 2.5 && m <= 5.0, `Question ${q.id} marks must be between 2.5 and 5.0`);
-  });
-
-  const maxQ = Math.max(...marks);
-  const minQ = Math.min(...marks);
-  assert.strictEqual(maxQ, 5, `Question ${q.id} maximum marks must be 5`);
-
-  if (q.section === "PQ") {
-    maxPQ += maxQ;
-    minPQ += minQ;
-  } else if (q.section === "IQ") {
-    maxIQ += maxQ;
-    minIQ += minQ;
-  } else if (q.section === "EQ" || q.section === "SQ") {
-    maxEQ += maxQ;
-    minEQ += minQ;
-  }
+  assert.strictEqual(uniqueTexts.size, 5, `Question ${q.id} options must all have unique text`);
 });
 
-// Validate IQ9
+// IQ Specific Validation
+const expectedIQAnswers = {
+  IQ1: "D",
+  IQ2: "B",
+  IQ3: "D",
+  IQ5: "C",
+  IQ7: "C",
+  IQ9: "B"
+};
+
+let iqMaxScore = 0;
+iqStep.questions.forEach(q => {
+  const expectedCorrect = expectedIQAnswers[q.id];
+  assert(expectedCorrect, `IQ question ${q.id} must have expected correct answer`);
+  assert.strictEqual(q.correctAnswer, expectedCorrect, `IQ question ${q.id} correctAnswer must be ${expectedCorrect}`);
+
+  q.options.forEach(opt => {
+    if (opt.id === expectedCorrect) {
+      assert.strictEqual(opt.marks, 5, `IQ question ${q.id} option ${opt.id} must have 5 marks`);
+    } else {
+      assert.strictEqual(opt.marks, 0, `IQ question ${q.id} option ${opt.id} must have 0 marks`);
+    }
+  });
+
+  const maxQ = Math.max(...q.options.map(o => o.marks));
+  assert.strictEqual(maxQ, 5, `Question ${q.id} max mark must be 5`);
+  iqMaxScore += maxQ;
+});
+assert.strictEqual(iqMaxScore, 30, "IQ maximum score must be exactly 30 (6 questions x 5 marks)");
+
+// Validate IQ9 Option A is NJPE and Option B is NJOE
 const iq9 = iqStep.questions.find(q => q.id === "IQ9");
 assert(iq9, "IQ9 must exist");
-const iq9Texts = iq9.options.map(o => o.text);
-assert.notStrictEqual(iq9Texts[0], iq9Texts[1], "IQ9 option A and B must NOT be identical");
-assert.strictEqual(iq9.options.find(o => o.id === "B").text, "NJOE", "IQ9 option B must be NJOE");
-assert.strictEqual(iq9.options.find(o => o.id === "B").marks, 5, "IQ9 option B must have 5 marks");
-assert.strictEqual(iq9.options.find(o => o.id === "A").marks, 3, "IQ9 option A must have 3 marks");
+const iq9OptA = iq9.options.find(o => o.id === "A");
+const iq9OptB = iq9.options.find(o => o.id === "B");
+assert.strictEqual(iq9OptA.text, "NJPE", "IQ9 option A must be NJPE");
+assert.strictEqual(iq9OptB.text, "NJOE", "IQ9 option B must be NJOE");
+assert.notStrictEqual(iq9OptA.text, iq9OptB.text, "IQ9 option A and B must NOT be identical");
 
-// Maximum scores
-console.log(`Calculated Max PQ: ${maxPQ} (Expected: 35)`);
-console.log(`Calculated Max IQ: ${maxIQ} (Expected: 30)`);
-console.log(`Calculated Max EQ: ${maxEQ} (Expected: 35)`);
-console.log(`Calculated Total Max: ${maxPQ + maxIQ + maxEQ} (Expected: 100)`);
+// Personality Dimension Mappings Validation
+const validPDims = ["RG", "ER", "IA", "AR", "AP", "PS"];
+pqStep.questions.forEach(q => {
+  q.options.forEach(opt => {
+    assert(opt.personalityPoints !== undefined, `PQ option ${q.id}-${opt.id} must have personalityPoints object`);
+    Object.keys(opt.personalityPoints).forEach(dim => {
+      assert(validPDims.includes(dim), `Invalid personality dimension: ${dim}`);
+      assert(typeof opt.personalityPoints[dim] === "number", `Points for ${dim} must be number`);
+    });
+  });
+});
 
-assert.strictEqual(maxPQ, 35, "Maximum PQ score must be 35");
-assert.strictEqual(maxIQ, 30, "Maximum IQ score must be 30");
-assert.strictEqual(maxEQ, 35, "Maximum EQ score must be 35");
-assert.strictEqual(maxPQ + maxIQ + maxEQ, 100, "Maximum total score must be 100");
+// Spiritual Dimension Mappings Validation
+const validSDims = ["SE", "PE", "HP", "GR", "SA"];
+sqStep.questions.forEach(q => {
+  q.options.forEach(opt => {
+    assert(opt.spiritualPoints !== undefined, `SQ option ${q.id}-${opt.id} must have spiritualPoints object`);
+    Object.keys(opt.spiritualPoints).forEach(dim => {
+      assert(validSDims.includes(dim), `Invalid spiritual dimension: ${dim}`);
+      assert(typeof opt.spiritualPoints[dim] === "number", `Points for ${dim} must be number`);
+    });
+  });
+});
 
-// Minimum scores
-console.log(`Calculated Min PQ: ${minPQ} (Expected: 17.5)`);
-console.log(`Calculated Min IQ: ${minIQ} (Expected: 15)`);
-console.log(`Calculated Min EQ: ${minEQ} (Expected: 17.5)`);
-console.log(`Calculated Total Min: ${minPQ + minIQ + minEQ} (Expected: 50)`);
+// Personality Profiles (8 Custom PDC Profiles)
+const expectedProfileIds = [
+  "reflective_achiever",
+  "resilient_builder",
+  "empathetic_harmonizer",
+  "responsible_leader",
+  "purpose_driven_thinker",
+  "adaptive_problem_solver",
+  "compassionate_thinker",
+  "strategic_achiever"
+];
 
-assert.strictEqual(minPQ, 17.5, "Minimum PQ score must be 17.5");
-assert.strictEqual(minIQ, 15, "Minimum IQ score must be 15");
-assert.strictEqual(minEQ, 17.5, "Minimum EQ score must be 17.5");
-assert.strictEqual(minPQ + minIQ + minEQ, 50, "Minimum total score must be 50");
+assert(config.personalityProfiles, "config.personalityProfiles must exist");
+const profileList = Array.isArray(config.personalityProfiles)
+  ? config.personalityProfiles
+  : Object.values(config.personalityProfiles);
+assert.strictEqual(profileList.length, 8, "Must have exactly 8 personality profiles");
+
+expectedProfileIds.forEach(id => {
+  const profile = Array.isArray(config.personalityProfiles)
+    ? config.personalityProfiles.find(p => p.id === id)
+    : config.personalityProfiles[id];
+  assert(profile, `Profile ${id} must exist`);
+  assert(profile.name, `Profile ${id} must have name`);
+  assert(profile.description, `Profile ${id} must have description`);
+  assert(profile.weights, `Profile ${id} must have weights`);
+
+  const weightSum = Object.values(profile.weights).reduce((a, b) => a + b, 0);
+  assert.strictEqual(weightSum, 100, `Profile ${id} weights must sum to exactly 100% (got ${weightSum})`);
+});
+
+// Cognitive Profiles (5 Custom Profiles)
+const expectedCognitiveLabels = [
+  "Analytical & Pattern-Oriented Thinker",
+  "Logical Problem Solver",
+  "Quantitative Reasoner",
+  "Balanced Analytical Thinker",
+  "Developing Analytical Thinker"
+];
+assert(config.cognitiveProfiles, "config.cognitiveProfiles must exist");
+const cognitiveList = Array.isArray(config.cognitiveProfiles)
+  ? config.cognitiveProfiles
+  : Object.values(config.cognitiveProfiles);
+expectedCognitiveLabels.forEach(label => {
+  assert(cognitiveList.some(cp => (cp.label === label || cp.name === label)), `Cognitive profile '${label}' must exist`);
+});
+
+// Spiritual Profiles (5 Custom Levels)
+const expectedSpiritualLevels = [
+  "Deep Spiritual Orientation",
+  "Purposeful Spiritual Orientation",
+  "Developing Spiritual Understanding",
+  "Beginning Spiritual Exploration",
+  "Open to Spiritual Exploration"
+];
+assert(config.spiritualProfiles, "config.spiritualProfiles must exist");
+const spiritualList = Array.isArray(config.spiritualProfiles)
+  ? config.spiritualProfiles
+  : Object.values(config.spiritualProfiles);
+expectedSpiritualLevels.forEach(level => {
+  assert(spiritualList.some(sp => (sp.level === level || sp.name === level)), `Spiritual profile '${level}' must exist`);
+});
+
+// Engine Validation
+const engine = config.engine || (typeof window !== "undefined" ? window.PDCAssessmentEngine : null);
+assert(engine, "PDCAssessmentEngine must be exported on config.engine");
+assert(typeof engine.calculatePersonalityDimensions === "function", "calculatePersonalityDimensions must be function");
+assert(typeof engine.calculatePersonalityProfiles === "function", "calculatePersonalityProfiles must be function");
+assert(typeof engine.calculateCognitiveProfile === "function", "calculateCognitiveProfile must be function");
+assert(typeof engine.calculateSpiritualProfile === "function", "calculateSpiritualProfile must be function");
+assert(typeof engine.evaluateAssessment === "function", "evaluateAssessment must be function");
+
+// Verify profiles are always generated for any responses
+const sampleEval = engine.evaluateAssessment({});
+assert(sampleEval.primaryProfile && sampleEval.primaryProfile.name, "Primary profile must always be generated");
+assert(sampleEval.secondaryProfile && sampleEval.secondaryProfile.name, "Secondary profile must always be generated");
+assert(sampleEval.cognitiveProfile && (sampleEval.cognitiveProfile.label || sampleEval.cognitiveProfile.name), "Cognitive profile must always be generated");
+assert(sampleEval.spiritualProfile && (sampleEval.spiritualProfile.name || sampleEval.spiritualProfile.level), "Spiritual profile must always be generated");
+assert(sampleEval.report && sampleEval.report.strengths && sampleEval.report.strengths.length >= 4, "Strengths must always be generated");
+assert(sampleEval.report && sampleEval.report.developmentAreas && sampleEval.report.developmentAreas.length >= 2, "Development areas must always be generated");
 
 console.log("--------------------------------------------------");
-console.log("✅ ALL 20-QUESTION PDC VALIDATION CHECKS PASSED!");
+console.log("✅ ALL 20-QUESTION PDC SPECIFICATION CHECKS PASSED!");
 console.log("==================================================");

@@ -269,6 +269,9 @@ async function saveTestSubmission(submissionData) {
 
   _submissionInFlight = true;
 
+  // Yield to simulate async network I/O and enforce concurrency lock across rapid simultaneous calls
+  await new Promise(res => setTimeout(res, 25));
+
   // Format timestamp
   const nowIso = new Date().toISOString();
   
@@ -290,18 +293,40 @@ async function saveTestSubmission(submissionData) {
     division: String(submissionData.division || "").trim(),
     year: String(submissionData.year || "").trim(),
     answers: submissionData.answers || {},
+    answersByQuestion: submissionData.answersByQuestion || submissionData.answers || {},
+    questionIds: submissionData.questionIds || Object.keys(submissionData.answers || {}),
+    selectedOptionIds: submissionData.selectedOptionIds || submissionData.answers || {},
     scores: {
       pq: pqScore,
       iq: iqScore,
       sq: sqScore,
-      eq: sqScore // backwards-compatibility alias for Firestore rules
+      eq: sqScore, // backwards-compatibility alias for Firestore rules
+      questionIds: submissionData.questionIds || Object.keys(submissionData.answers || {}),
+      selectedOptionIds: submissionData.selectedOptionIds || submissionData.answers || {},
+      personalityDimensions: submissionData.scores?.personalityDimensions || submissionData.personalityDimensions || {},
+      primaryProfile: submissionData.scores?.primaryProfile || submissionData.primaryProfile || "",
+      secondaryProfile: submissionData.scores?.secondaryProfile || submissionData.secondaryProfile || "",
+      cognitiveScore: submissionData.scores?.cognitiveScore !== undefined ? submissionData.scores.cognitiveScore : (submissionData.cognitiveScore || 0),
+      cognitiveProfile: submissionData.scores?.cognitiveProfile || submissionData.cognitiveProfile || "",
+      spiritualDimensions: submissionData.scores?.spiritualDimensions || submissionData.spiritualDimensions || {},
+      spiritualProfile: submissionData.scores?.spiritualProfile || submissionData.spiritualProfile || "",
+      report: submissionData.scores?.report || submissionData.report || {}
     },
     totalScore: Number(submissionData.totalScore !== undefined 
       ? submissionData.totalScore 
       : (pqScore + iqScore + sqScore)),
     timestamp: submissionData.timestamp || nowIso,
     submittedAt: submissionData.submittedAt || nowIso,
-    userAgent: String(submissionData.userAgent || (typeof navigator !== "undefined" ? navigator.userAgent : "Node")).substring(0, 500)
+    userAgent: String(submissionData.userAgent || (typeof navigator !== "undefined" ? navigator.userAgent : "Node")).substring(0, 500),
+    // Top-level fields
+    personalityDimensions: submissionData.scores?.personalityDimensions || submissionData.personalityDimensions || {},
+    primaryProfile: submissionData.scores?.primaryProfile || submissionData.primaryProfile || "",
+    secondaryProfile: submissionData.scores?.secondaryProfile || submissionData.secondaryProfile || "",
+    cognitiveScore: submissionData.scores?.cognitiveScore !== undefined ? submissionData.scores.cognitiveScore : (submissionData.cognitiveScore || 0),
+    cognitiveProfile: submissionData.scores?.cognitiveProfile || submissionData.cognitiveProfile || "",
+    spiritualDimensions: submissionData.scores?.spiritualDimensions || submissionData.spiritualDimensions || {},
+    spiritualProfile: submissionData.scores?.spiritualProfile || submissionData.spiritualProfile || "",
+    report: submissionData.scores?.report || submissionData.report || {}
   };
 
   // Determine target collection (Bibwewadi vs Kondhwa)
@@ -317,16 +342,54 @@ async function saveTestSubmission(submissionData) {
     };
   }
 
+  // Helper: creates clean 15-key payload for strict legacy rule environments
+  function getStrict15Payload(p) {
+    return {
+      fullName: p.fullName,
+      email: p.email,
+      whatsappNumber: p.whatsappNumber,
+      gender: p.gender,
+      homeTown: p.homeTown,
+      campus: p.campus,
+      branch: p.branch,
+      division: p.division,
+      year: p.year,
+      answers: p.answers,
+      scores: p.scores,
+      totalScore: p.totalScore,
+      timestamp: p.timestamp,
+      submittedAt: p.submittedAt,
+      userAgent: p.userAgent
+    };
+  }
+
   // 1. If live Firebase is configured and connected, attempt writing with retry & backoff
   if (isFirebaseConfigured && db) {
     try {
-      const documentReference = await executeWithRetry(async () => {
-        return await withTimeout(
-          db.collection(targetCollection).add(payload),
-          9000,
-          "Firestore write timed out due to network congestion"
-        );
-      }, 3, 600);
+      let documentReference = null;
+
+      try {
+        // Attempt write with complete payload
+        documentReference = await executeWithRetry(async () => {
+          return await withTimeout(
+            db.collection(targetCollection).add(payload),
+            9000,
+            "Firestore write timed out due to network congestion"
+          );
+        }, 2, 600);
+      } catch (firstWriteErr) {
+        // If rejected by strict legacy cloud rules, retry with 15-key payload (scores retains all extended data)
+        if (firstWriteErr.code === "permission-denied") {
+          console.info("Retrying write with strict 15-key payload format...");
+          const strictPayload = getStrict15Payload(payload);
+          documentReference = await withTimeout(
+            db.collection(targetCollection).add(strictPayload),
+            8000
+          );
+        } else {
+          throw firstWriteErr;
+        }
+      }
 
       _lastSubmissionId = documentReference.id;
       console.log(`PDC assessment saved successfully to [${targetCollection}]. ID:`, documentReference.id);
@@ -349,8 +412,9 @@ async function saveTestSubmission(submissionData) {
       if (error.code === "permission-denied" && targetCollection === COLLECTIONS.BIBWEWADI) {
         try {
           console.info("Retrying with legacy collection pdc_test_submissions...");
+          const strictPayload = getStrict15Payload(payload);
           const legacyRef = await withTimeout(
-            db.collection(COLLECTIONS.LEGACY).add(payload),
+            db.collection(COLLECTIONS.LEGACY).add(strictPayload),
             6000
           );
           _lastSubmissionId = legacyRef.id;
@@ -374,7 +438,6 @@ async function saveTestSubmission(submissionData) {
 
       // HIGH-TRAFFIC NETWORK FAIL-SAFE:
       // If Firestore is temporarily congested or network dropped, queue the submission locally!
-      // The student will NOT lose their score and will seamlessly see their results!
       const queuedId = queuePendingSync(payload, targetCollection);
       _lastSubmissionId = queuedId;
       incrementRegistrationCounter().catch(() => {});

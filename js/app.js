@@ -776,46 +776,48 @@ document.addEventListener("DOMContentLoaded", () => {
   // Total = 35 + 30 + 35 = 100
   // ===================================================================
   function calculateScores() {
+    if (window.PDCAssessmentEngine && typeof window.PDCAssessmentEngine.evaluateAssessment === "function") {
+      const evaluation = window.PDCAssessmentEngine.evaluateAssessment(formData.answers);
+      return {
+        ...evaluation.scores,
+        total: evaluation.totalScore,
+        evaluation
+      };
+    }
+
+    // Fallback if engine is not initialized
     let pqEarned = 0;
     let iqEarned = 0;
     let sqEarned = 0;
 
     (config.steps || []).forEach(step => {
       if (!step.questions || !step.questions.length) return;
-
-      const dim = (step.dimension || (step.id.includes("iq") ? "iq" : (step.id.includes("sq") || step.id.includes("eq") ? "sq" : "pq"))).toLowerCase();
+      const dim = (step.dimension || (step.id.includes("iq") ? "iq" : "pq")).toLowerCase();
 
       step.questions.forEach(q => {
         const userSelectedOptId = formData.answers[q.id];
         if (!userSelectedOptId) return;
 
         const selectedOpt = q.options.find(o => o.id === userSelectedOptId);
-        const marks = selectedOpt ? selectedOpt.marks : 0;
+        const marks = selectedOpt ? (selectedOpt.marks || 0) : 0;
 
         if (dim === "pq") {
           pqEarned += marks;
         } else if (dim === "iq") {
           iqEarned += marks;
-        } else if (dim === "sq" || dim === "eq") {
+        } else if (dim === "sq") {
           sqEarned += marks;
         }
       });
     });
 
     const roundScore = (val) => Math.round(val * 10) / 10;
-
     const pq = roundScore(pqEarned);
     const iq = roundScore(iqEarned);
     const sq = roundScore(sqEarned);
     const total = roundScore(pq + iq + sq);
 
-    return {
-      pq,
-      iq,
-      sq,
-      eq: sq, // backwards compatibility
-      total
-    };
+    return { pq, iq, sq, eq: sq, total };
   }
 
   // ===================================================================
@@ -843,7 +845,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const userGender = (formData.personal.gender || "male").toLowerCase();
     const studentName = formData.personal.fullName || "Student";
-    const computedScores = calculateScores();
     const selectedCampus = String(formData.personal.campus || "").trim();
     const selectedDivision = String(formData.personal.division || "").trim();
 
@@ -856,7 +857,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Payload strictly conforms to Firestore schema
+    // Run complete evaluation engine
+    const evaluation = window.PDCAssessmentEngine
+      ? window.PDCAssessmentEngine.evaluateAssessment(formData.answers)
+      : null;
+
+    const computedScores = evaluation
+      ? evaluation.scores
+      : calculateScores();
+    const totalScore = evaluation
+      ? evaluation.totalScore
+      : (computedScores.total || Math.round(computedScores.pq + computedScores.iq + computedScores.sq));
+
+    // Payload strictly conforms to Firestore schema while saving all required evaluation data
     const submissionTimestamp = new Date().toISOString();
     const payload = {
       fullName: String(formData.personal.fullName || "").trim(),
@@ -869,16 +882,37 @@ document.addEventListener("DOMContentLoaded", () => {
       division: selectedDivision,
       year: String(formData.personal.year || "").trim(),
       answers: { ...formData.answers },
+      answersByQuestion: { ...formData.answers },
+      questionIds: Object.keys(formData.answers || {}),
+      selectedOptionIds: { ...formData.answers },
       scores: {
         pq: computedScores.pq,
         iq: computedScores.iq,
         sq: computedScores.sq,
-        eq: computedScores.sq
+        eq: computedScores.sq,
+        // Nested evaluation fields guarantee preservation even if Firestore rules restrict top-level keys
+        personalityDimensions: evaluation ? evaluation.personalityDimensions : {},
+        primaryProfile: evaluation ? evaluation.primaryProfile.name : "",
+        secondaryProfile: evaluation ? evaluation.secondaryProfile.name : "",
+        cognitiveScore: evaluation ? evaluation.cognitiveProfile.correctAnswers : 0,
+        cognitiveProfile: evaluation ? evaluation.cognitiveProfile.label : "",
+        spiritualDimensions: evaluation ? evaluation.spiritualProfile.dimensions : {},
+        spiritualProfile: evaluation ? evaluation.spiritualProfile.name : "",
+        report: evaluation ? evaluation.report : {}
       },
-      totalScore: computedScores.total,
+      totalScore: totalScore,
       timestamp: submissionTimestamp,
       submittedAt: submissionTimestamp,
-      userAgent: (navigator.userAgent || "Unknown Browser").substring(0, 500)
+      userAgent: (navigator.userAgent || "Unknown Browser").substring(0, 500),
+      // Top-level fields when supported by Firestore rules
+      personalityDimensions: evaluation ? evaluation.personalityDimensions : {},
+      primaryProfile: evaluation ? evaluation.primaryProfile.name : "",
+      secondaryProfile: evaluation ? evaluation.secondaryProfile.name : "",
+      cognitiveScore: evaluation ? evaluation.cognitiveProfile.correctAnswers : 0,
+      cognitiveProfile: evaluation ? evaluation.cognitiveProfile.label : "",
+      spiritualDimensions: evaluation ? evaluation.spiritualProfile.dimensions : {},
+      spiritualProfile: evaluation ? evaluation.spiritualProfile.name : "",
+      report: evaluation ? evaluation.report : {}
     };
 
     console.log("Submitting PDC assessment payload:", payload);
@@ -917,19 +951,28 @@ document.addEventListener("DOMContentLoaded", () => {
         gender: userGender,
         fullName: studentName,
         joinedCommunity: formData.joinedCommunity || "yes",
+        campus: selectedCampus,
         scores: {
           pq: computedScores.pq,
           iq: computedScores.iq,
           sq: computedScores.sq,
           eq: computedScores.sq
         },
-        totalScore: computedScores.total,
+        totalScore: totalScore,
+        answers: { ...formData.answers },
+        evaluation: evaluation || null,
+        personalityDimensions: evaluation ? evaluation.personalityDimensions : {},
+        primaryProfile: evaluation ? evaluation.primaryProfile : null,
+        secondaryProfile: evaluation ? evaluation.secondaryProfile : null,
+        cognitiveProfile: evaluation ? evaluation.cognitiveProfile : null,
+        spiritualProfile: evaluation ? evaluation.spiritualProfile : null,
+        report: evaluation ? evaluation.report : null,
         percentages: {
           pq: Math.round((computedScores.pq / 35) * 100),
           iq: Math.round((computedScores.iq / 30) * 100),
           sq: Math.round((computedScores.sq / 35) * 100),
           eq: Math.round((computedScores.sq / 35) * 100),
-          total: Math.round((computedScores.total / 100) * 100)
+          total: Math.round((totalScore / 100) * 100)
         },
         maxScores: {
           pq: 35,

@@ -15,7 +15,7 @@ service cloud.firestore {
     // Assessment: 20 Questions — 7 PQ (max 35) + 6 IQ (max 30) + 7 EQ (max 35) = 100
     // =====================================================================
 
-    // Common helper function validating all 15 required assessment payload fields
+    // Common helper function validating assessment payload fields
     function isValidAssessmentSubmission(data, expectedCampus) {
       return data.keys().hasOnly([
         'fullName',
@@ -28,11 +28,22 @@ service cloud.firestore {
         'division',
         'year',
         'answers',
+        'answersByQuestion',
+        'questionIds',
+        'selectedOptionIds',
         'scores',
         'totalScore',
         'timestamp',
         'submittedAt',
-        'userAgent'
+        'userAgent',
+        'personalityDimensions',
+        'primaryProfile',
+        'secondaryProfile',
+        'cognitiveScore',
+        'cognitiveProfile',
+        'spiritualDimensions',
+        'spiritualProfile',
+        'report'
       ])
       // Required Personal Information
       && data.fullName is string

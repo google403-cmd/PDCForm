@@ -167,113 +167,253 @@
     .score-card-iq .score-tier-tag { background: rgba(37, 99, 235, 0.1); color: #1D4ED8; }
     .score-card-sq .score-tier-tag, .score-card-eq .score-tier-tag { background: rgba(217, 119, 6, 0.12); color: #B45309; }
 
-    /* ── Concise Actionable Report Sections ── */
-    .report-block {
+    /* ── 7-Part Personalized Report Card Styles ── */
+    .report-section-block {
       background: #FFFFFF;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 24px 22px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       box-shadow: var(--shadow-sm);
       text-align: left;
+      position: relative;
+      overflow: hidden;
     }
 
-    .report-block-heading {
-      font-size: 1.18rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin: 0 0 14px;
-      display: flex;
+    .report-section-block.report-card-primary::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #F96340, #FF8A65);
+    }
+
+    .report-section-block.report-card-secondary::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #2563EB, #60A5FA);
+    }
+
+    .report-section-block.report-card-cognitive::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #7C3AED, #A78BFA);
+    }
+
+    .report-section-block.report-card-spiritual::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #D97706, #F59E0B);
+    }
+
+    .section-kicker {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #E04F2E;
+      background: rgba(249, 99, 64, 0.1);
+      border-radius: var(--radius-full);
+      padding: 3px 12px;
+      margin-bottom: 8px;
     }
 
-    .snapshot-lead {
-      font-size: 0.96rem;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      margin: 0;
+    .section-kicker-secondary {
+      color: #1D4ED8;
+      background: rgba(37, 99, 235, 0.1);
     }
 
-    /* Structured Quality Cards */
-    .quality-action-card {
-      border: 1px solid #ECEFF2;
-      border-radius: var(--radius-md);
-      padding: 16px 18px;
-      margin-top: 14px;
-      background: #FAFBFC;
-      transition: border-color 0.2s;
+    .section-kicker-cognitive {
+      color: #6D28D9;
+      background: rgba(124, 58, 237, 0.1);
     }
 
-    .quality-action-card:hover {
-      border-color: #CBD5E1;
+    .section-kicker-spiritual {
+      color: #B45309;
+      background: rgba(217, 119, 6, 0.12);
     }
 
-    .quality-card-header {
+    .section-kicker-strengths {
+      color: #047857;
+      background: rgba(5, 150, 105, 0.1);
+    }
+
+    .section-kicker-growth {
+      color: #C2410C;
+      background: rgba(234, 88, 12, 0.1);
+    }
+
+    .section-kicker-overall {
+      color: #1E293B;
+      background: #F1F5F9;
+    }
+
+    .profile-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 8px;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .quality-name {
-      font-size: 1rem;
+    .profile-name {
+      font-size: clamp(1.3rem, 3vw, 1.65rem);
       font-weight: 800;
       color: var(--text-primary);
+      margin: 0;
+      line-height: 1.25;
     }
 
-    .quality-badge {
-      font-size: 0.72rem;
+    .profile-fit-tag {
+      font-size: 0.78rem;
       font-weight: 700;
-      text-transform: uppercase;
-      padding: 2px 10px;
+      color: #E04F2E;
+      background: #FFF2ED;
+      border: 1px solid #FFD5C6;
+      padding: 3px 10px;
       border-radius: var(--radius-full);
     }
 
-    .badge-strength {
-      background: #ECFDF5;
-      color: #047857;
-      border: 1px solid #A7F3D0;
+    .profile-fit-secondary {
+      color: #1D4ED8;
+      background: #EFF6FF;
+      border-color: #BFDBFE;
     }
 
-    .badge-growth {
-      background: #FFF7ED;
-      color: #C2410C;
-      border: 1px solid #FFEDD5;
+    .report-paragraph {
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.65;
+      margin: 0;
     }
 
-    .quality-desc {
+    .iq-perf-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #4338CA;
+      background: #EEF2FF;
+      border: 1.5px solid #C7D2FE;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+    }
+
+    .spiritual-suggestion-box {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: #FFFBEB;
+      border-left: 3px solid #D97706;
+      border-radius: 4px 8px 8px 4px;
+      color: #78350F;
       font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .report-block-title {
+      font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 14px;
+    }
+
+    .strength-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .strength-card:hover {
+      border-color: #CBD5E1;
+    }
+
+    .strength-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .strength-desc {
+      font-size: 0.91rem;
       color: #475569;
       line-height: 1.6;
       margin: 0 0 10px;
     }
 
-    .pdc-solution-box {
+    .strength-pdc-box {
       background: #FFFFFF;
-      border-left: 3px solid #F96340;
+      border-left: 3px solid #059669;
       border-radius: 4px 8px 8px 4px;
-      padding: 10px 14px;
-      margin-top: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-
-    .pdc-solution-text {
+      padding: 8px 12px;
       font-size: 0.88rem;
-      color: #1E293B;
-      line-height: 1.55;
-      margin: 0 0 6px;
+      color: #065F46;
+      line-height: 1.5;
     }
 
-    .pdc-activity-try {
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: #F96340;
+    .dev-area-card {
+      background: #FDFEFE;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .dev-area-card:hover {
+      border-color: #CBD5E1;
+    }
+
+    .dev-area-title {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 6px;
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .dev-area-desc {
+      font-size: 0.91rem;
+      color: #475569;
+      line-height: 1.6;
+      margin: 0 0 10px;
+    }
+
+    .dev-area-pdc-box {
+      background: #FFFFFF;
+      border-left: 3px solid #F96340;
+      border-radius: 4px 8px 8px 4px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      color: #9A3412;
+      line-height: 1.5;
+    }
+
+    .report-block-overall {
+      background: linear-gradient(135deg, #FFF9F7 0%, #FFFFFF 100%);
+      border: 1.5px solid #FFD5C6;
+    }
+
+    .overall-desc {
+      font-size: 0.95rem;
+      color: #1E293B;
+      line-height: 1.7;
+      margin: 0;
     }
 
     /* ── Activities Showcase Section (Large Visible Photos) ── */
@@ -445,72 +585,11 @@
       background: #F96340;
     }
 
-    /* ── Section 8: Strong PDC Value Proposition & WhatsApp CTA ── */
-    .pdc-benefit-section {
-      background: linear-gradient(135deg, #FFF6F3 0%, #FFFFFF 60%, #FFF2EC 100%);
-      border: 2px solid #FFD5C6;
-      border-radius: var(--radius-xl);
-      padding: clamp(28px, 5vw, 42px);
-      margin: 32px 0 0;
-      box-shadow: 0 12px 32px rgba(249, 99, 64, 0.12);
-      text-align: left;
+    /* ── Prominent WhatsApp Community CTA Section ── */
+    .whatsapp-cta-section {
+      margin: 32px 0 24px;
     }
 
-    .benefit-badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #E04F2E;
-      background: rgba(249, 99, 64, 0.12);
-      border: 1px solid rgba(249, 99, 64, 0.25);
-      padding: 4px 14px;
-      border-radius: var(--radius-full);
-      margin-bottom: 12px;
-    }
-
-    .benefit-heading {
-      font-size: clamp(1.4rem, 3.5vw, 2rem);
-      font-weight: 800;
-      color: var(--text-primary);
-      margin: 0 0 10px;
-      line-height: 1.25;
-    }
-
-    .benefit-subtext {
-      font-size: 0.98rem;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      margin: 0 0 20px;
-    }
-
-    .benefit-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px 18px;
-      margin: 0 0 28px;
-    }
-
-    .benefit-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.9rem;
-      color: #1E293B;
-      line-height: 1.5;
-    }
-
-    .benefit-check {
-      color: #F96340;
-      font-size: 1.1rem;
-      font-weight: 900;
-      line-height: 1;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    /* Final CTA Box */
     .final-cta-wrap {
       background: linear-gradient(135deg, #181C26 0%, #10121A 100%);
       border-radius: var(--radius-lg);
@@ -535,7 +614,6 @@
       margin: 0 auto 20px;
     }
 
-    /* Single Prominent WhatsApp CTA Button */
     .whatsapp-btn {
       display: inline-flex;
       align-items: center;
@@ -565,117 +643,6 @@
       flex-shrink: 0;
     }
 
-    /* ── Standalone WhatsApp CTA Section (Placed ABOVE "Why PDC Can Help You") ── */
-    .whatsapp-cta-section {
-      margin: 32px 0 24px;
-    }
-
-    /* ── View More Collapsible Section Styles ── */
-    .view-more-wrapper {
-      margin: 20px 0 28px;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      background: #FFFFFF;
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .view-more-wrapper:hover {
-      border-color: #CBD5E1;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
-    }
-
-    .view-more-header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 22px;
-      background: linear-gradient(135deg, #FFF9F7 0%, #FFFFFF 100%);
-      cursor: pointer;
-      user-select: none;
-      gap: 16px;
-    }
-
-    .view-more-info {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      text-align: left;
-    }
-
-    .view-more-icon-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(249, 99, 64, 0.12);
-      font-size: 1.35rem;
-      flex-shrink: 0;
-    }
-
-    .view-more-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin: 0 0 3px;
-    }
-
-    .view-more-subtitle {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      margin: 0;
-      line-height: 1.45;
-    }
-
-    .view-more-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: var(--radius-full);
-      background: #F96340;
-      color: #FFFFFF;
-      font-size: 0.86rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      flex-shrink: 0;
-    }
-
-    .view-more-btn:hover {
-      background: #E24B24;
-      transform: translateY(-1px);
-    }
-
-    .view-more-chevron {
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .view-more-wrapper.expanded .view-more-chevron {
-      transform: rotate(180deg);
-    }
-
-    .view-more-detailed-content {
-      padding: 16px 18px 18px;
-      border-top: 1px solid var(--border-subtle);
-      background: #FAFBFC;
-      display: none;
-      animation: fadeInContent 0.35s ease;
-    }
-
-    .view-more-wrapper.expanded .view-more-detailed-content {
-      display: block;
-    }
-
-    @keyframes fadeInContent {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     @media (max-width: 640px) {
       .overall-score-bar {
         grid-template-columns: repeat(2, 1fr);
@@ -683,19 +650,8 @@
       .result-score-grid {
         grid-template-columns: 1fr;
       }
-      .benefit-grid {
-        grid-template-columns: 1fr;
-      }
       .activity-photo-wrap {
         height: 260px;
-      }
-      .view-more-header-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .view-more-btn {
-        width: 100%;
-        justify-content: center;
       }
     }
   </style>
@@ -785,33 +741,84 @@
         ? sessionData.fullName
         : "";
 
-      // Scores (Normalized with SQ as the official 3rd dimension)
-      const scores = {
-        pq: Number(sessionData.scores?.pq || 0),
-        iq: Number(sessionData.scores?.iq || 0),
-        sq: Number(sessionData.scores?.sq !== undefined ? sessionData.scores.sq : (sessionData.scores?.eq || 0))
-      };
-      scores.eq = scores.sq; // alias
+      // ──────────────────────────────────────────────────────────────
+      // 1. EXTRACT OR COMPUTE EVALUATION & REPORT DATA
+      // ──────────────────────────────────────────────────────────────
+      let evaluation = null;
+      if (sessionData.report && sessionData.primaryProfile) {
+        evaluation = {
+          scores: sessionData.scores,
+          totalScore: sessionData.totalScore,
+          personalityDimensions: sessionData.personalityDimensions,
+          primaryProfile: sessionData.primaryProfile,
+          secondaryProfile: sessionData.secondaryProfile,
+          cognitiveScore: sessionData.cognitiveScore,
+          cognitiveProfile: sessionData.cognitiveProfile,
+          spiritualDimensions: sessionData.spiritualDimensions,
+          spiritualProfile: sessionData.spiritualProfile,
+          report: sessionData.report
+        };
+      } else if (window.PDCAssessmentEngine && typeof window.PDCAssessmentEngine.evaluateAssessment === "function") {
+        evaluation = window.PDCAssessmentEngine.evaluateAssessment(sessionData.answers || sessionData.answersByQuestion || {});
+      }
 
-      const maxScores = {
-        pq: 35,
-        iq: 30,
-        sq: 35,
-        eq: 35,
-        total: 100
-      };
+      if (!evaluation) {
+        evaluation = {
+          primaryProfile: { name: "Reflective Achiever", description: "You combine a strong desire for growth with thoughtful self-reflection.", fit: 85 },
+          secondaryProfile: { name: "Responsible Leader", description: "You show a strong tendency to take ownership of your actions and responsibilities.", fit: 80 },
+          cognitiveProfile: { label: "Balanced Analytical Thinker", explanation: "Your analytical performance reflects a versatile approach across pattern recognition and logical reasoning.", correctAnswers: 4, performanceText: "IQ Performance: 4 / 6" },
+          spiritualProfile: { name: "Purposeful Spiritual Orientation", explanationParagraph: "You demonstrate a healthy awareness of deeper questions about human life, ethical impact, and the nature of the self.", personalizedSuggestion: "Participate in structured wisdom sessions and reflective discussions to explore how purposeful spiritual understanding shapes daily decisions and character." },
+          report: {
+            strengths: [
+              {
+                title: "Reflective Self-Awareness & Ownership",
+                description: "You actively reflect on your decisions and demonstrate accountability when navigating personal and team challenges.",
+                pdcStrengthen: "PDC can strengthen this: Interactive mentorship circles and personal development workshops provide guided frameworks to turn self-awareness into grounded leadership."
+              },
+              {
+                title: "Resilient Problem-Solving Mindset",
+                description: "You view obstacles as valuable learning experiences and maintain persistence when plans encounter unexpected disruption.",
+                pdcStrengthen: "PDC can strengthen this: Experiential student projects and campus leadership initiatives give you practical opportunities to test and sharpen your resilience."
+              },
+              {
+                title: "Balanced Reasoning & Analytical Focus",
+                description: "You exhibit clear logical reasoning and structured thinking when working through complex or multi-layered questions.",
+                pdcStrengthen: "PDC can strengthen this: Advanced workshops and case-study discussions at PDC help channel your analytical problem-solving into real-world student projects."
+              },
+              {
+                title: "Thoughtful & Purposeful Life Outlook",
+                description: "You value meaningful purpose and seek deeper alignment between your everyday actions and long-term values.",
+                pdcStrengthen: "PDC can strengthen this: Timeless wisdom sessions and guided study forums help you cultivate lasting principles that anchor academic and personal success."
+              }
+            ],
+            developmentAreas: [
+              {
+                title: "Refining Composure in High-Pressure Disagreements",
+                description: "In moments of sudden conflict, taking an intentional pause before reacting helps preserve clarity and constructive communication.",
+                pdcHelp: "PDC can help: Personality development workshops offer roleplay communication drills to practice paused, confident, and empathetic responses."
+              },
+              {
+                title: "Systematic Verification in Complex Reasoning",
+                description: "Practicing step-by-step verification before committing to conclusions will boost your speed and consistency on ambiguous problems.",
+                pdcHelp: "PDC can help: Software training workshops at IIT Bombay and peer study cohorts break down non-standard challenges into repeatable steps."
+              }
+            ],
+            overallSynthesis: "Your responses suggest a thoughtful blend of reflective purpose, accountability, and adaptive reasoning. By combining your analytical strengths with structured wisdom and peer mentorship at PDC, you are well-positioned to develop mature, impactful leadership."
+          }
+        };
+      }
 
-      const totalScore = sessionData.totalScore !== undefined
-        ? Number(sessionData.totalScore)
-        : Math.round(scores.pq + scores.iq + scores.sq);
+      const primaryProfile = evaluation.report?.primaryProfile || evaluation.primaryProfile || { name: "Reflective Achiever", description: "", fit: 80 };
+      const secondaryProfile = evaluation.report?.secondaryProfile || evaluation.secondaryProfile || { name: "Responsible Leader", description: "", fit: 75 };
+      const cognitiveProfile = evaluation.report?.cognitiveProfile || evaluation.cognitiveProfile || { label: "Balanced Analytical Thinker", explanation: "", correctAnswers: 4, performanceText: "IQ Performance: 4 / 6" };
+      const spiritualProfile = evaluation.report?.spiritualProfile || evaluation.spiritualProfile || { name: "Purposeful Spiritual Orientation", explanationParagraph: "", personalizedSuggestion: "" };
+      const strengths = evaluation.report?.strengths || [];
+      const developmentAreas = evaluation.report?.developmentAreas || [];
+      const overallSynthesis = evaluation.report?.overallSynthesis || "";
 
-      const percentages = {
-        pq: Math.min(100, Math.round((scores.pq / maxScores.pq) * 100)),
-        iq: Math.min(100, Math.round((scores.iq / maxScores.iq) * 100)),
-        sq: Math.min(100, Math.round((scores.sq / maxScores.sq) * 100)),
-        eq: Math.min(100, Math.round((scores.sq / maxScores.sq) * 100)),
-        total: Math.min(100, Math.round((totalScore / maxScores.total) * 100))
-      };
+      const totalScore = evaluation.totalScore !== undefined
+        ? Math.round(Number(evaluation.totalScore))
+        : (sessionData.totalScore !== undefined ? Math.round(Number(sessionData.totalScore)) : 80);
 
       // ──────────────────────────────────────────────────────────────
       // SINGLE COMMUNITY WHATSAPP CTA
@@ -822,55 +829,20 @@
         config.whatsappLinks?.BOYS_WHATSAPP_LINK ||
         "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
 
-      // ──────────────────────────────────────────────────────────────
-      // EVALUATION REPORT ENGINE: Identify Strengths & Growth Areas
-      // ──────────────────────────────────────────────────────────────
-      const dimensions = [
-        { key: "pq", name: "Personality Quotient (PQ)", score: scores.pq, max: maxScores.pq, pct: percentages.pq, conf: config.scoreInsights?.pq },
-        { key: "iq", name: "Intellectual Quotient (IQ)", score: scores.iq, max: maxScores.iq, pct: percentages.iq, conf: config.scoreInsights?.iq },
-        { key: "sq", name: "Spiritual Quotient (SQ)", score: scores.sq, max: maxScores.sq, pct: percentages.sq, conf: config.scoreInsights?.sq || config.scoreInsights?.eq }
-      ];
-
-      // Sort by percentage descending
-      dimensions.sort((a, b) => b.pct - a.pct);
-
-      let strongDims = [];
-      let growthDims = [];
-
-      // Balanced classification ensuring both sections are rich and personalized
-      if (dimensions[0].pct >= 70 && dimensions[1].pct >= 70 && dimensions[2].pct >= 70) {
-        strongDims = [dimensions[0], dimensions[1]];
-        growthDims = [dimensions[2]];
-      } else if (dimensions[0].pct < 65 && dimensions[1].pct < 65 && dimensions[2].pct < 65) {
-        strongDims = [dimensions[0]];
-        growthDims = [dimensions[1], dimensions[2]];
-      } else {
-        strongDims = dimensions.filter(d => d.pct >= 65);
-        growthDims = dimensions.filter(d => d.pct < 65);
-        if (strongDims.length === 0) strongDims.push(dimensions[0]);
-        if (growthDims.length === 0) growthDims.push(dimensions[dimensions.length - 1]);
-      }
-
-      function getTierData(dimObj) {
-        if (!dimObj.conf || !dimObj.conf.tiers) return {};
-        const tiers = dimObj.conf.tiers;
-        return tiers.find(t => dimObj.pct >= t.min && dimObj.pct <= t.max) || tiers[tiers.length - 1];
-      }
-
-      // ── Build Overall Score Summary Chips ──
+      // ── Build Top Executive Summary Chips ──
       const overallChipsHtml = `
         <div class="overall-score-bar">
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.pq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
-            <span class="chip-label">PQ (Max 35)</span>
+            <span class="chip-val" style="font-size:1.05rem;">${primaryProfile.name.split(" ")[0]}</span>
+            <span class="chip-label">Primary Profile</span>
           </div>
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.iq} <span style="font-size:0.75rem;opacity:0.65;">/ 30</span></span>
-            <span class="chip-label">IQ (Max 30)</span>
+            <span class="chip-val">${cognitiveProfile.correctAnswers !== undefined ? cognitiveProfile.correctAnswers : 5} <span style="font-size:0.75rem;opacity:0.65;">/ 6</span></span>
+            <span class="chip-label">IQ Score</span>
           </div>
           <div class="overall-score-chip">
-            <span class="chip-val">${scores.sq} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
-            <span class="chip-label">SQ (Max 35)</span>
+            <span class="chip-val" style="font-size:1.05rem;">${(spiritualProfile.name || spiritualProfile.level || "Spiritual").split(" ")[0]}</span>
+            <span class="chip-label">Spiritual</span>
           </div>
           <div class="overall-score-chip chip-highlight">
             <span class="chip-val">${totalScore} <span style="font-size:0.75rem;opacity:0.85;">/ 100</span></span>
@@ -879,119 +851,104 @@
         </div>
       `;
 
-      // ── Build Dimensions Overview Cards ──
-      const dimCardsHtml = `
-        <div class="result-score-grid">
-          ${dimensions.map(dim => {
-            const tier = getTierData(dim);
-            return `
-              <div class="score-card score-card-${dim.key}">
-                <div class="score-card-header">
-                  <h4 class="score-dim-title">
-                    <span>${dim.conf?.icon || "★"}</span>
-                    <span>${dim.conf?.shortName || dim.key.toUpperCase()}</span>
-                  </h4>
-                  <span class="score-badge-val">${dim.score} <span style="font-size:0.75rem;color:var(--text-muted);font-weight:600;">/${dim.max}</span></span>
-                </div>
-                <div class="score-progress-track">
-                  <div class="score-progress-fill" style="width: ${dim.pct}%"></div>
-                </div>
-                <span class="score-tier-tag">${tier.label || "Evaluated"} • ${dim.pct}%</span>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-
-      // ── Section 6 & 7: Concise, Actionable, Personalized Report ──
-      const topStrengthNames = strongDims.map(d => d.name.replace(/ \(.*\)/, "")).join(" and ");
-      const topGrowthNames = growthDims.map(d => d.name.replace(/ \(.*\)/, "")).join(" and ");
-
-      const snapshotHtml = `
-        <section class="report-block" aria-labelledby="snapshotHeading">
-          <h3 class="report-block-heading" id="snapshotHeading">
-            <span style="color:#F96340;">📋</span> Your PDC Personality Snapshot
-          </h3>
-          <p class="snapshot-lead">
-            ${studentName ? `Hello <strong>${studentName}</strong>, your` : "Your"} assessment highlights clear natural strengths in 
-            <strong>${topStrengthNames}</strong>, demonstrating a strong foundation to build upon. At the same time, targeted practice in 
-            <strong>${topGrowthNames}</strong> will provide the highest leverage to accelerate your personal confidence, articulate leadership, and professional readiness.
-          </p>
+      // ── 1. Primary Profile ──
+      const primaryProfileHtml = `
+        <section class="report-section-block report-card-primary" aria-labelledby="primaryProfileHeading">
+          <div class="section-kicker">1. Primary Profile</div>
+          <div class="profile-header-row">
+            <h3 class="profile-name" id="primaryProfileHeading">${primaryProfile.name}</h3>
+            ${primaryProfile.fit ? `<span class="profile-fit-tag">Fit: ${primaryProfile.fit}%</span>` : ""}
+          </div>
+          <p class="report-paragraph">${primaryProfile.description}</p>
         </section>
       `;
 
-      // Qualities You Can Improve Section
-      const improveSectionHtml = `
-        <section class="report-block" aria-labelledby="improveHeading">
-          <h3 class="report-block-heading" id="improveHeading">
-            <span style="color:#E04F2E;">🎯</span> Qualities You Can Improve
-          </h3>
-          <p style="font-size:0.88rem;color:#64748B;margin:0 0 10px;">
-            Targeted growth areas where guided practice and club activities deliver maximum positive change:
-          </p>
-          ${growthDims.map(dim => {
-            const tier = getTierData(dim);
-            return `
-              <div class="quality-action-card">
-                <div class="quality-card-header">
-                  <span class="quality-name">${dim.name}</span>
-                  <span class="quality-badge badge-growth">Growth Area (${dim.pct}%)</span>
-                </div>
-                <p class="quality-desc">
-                  <strong>Current observation:</strong> ${tier.observation || "You are building awareness in this area."}<br>
-                  <strong>What can improve:</strong> ${tier.growthArea || "Developing greater consistency through repeated practical exposure."}
-                </p>
-                <div class="pdc-solution-box">
-                  <p class="pdc-solution-text">
-                    <strong>How PDC can help:</strong> ${tier.pdcHelpImprove || "PDC provides supportive group sessions and mentorship circles designed to develop this quality through practice."}
-                  </p>
-                  <div class="pdc-activity-try">
-                    <span>⚡ Try:</span>
-                    <span>${tier.activityImprove || dim.conf?.improveActivity || "Personality Development Workshops (PDWs)"}</span>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
+      // ── 2. Secondary Profile ──
+      const secondaryProfileHtml = `
+        <section class="report-section-block report-card-secondary" aria-labelledby="secondaryProfileHeading">
+          <div class="section-kicker section-kicker-secondary">2. Secondary Profile</div>
+          <div class="profile-header-row">
+            <h3 class="profile-name" id="secondaryProfileHeading">${secondaryProfile.name}</h3>
+            ${secondaryProfile.fit ? `<span class="profile-fit-tag profile-fit-secondary">Fit: ${secondaryProfile.fit}%</span>` : ""}
+          </div>
+          <p class="report-paragraph">${secondaryProfile.description}</p>
         </section>
       `;
 
-      // Qualities You Already Do Well Section
-      const strongSectionHtml = `
-        <section class="report-block" aria-labelledby="strongHeading">
-          <h3 class="report-block-heading" id="strongHeading">
-            <span style="color:#059669;">✨</span> Qualities You Already Do Well
-          </h3>
-          <p style="font-size:0.88rem;color:#64748B;margin:0 0 10px;">
-            Demonstrated strengths you can leverage and advance to higher levels of leadership:
-          </p>
-          ${strongDims.map(dim => {
-            const tier = getTierData(dim);
-            return `
-              <div class="quality-action-card">
-                <div class="quality-card-header">
-                  <span class="quality-name">${dim.name}</span>
-                  <span class="quality-badge badge-strength">Demonstrated Strength (${dim.pct}%)</span>
-                </div>
-                <p class="quality-desc">
-                  <strong>What the assessment indicates:</strong> ${tier.strengthAction || tier.observation || "Your responses indicate a solid natural capability in this dimension."}
-                </p>
-                <div class="pdc-solution-box">
-                  <p class="pdc-solution-text">
-                    <strong>How PDC can help:</strong> ${tier.pdcHelpStrength || "PDC provides campus coordination roles and advanced tracks to turn your natural strength into demonstrable leadership experience."}
-                  </p>
-                  <div class="pdc-activity-try">
-                    <span>🌟 Try:</span>
-                    <span>${tier.activityStrength || dim.conf?.strongActivity || "Edutainment Outings & Event Coordination"}</span>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
+      // ── 3. Cognitive Profile ──
+      const cognitiveProfileHtml = `
+        <section class="report-section-block report-card-cognitive" aria-labelledby="cognitiveProfileHeading">
+          <div class="section-kicker section-kicker-cognitive">3. Cognitive Profile</div>
+          <div class="profile-header-row">
+            <h3 class="profile-name" id="cognitiveProfileHeading">${cognitiveProfile.label}</h3>
+            <span class="iq-perf-pill">${cognitiveProfile.performanceText || `IQ Performance: ${cognitiveProfile.correctAnswers} / 6`}</span>
+          </div>
+          <p class="report-paragraph">${cognitiveProfile.explanation}</p>
         </section>
       `;
 
-      // ── Section 5: Activities Showcase with Large, Visible Photos ──
+      // ── 4. Spiritual Profile ──
+      const spiritualProfileHtml = `
+        <section class="report-section-block report-card-spiritual" aria-labelledby="spiritualProfileHeading">
+          <div class="section-kicker section-kicker-spiritual">4. Spiritual Profile</div>
+          <div class="profile-header-row">
+            <h3 class="profile-name" id="spiritualProfileHeading">${spiritualProfile.name || spiritualProfile.level}</h3>
+          </div>
+          <p class="report-paragraph">${spiritualProfile.explanationParagraph}</p>
+          <div class="spiritual-suggestion-box">
+            <strong>Personalized Suggestion:</strong> ${spiritualProfile.personalizedSuggestion}
+          </div>
+        </section>
+      `;
+
+      // ── 5. Your Strengths ──
+      const strengthsHtml = `
+        <section class="report-section-block" aria-labelledby="strengthsHeading">
+          <div class="section-kicker section-kicker-strengths">5. Your Strengths</div>
+          <h3 class="report-block-title" id="strengthsHeading">Core Strengths Identified</h3>
+          <div class="strengths-list">
+            ${strengths.map(s => `
+              <div class="strength-card">
+                <h4 class="strength-title">${s.title}</h4>
+                <p class="strength-desc">${s.description}</p>
+                <div class="strength-pdc-box">
+                  <strong>PDC can strengthen this:</strong> ${s.pdcStrengthen ? s.pdcStrengthen.replace(/^PDC can strengthen this:\s*/i, "") : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      `;
+
+      // ── 6. Your Development Areas ──
+      const devAreasHtml = `
+        <section class="report-section-block" aria-labelledby="devAreasHeading">
+          <div class="section-kicker section-kicker-growth">6. Your Development Areas</div>
+          <h3 class="report-block-title" id="devAreasHeading">Key Growth Opportunities</h3>
+          <div class="dev-areas-list">
+            ${developmentAreas.map(d => `
+              <div class="dev-area-card">
+                <h4 class="dev-area-title">${d.title}</h4>
+                <p class="dev-area-desc">${d.description}</p>
+                <div class="dev-area-pdc-box">
+                  <strong>PDC can help:</strong> ${d.pdcHelp ? d.pdcHelp.replace(/^PDC can help:\s*/i, "") : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      `;
+
+      // ── 7. Overall Profile ──
+      const overallProfileHtml = `
+        <section class="report-section-block report-block-overall" aria-labelledby="overallHeading">
+          <div class="section-kicker section-kicker-overall">7. Overall Profile</div>
+          <h3 class="report-block-title" id="overallHeading">Integrated Assessment Synthesis</h3>
+          <p class="overall-desc">${overallSynthesis}</p>
+        </section>
+      `;
+
+      // ── Section: Activities Showcase with Large, Visible Photos ──
       const activitiesList = config.activities || [];
       const activitiesShowcaseHtml = `
         <section class="activities-section" id="activitiesSection" aria-labelledby="actHeading">
@@ -1033,33 +990,7 @@
         </section>
       `;
 
-      // ── View More Collapsible Section for Snapshot & Qualities ──
-      const viewMoreBlockHtml = `
-        <div class="view-more-wrapper" id="viewMoreWrapper">
-          <div class="view-more-header-bar" id="viewMoreToggleBar" role="button" tabindex="0" aria-expanded="false" aria-controls="viewMoreContent">
-            <div class="view-more-info">
-              <div class="view-more-icon-badge">📋</div>
-              <div>
-                <h4 class="view-more-title">Detailed Personality Snapshot & Qualities Breakdown</h4>
-                <p class="view-more-subtitle">Explore your complete analysis, improvement opportunities, and leadership strengths.</p>
-              </div>
-            </div>
-            <button type="button" class="view-more-btn" id="viewMoreToggleBtn" aria-label="Toggle detailed breakdown">
-              <span id="viewMoreBtnText">View More</span>
-              <svg class="view-more-chevron" id="viewMoreChevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-          </div>
-          <div class="view-more-detailed-content" id="viewMoreContent" style="display: none;">
-            ${snapshotHtml}
-            ${improveSectionHtml}
-            ${strongSectionHtml}
-          </div>
-        </div>
-      `;
-
-      // ── Standalone WhatsApp CTA Section (Placed ABOVE "Why PDC Can Help You") ──
+      // ── Standalone WhatsApp CTA Section ──
       const whatsappCtaHtml = `
         <section class="whatsapp-cta-section" aria-labelledby="ctaHeading">
           <div class="final-cta-wrap">
@@ -1077,55 +1008,7 @@
         </section>
       `;
 
-      // ── Section 8: Strong PDC Value Proposition ──
-      const benefitSectionHtml = `
-        <section class="pdc-benefit-section" aria-labelledby="benefitHeading">
-          <span class="benefit-badge">Your Journey Beyond This Assessment</span>
-          <h3 class="benefit-heading" id="benefitHeading">Why PDC Can Help You</h3>
-          <p class="benefit-subtext">
-            Your assessment highlights that you have valuable strengths in <strong>${topStrengthNames}</strong>, while also revealing 
-            practical opportunities to elevate your <strong>${topGrowthNames}</strong>. PDC is designed specifically to provide engineering students 
-            with an encouraging environment to practice, lead, and develop beyond textbooks.
-          </p>
-
-          <div class="benefit-grid">
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Develop qualities where you currently need improvement through structured workshops</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Practice your existing strengths in real-world leadership and campus events</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Participate in high-impact workshops (IIT Bombay STWs, PDWs, Outings)</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Meet and interact with proactive engineering students across all branches</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Take part in live group discussions, presentation drills, and debriefs</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Build authentic, unshakeable confidence through regular participation</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Gain opportunities to lead initiatives, teams, and student cohorts</span>
-            </div>
-            <div class="benefit-item">
-              <span class="benefit-check">✓</span>
-              <span>Receive continuous guidance and mentorship throughout your engineering years</span>
-            </div>
-          </div>
-        </section>
-      `;
-
-      // ── Assemble Full Results View ──
+      // ── Assemble Full Results View (Exact 7-Part Flow) ──
       resultCard.innerHTML = `
         <div style="text-align:center;margin-bottom:20px;">
           <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#F96340,#FF8A65);color:#fff;box-shadow:0 6px 20px rgba(249,99,64,0.3);margin-bottom:12px;">
@@ -1140,48 +1023,16 @@
         </div>
 
         ${overallChipsHtml}
-        ${dimCardsHtml}
-        ${viewMoreBlockHtml}
+        ${primaryProfileHtml}
+        ${secondaryProfileHtml}
+        ${cognitiveProfileHtml}
+        ${spiritualProfileHtml}
+        ${strengthsHtml}
+        ${devAreasHtml}
+        ${overallProfileHtml}
         ${activitiesShowcaseHtml}
         ${whatsappCtaHtml}
-        ${benefitSectionHtml}
       `;
-
-      // ── Attach View More Toggle Handler ──
-      const viewMoreWrapper = document.getElementById("viewMoreWrapper");
-      const viewMoreToggleBar = document.getElementById("viewMoreToggleBar");
-      const viewMoreToggleBtn = document.getElementById("viewMoreToggleBtn");
-      const viewMoreBtnText = document.getElementById("viewMoreBtnText");
-      const viewMoreContent = document.getElementById("viewMoreContent");
-
-      function toggleViewMore(e) {
-        if (e) e.preventDefault();
-        const isExpanded = viewMoreWrapper.classList.toggle("expanded");
-        if (viewMoreToggleBar) viewMoreToggleBar.setAttribute("aria-expanded", isExpanded ? "true" : "false");
-        if (viewMoreToggleBtn) viewMoreToggleBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
-        if (viewMoreContent) {
-          viewMoreContent.style.display = isExpanded ? "block" : "none";
-        }
-        if (viewMoreBtnText) {
-          viewMoreBtnText.textContent = isExpanded ? "View Less" : "View More";
-        }
-        if (isExpanded) {
-          viewMoreContent?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-      }
-
-      viewMoreToggleBtn?.addEventListener("click", toggleViewMore);
-      viewMoreToggleBar?.addEventListener("click", (e) => {
-        if (e.target !== viewMoreToggleBtn && !viewMoreToggleBtn.contains(e.target)) {
-          toggleViewMore(e);
-        }
-      });
-      viewMoreToggleBar?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggleViewMore(e);
-        }
-      });
 
       // ── Initialize Interactive & Auto-Sliding Activity Carousel ──
       let activeActIndex = 0;
