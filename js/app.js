@@ -1366,8 +1366,8 @@ if (stepperContainer) {
       if (!branch) {
         if (entryBranchError) {
           entryBranchError.textContent = "⚠️ Please select your branch to continue.";
-          entryBranchError.style.display = "block";
-          entryBranchError.scrollIntoView({ behavior: "smooth", block: "start" });
+
+
         }
         entryBranchSelect.focus();
         return;
