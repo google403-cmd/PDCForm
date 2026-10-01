@@ -1367,7 +1367,7 @@ if (stepperContainer) {
         if (entryBranchError) {
           entryBranchError.textContent = "⚠️ Please select your branch to continue.";
           entryBranchError.style.display = "block";
-          entryBranchError.scrollIntoView({ behavior: "smooth", block: "center" });
+          entryBranchError.scrollIntoView({ behavior: "smooth", block: "start" });
         }
         entryBranchSelect.focus();
         return;
@@ -1435,7 +1435,7 @@ if (stepperContainer) {
     try {
       history.pushState(null, "", window.location.pathname);
     } catch (e) {}
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" , block: "start"});
   }
 
   function enterBibwewadiAssessment(branch, pushHistory = true, scrollToAssessment = true) {
