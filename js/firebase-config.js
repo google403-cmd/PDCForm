@@ -22,7 +22,7 @@ const getFirebaseConfig = () => {
     : {};
 
   return {
-    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
+    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "",
     authDomain: injectedConfig.authDomain || globalConfig.authDomain || "pdclub-e9f59.firebaseapp.com",
     projectId: injectedConfig.projectId || globalConfig.projectId || "pdclub-e9f59",
     storageBucket: injectedConfig.storageBucket || globalConfig.storageBucket || "pdclub-e9f59.firebasestorage.app",
