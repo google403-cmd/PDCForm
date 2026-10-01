@@ -65,6 +65,22 @@ console.log('✅ Requirement 7.2: firebase-config.js manages WhatsApp joined cou
 assert(appJs.includes('whatsappJoined: formData.joinedCommunity === "yes"'), 'app.js must pass whatsappJoined field in payload');
 console.log('✅ Requirement 7.3: app.js populates database WhatsApp community management fields');
 
+// 8. Dedicated pdc_whatsapp_joins collection for checking WhatsApp joins
+assert(firestoreRules.includes('match /pdc_whatsapp_joins/{joinId}'), 'firestore.rules must include pdc_whatsapp_joins collection');
+assert(firestoreRules.includes('request.resource.data.whatsappNumber is string'), 'pdc_whatsapp_joins must validate whatsappNumber');
+console.log('✅ Requirement 8.1: firestore.rules declares dedicated pdc_whatsapp_joins collection');
+
+assert(firebaseConfigJs.includes('WHATSAPP_JOINS: "pdc_whatsapp_joins"'), 'firebase-config.js must include WHATSAPP_JOINS collection name');
+assert(firebaseConfigJs.includes('async function recordWhatsAppJoin'), 'firebase-config.js must implement recordWhatsAppJoin');
+assert(firebaseConfigJs.includes('COLLECTIONS.WHATSAPP_JOINS'), 'firebase-config.js must query WHATSAPP_JOINS');
+console.log('✅ Requirement 8.2: firebase-config.js writes and queries pdc_whatsapp_joins collection');
+
+// 9. Dead code removal verification
+assert(!resultHtml.includes('.result-score-grid'), 'result.html must not contain unused .result-score-grid CSS');
+assert(!resultHtml.includes('.score-card-pq'), 'result.html must not contain unused .score-card-pq CSS');
+console.log('✅ Requirement 9: Unused score grid styles removed from result.html');
+
 console.log("==================================================");
 console.log("ALL REQUIREMENTS & POPUP SUPPRESSION TESTS PASSED!");
 console.log("==================================================");
+

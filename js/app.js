@@ -557,6 +557,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (communityJoinBtn) {
       communityJoinBtn.addEventListener("click", () => {
         selectCommunityChoice("yes");
+        if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
+          window.PDCBackend.recordWhatsAppJoin({
+            fullName: formData.personal?.fullName || "Student",
+            email: formData.personal?.email || "",
+            whatsappNumber: formData.personal?.whatsappNumber || "",
+            campus: formData.personal?.campus || "Bibwewadi",
+            branch: formData.personal?.branch || "",
+            division: formData.personal?.division || "",
+            year: formData.personal?.year || "FY",
+            source: "assessment_community_step"
+          }).catch(() => {});
+        }
       });
     }
 
@@ -590,7 +602,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const joinDirectBtn = document.getElementById("joinCommunityDirectBtn");
     if (joinDirectBtn) {
       joinDirectBtn.addEventListener("click", () => {
-        if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+        if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
+          window.PDCBackend.recordWhatsAppJoin({
+            fullName: formData.personal?.fullName || "Student",
+            email: formData.personal?.email || "",
+            whatsappNumber: formData.personal?.whatsappNumber || "",
+            campus: formData.personal?.campus || "Bibwewadi",
+            branch: formData.personal?.branch || "",
+            division: formData.personal?.division || "",
+            year: formData.personal?.year || "FY",
+            source: "direct_cta"
+          }).catch(() => {});
+        } else if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
           window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
         }
       });

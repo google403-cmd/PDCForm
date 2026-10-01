@@ -189,97 +189,6 @@
       background: #FFFFFF;
     }
 
-    /* Dimensions Score Grid */
-    .result-score-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 24px 0 32px;
-    }
-
-    .score-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 18px 16px;
-      text-align: left;
-      box-shadow: var(--shadow-sm);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .score-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 4px;
-    }
-
-    .score-card-pq::before { background: #F96340; }
-    .score-card-iq::before { background: #2563EB; }
-    .score-card-sq::before, .score-card-eq::before { background: #D97706; }
-
-    .score-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .score-dim-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .score-badge-val {
-      font-size: 1.35rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .score-card-pq .score-badge-val { color: #F96340; }
-    .score-card-iq .score-badge-val { color: #2563EB; }
-    .score-card-sq .score-badge-val, .score-card-eq .score-badge-val { color: #D97706; }
-
-    .score-progress-track {
-      height: 6px;
-      background: #F1F3F5;
-      border-radius: 99px;
-      overflow: hidden;
-      margin: 10px 0 8px;
-    }
-
-    .score-progress-fill {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .score-card-pq .score-progress-fill { background: linear-gradient(90deg, #FF8A65, #F96340); }
-    .score-card-iq .score-progress-fill { background: linear-gradient(90deg, #60A5FA, #2563EB); }
-    .score-card-sq .score-progress-fill, .score-card-eq .score-progress-fill { background: linear-gradient(90deg, #FBBF24, #D97706); }
-
-    .score-tier-tag {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
-      display: inline-block;
-      margin-top: auto;
-    }
-
-    .score-card-pq .score-tier-tag { background: rgba(249, 99, 64, 0.1); color: #E04F2E; }
-    .score-card-iq .score-tier-tag { background: rgba(37, 99, 235, 0.1); color: #1D4ED8; }
-    .score-card-sq .score-tier-tag, .score-card-eq .score-tier-tag { background: rgba(217, 119, 6, 0.12); color: #B45309; }
-
     /* ── 7-Part Personalized Report Card Styles ── */
     .report-section-block {
       background: #FFFFFF;
@@ -759,9 +668,6 @@
     @media (max-width: 640px) {
       .overall-score-bar {
         grid-template-columns: repeat(2, 1fr);
-      }
-      .result-score-grid {
-        grid-template-columns: 1fr;
       }
       .activity-photo-wrap {
         height: 260px;
@@ -1477,7 +1383,13 @@
         // Click widget to open WhatsApp and track joined count for database management
         widgetCard.addEventListener("click", (e) => {
           if (e.target === dismissBtn || dismissBtn?.contains(e.target)) return;
-          if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+          if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
+            window.PDCBackend.recordWhatsAppJoin({
+              fullName: studentName || "Student",
+              campus: sessionData?.campus || "Bibwewadi",
+              source: "result_page_live_widget"
+            }).catch(() => {});
+          } else if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
             window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
           }
           window.open(targetCommunityLink, "_blank", "noopener,noreferrer");
@@ -1497,7 +1409,13 @@
 
       // Track WhatsApp button click on report page for database management
       document.getElementById("joinCommunityBtn")?.addEventListener("click", () => {
-        if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+        if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
+          window.PDCBackend.recordWhatsAppJoin({
+            fullName: studentName || "Student",
+            campus: sessionData?.campus || "Bibwewadi",
+            source: "result_page_cta"
+          }).catch(() => {});
+        } else if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
           window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
         }
       });

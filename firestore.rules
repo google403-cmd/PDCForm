@@ -156,6 +156,17 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ───────────────────────────────────────────────────────────────────
+    // 5. WHATSAPP COMMUNITY JOINS (Dedicated collection to check joins)
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_whatsapp_joins/{joinId} {
+      allow read: if true;
+      allow create: if request.resource.data.fullName is string
+        && request.resource.data.whatsappNumber is string
+        && request.resource.data.timestamp is string;
+      allow update, delete: if false;
+    }
+
     // Explicitly deny access to any other collections
     match /{document=**} {
       allow read, write: if false;
