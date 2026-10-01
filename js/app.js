@@ -586,6 +586,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Direct WhatsApp Community CTA Button
+    const joinDirectBtn = document.getElementById("joinCommunityDirectBtn");
+    if (joinDirectBtn) {
+      joinDirectBtn.addEventListener("click", () => {
+        if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+          window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
+        }
+      });
+    }
+
     function selectCommunityChoice(val) {
       choiceCards.forEach(c => {
         const isMatch = c.dataset.value === val;
@@ -933,7 +943,11 @@ document.addEventListener("DOMContentLoaded", () => {
       cognitiveProfile: evaluation ? evaluation.cognitiveProfile.label : "",
       spiritualDimensions: evaluation ? evaluation.spiritualProfile.dimensions : {},
       spiritualProfile: evaluation ? evaluation.spiritualProfile.name : "",
-      report: evaluation ? evaluation.report : {}
+      report: evaluation ? evaluation.report : {},
+      // Community & WhatsApp tracking for database management
+      joinedCommunity: formData.joinedCommunity || "yes",
+      whatsappJoined: formData.joinedCommunity === "yes",
+      hasJoinedWhatsapp: formData.joinedCommunity === "yes"
     };
 
     console.log("Submitting PDC assessment payload:", payload);

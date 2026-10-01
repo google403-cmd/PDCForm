@@ -2,7 +2,7 @@ const fs = require('fs');
 const assert = require('assert');
 
 console.log("==================================================");
-console.log("TESTING 4 NEW USER REQUIREMENTS & VIEW MORE REPORT");
+console.log("TESTING ALL REQUIREMENTS & POPUP SUPPRESSION < 50");
 console.log("==================================================");
 
 // 1. Consent checkbox verification in app.js
@@ -36,12 +36,35 @@ assert(resultHtml.includes('id="viewMoreToggleBtn"'), 'result.html must contain 
 assert(resultHtml.includes('toggleViewMore'), 'result.html must contain toggleViewMore handler');
 console.log('✅ View More: 7 Detailed assessment report sections enclosed in collapsible View More container');
 
-// 5. Real people registered after 50 submissions
+// 5. Strict popup suppression when < 50 registered in DB
+assert(resultHtml.includes('id="liveJoinWidget" class="live-join-widget" aria-live="polite" aria-label="Recent Community Members" style="display: none;"'), 'liveJoinWidget must be hidden by default on load');
+assert(resultHtml.includes('id="liveJoinCard" role="status" style="display: none;"'), 'liveJoinCard must be hidden by default on load');
+assert(resultHtml.includes('if (latestRegisteredCount < MIN_DISPLAY_THRESHOLD)'), 'showNotification must strictly abort popup if registered count is below 50');
+console.log('✅ Requirement 5: Popups strictly suppressed until more than 50 registered in DB');
+
+// 6. Real people registered after 50 submissions
 assert(resultHtml.includes('latestRegisteredCount >= MIN_DISPLAY_THRESHOLD'), 'result.html must check threshold count');
 assert(resultHtml.includes('pdc_real_registrations'), 'result.html must check pdc_real_registrations');
 assert(appJs.includes('pdc_real_registrations'), 'app.js must cache real student registrations');
-console.log('✅ Requirement 4: Real registered people shown when registrations >= 50');
+console.log('✅ Requirement 6: Real registered people shown when registrations >= 50');
+
+// 7. Database management field for WhatsApp community joins
+const firestoreRules = fs.readFileSync('firestore.rules', 'utf8');
+assert(firestoreRules.includes("'joinedCommunity'"), 'firestore.rules must allow joinedCommunity in payload');
+assert(firestoreRules.includes("'whatsappJoined'"), 'firestore.rules must allow whatsappJoined in payload');
+assert(firestoreRules.includes("'hasJoinedWhatsapp'"), 'firestore.rules must allow hasJoinedWhatsapp in payload');
+assert(firestoreRules.includes('whatsappJoinedCount is number'), 'firestore.rules must allow whatsappJoinedCount in pdc_stats');
+console.log('✅ Requirement 7.1: firestore.rules validates WhatsApp joined management fields');
+
+const firebaseConfigJs = fs.readFileSync('js/firebase-config.js', 'utf8');
+assert(firebaseConfigJs.includes('incrementWhatsAppJoinedCounter'), 'firebase-config.js must export incrementWhatsAppJoinedCounter');
+assert(firebaseConfigJs.includes('getWhatsAppJoinedCount'), 'firebase-config.js must export getWhatsAppJoinedCount');
+assert(firebaseConfigJs.includes('whatsappJoinedCount: firebase.firestore.FieldValue.increment(1)'), 'firebase-config.js must increment WhatsApp joined in pdc_stats');
+console.log('✅ Requirement 7.2: firebase-config.js manages WhatsApp joined counter in database');
+
+assert(appJs.includes('whatsappJoined: formData.joinedCommunity === "yes"'), 'app.js must pass whatsappJoined field in payload');
+console.log('✅ Requirement 7.3: app.js populates database WhatsApp community management fields');
 
 console.log("==================================================");
-console.log("ALL NEW USER REQUIREMENTS VERIFIED SUCCESSFULLY!");
+console.log("ALL REQUIREMENTS & POPUP SUPPRESSION TESTS PASSED!");
 console.log("==================================================");

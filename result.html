@@ -1316,6 +1316,7 @@
       ];
 
       function initLiveJoinWidget() {
+        const widgetContainer = document.getElementById("liveJoinWidget");
         const widgetCard = document.getElementById("liveJoinCard");
         const liveAvatar = document.getElementById("liveAvatar");
         const liveName = document.getElementById("liveName");
@@ -1325,6 +1326,11 @@
         const dismissBtn = document.getElementById("liveJoinDismiss");
 
         if (!widgetCard) return;
+
+        // Ensure popup is strictly hidden by default until > 50 registered in DB
+        if (widgetContainer) widgetContainer.style.display = "none";
+        widgetCard.style.display = "none";
+        widgetCard.classList.remove("visible");
 
         let currentIndex = 0;
         let isDismissed = false;
@@ -1347,9 +1353,15 @@
           const renderPill = (val) => {
             latestRegisteredCount = val;
             if (val >= MIN_DISPLAY_THRESHOLD) {
+              if (widgetContainer) widgetContainer.style.display = "block";
               liveCounter.style.display = "inline-block";
               liveCounter.textContent = `${val} registered in total`;
             } else {
+              if (widgetContainer) widgetContainer.style.display = "none";
+              if (widgetCard) {
+                widgetCard.classList.remove("visible");
+                widgetCard.style.display = "none";
+              }
               liveCounter.style.display = "none";
               liveCounter.textContent = "";
             }
@@ -1401,13 +1413,12 @@
             };
           }
 
-          // Before 50 submissions: cycle simulated joiners
-          const person = SIMULATED_JOINERS[currentIndex % SIMULATED_JOINERS.length];
-          currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
-          return person;
+          // Before 50 submissions: do not return any joiner so nothing pops up
+          return null;
         }
 
         function updateWidgetContent(person) {
+          if (!person) return;
           if (liveAvatar) {
             liveAvatar.textContent = person.initials;
             liveAvatar.style.backgroundColor = person.color;
@@ -1424,7 +1435,28 @@
 
         function showNotification() {
           if (isDismissed) return;
+
+          // STRICT ENFORCEMENT: ONLY SHOW POP-UP ONCE MORE THAN 50 ARE REGISTERED IN DB!
+          if (latestRegisteredCount < MIN_DISPLAY_THRESHOLD) {
+            if (widgetContainer) widgetContainer.style.display = "none";
+            if (widgetCard) {
+              widgetCard.classList.remove("visible");
+              widgetCard.style.display = "none";
+            }
+            if (cycleTimer) clearTimeout(cycleTimer);
+            cycleTimer = setTimeout(showNotification, 5000);
+            return;
+          }
+
           const person = getNextJoiner();
+          if (!person) {
+            if (cycleTimer) clearTimeout(cycleTimer);
+            cycleTimer = setTimeout(showNotification, 5000);
+            return;
+          }
+
+          if (widgetContainer) widgetContainer.style.display = "block";
+          if (widgetCard) widgetCard.style.display = "block";
 
           updateWidgetContent(person);
           widgetCard.classList.add("visible");
@@ -1439,12 +1471,15 @@
           }, 4500);
         }
 
-        // Start first notification after 2 seconds
+        // Start checking notifications after 2 seconds (strictly hidden unless count >= 50)
         setTimeout(showNotification, 2000);
 
-        // Click widget to open WhatsApp
+        // Click widget to open WhatsApp and track joined count for database management
         widgetCard.addEventListener("click", (e) => {
           if (e.target === dismissBtn || dismissBtn?.contains(e.target)) return;
+          if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+            window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
+          }
           window.open(targetCommunityLink, "_blank", "noopener,noreferrer");
         });
 
@@ -1460,14 +1495,21 @@
         }
       }
 
+      // Track WhatsApp button click on report page for database management
+      document.getElementById("joinCommunityBtn")?.addEventListener("click", () => {
+        if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
+          window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
+        }
+      });
+
       initLiveJoinWidget();
 
     });
   </script>
 
   <!-- Live Community Joining Widget (Bottom Corner Social Proof) -->
-  <aside id="liveJoinWidget" class="live-join-widget" aria-live="polite" aria-label="Recent Community Members">
-    <div class="live-join-card" id="liveJoinCard" role="status">
+  <aside id="liveJoinWidget" class="live-join-widget" aria-live="polite" aria-label="Recent Community Members" style="display: none;">
+    <div class="live-join-card" id="liveJoinCard" role="status" style="display: none;">
       <button type="button" class="live-join-dismiss" id="liveJoinDismiss" title="Dismiss" aria-label="Close notification">×</button>
       <div class="live-join-pulse-header">
         <span class="live-pulse-dot"></span>
