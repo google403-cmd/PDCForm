@@ -152,8 +152,7 @@ const COLLECTIONS = {
   BIBWEWADI: "pdc_bibwewadi_submissions",
   KONDHWA: "pdc_kondhwa_submissions",
   LEGACY: "pdc_test_submissions",
-  WHATSAPP_JOINS: "pdc_whatsapp_joins",
-  NOT_JOINED: "pdc_not_joined_community"
+  WHATSAPP_JOINS: "pdc_whatsapp_joins"
 };
 
 /**
@@ -411,8 +410,6 @@ async function saveTestSubmission(submissionData) {
       incrementRegistrationCounter().catch(() => {});
       if (payload.whatsappJoined) {
         recordWhatsAppJoin(payload).catch(() => {});
-      } else {
-        recordNotJoinedCommunity(payload).catch(() => {});
       }
 
       return {
@@ -436,8 +433,6 @@ async function saveTestSubmission(submissionData) {
           incrementRegistrationCounter().catch(() => {});
           if (payload.whatsappJoined) {
             recordWhatsAppJoin(payload).catch(() => {});
-          } else {
-            recordNotJoinedCommunity(payload).catch(() => {});
           }
           return {
             success: true,
@@ -463,8 +458,6 @@ async function saveTestSubmission(submissionData) {
       incrementRegistrationCounter().catch(() => {});
       if (payload.whatsappJoined) {
         recordWhatsAppJoin(payload).catch(() => {});
-      } else {
-        recordNotJoinedCommunity(payload).catch(() => {});
       }
 
       return {
@@ -487,8 +480,6 @@ async function saveTestSubmission(submissionData) {
     incrementRegistrationCounter().catch(() => {});
     if (payload.whatsappJoined) {
       recordWhatsAppJoin(payload).catch(() => {});
-    } else {
-      recordNotJoinedCommunity(payload).catch(() => {});
     }
     return {
       success: true,
@@ -606,7 +597,6 @@ async function recordWhatsAppJoin(studentData = {}) {
 
   // Increment aggregated stats & cache
   incrementWhatsAppJoinedCounter().catch(() => {});
-  markStudentJoined(studentData.whatsappNumber).catch(() => {});
 
   // If live Firestore is available, write directly to pdc_whatsapp_joins
   if (isFirebaseConfigured && db && typeof firebase !== "undefined") {
@@ -721,219 +711,6 @@ async function getWhatsAppJoinedCount() {
   return count;
 }
 
-/**
- * Records a student who completed the assessment test but has NOT joined the WhatsApp community.
- * Stored in the dedicated 'pdc_not_joined_community' collection with phone number and name for coordinator outreach.
- * @param {Object} studentData
- */
-async function recordNotJoinedCommunity(studentData = {}) {
-  const nowIso = new Date().toISOString();
-  const rawNumber = String(studentData.whatsappNumber || studentData.phone || "").replace(/[^0-9]/g, "");
-  const payload = {
-    fullName: String(studentData.fullName || studentData.name || "Student").trim(),
-    whatsappNumber: rawNumber,
-    email: String(studentData.email || "").trim(),
-    campus: String(studentData.campus || "Bibwewadi").trim(),
-    branch: String(studentData.branch || "").trim(),
-    division: String(studentData.division || "").trim(),
-    year: String(studentData.year || "FY").trim(),
-    joinedCommunity: "no",
-    status: "pending_followup",
-    totalScore: Number(studentData.totalScore || 0),
-    submittedAt: nowIso,
-    timestamp: nowIso,
-    userAgent: String(typeof navigator !== "undefined" ? navigator.userAgent : "Node/Browser").substring(0, 500)
-  };
-
-  // Cache locally in localStorage for instant offline access and display
-  try {
-    if (typeof localStorage !== "undefined") {
-      const list = JSON.parse(localStorage.getItem("pdc_not_joined_students") || "[]");
-      const filtered = list.filter(item => item.whatsappNumber !== rawNumber);
-      filtered.unshift({ id: "local_lead_" + Date.now(), ...payload });
-      if (filtered.length > 500) filtered.length = 500;
-      localStorage.setItem("pdc_not_joined_students", JSON.stringify(filtered));
-      localStorage.setItem("pdc_not_joined_count", String(filtered.length));
-    }
-  } catch (e) {}
-
-  // Atomically increment notJoined counter in pdc_stats
-  incrementNotJoinedCounter().catch(() => {});
-
-  // If live Firestore is available, write directly to pdc_not_joined_community
-  if (isFirebaseConfigured && db && typeof firebase !== "undefined") {
-    try {
-      const docRef = await withTimeout(
-        db.collection(COLLECTIONS.NOT_JOINED).add(payload),
-        5000,
-        "Record not-joined community timeout"
-      );
-      console.log("Recorded student not joined community in pdc_not_joined_community:", docRef.id);
-      return { success: true, id: docRef.id, collection: COLLECTIONS.NOT_JOINED };
-    } catch (err) {
-      console.warn("Could not save to pdc_not_joined_community collection:", err.message);
-    }
-  }
-
-  return { success: true, isOffline: true, collection: COLLECTIONS.NOT_JOINED };
-}
-
-/**
- * Atomically increments the not-joined student counter in Firestore (pdc_stats/registrations)
- */
-async function incrementNotJoinedCounter() {
-  let localCount = 0;
-  try {
-    const raw = typeof localStorage !== "undefined" ? localStorage.getItem("pdc_not_joined_count") : null;
-    localCount = raw ? parseInt(raw, 10) : 0;
-    if (isNaN(localCount)) localCount = 0;
-    localCount++;
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("pdc_not_joined_count", String(localCount));
-    }
-  } catch (e) {}
-
-  if (isFirebaseConfigured && db && typeof firebase !== "undefined" && firebase.firestore) {
-    try {
-      const statsRef = db.collection("pdc_stats").doc("registrations");
-      await statsRef.set({
-        notJoinedCount: firebase.firestore.FieldValue.increment(1),
-        lastNotJoinedAt: new Date().toISOString()
-      }, { merge: true });
-    } catch (err) {
-      console.warn("Could not increment Firestore not-joined stats:", err.message);
-    }
-  }
-}
-
-/**
- * Retrieves the count of students who gave the test but have not joined the community.
- */
-async function getNotJoinedCount() {
-  let count = 0;
-  try {
-    if (typeof localStorage !== "undefined") {
-      const raw = localStorage.getItem("pdc_not_joined_count");
-      if (raw) count = parseInt(raw, 10) || 0;
-    }
-  } catch (e) {}
-
-  if (isFirebaseConfigured && db) {
-    try {
-      const snapshot = await withTimeout(
-        db.collection(COLLECTIONS.NOT_JOINED).where("status", "==", "pending_followup").get(),
-        4000,
-        "Fetch not joined count timeout"
-      );
-      if (snapshot && typeof snapshot.size === "number") {
-        count = Math.max(count, snapshot.size);
-      }
-    } catch (e) {
-      try {
-        const doc = await db.collection("pdc_stats").doc("registrations").get();
-        if (doc && doc.exists && typeof doc.data()?.notJoinedCount === "number") {
-          count = Math.max(count, doc.data().notJoinedCount);
-        }
-      } catch (e2) {}
-    }
-  }
-
-  return count;
-}
-
-/**
- * Fetches the list of students who gave the test but have NOT joined the WhatsApp community.
- * Reads from Firestore pdc_not_joined_community collection and merges with local storage cache.
- * Returns array of objects with { id, fullName, whatsappNumber, email, campus, branch, division, year, totalScore, timestamp, status }
- */
-async function getNotJoinedCommunityStudents() {
-  const studentsMap = new Map();
-
-  // 1. Read from localStorage cache first
-  try {
-    if (typeof localStorage !== "undefined") {
-      const localList = JSON.parse(localStorage.getItem("pdc_not_joined_students") || "[]");
-      if (Array.isArray(localList)) {
-        localList.forEach(s => {
-          if (s.whatsappNumber) studentsMap.set(s.whatsappNumber, s);
-        });
-      }
-    }
-  } catch (e) {}
-
-  // 2. Fetch from live Firestore pdc_not_joined_community collection
-  if (isFirebaseConfigured && db && typeof firebase !== "undefined") {
-    try {
-      const snapshot = await withTimeout(
-        db.collection(COLLECTIONS.NOT_JOINED).limit(300).get(),
-        6000,
-        "Fetch not joined students timeout"
-      );
-      if (snapshot && !snapshot.empty) {
-        snapshot.forEach(doc => {
-          const data = doc.data() || {};
-          const num = data.whatsappNumber;
-          if (num) {
-            studentsMap.set(num, { id: doc.id, ...data });
-          }
-        });
-      }
-    } catch (err) {
-      console.warn("Could not fetch remote pdc_not_joined_community:", err.message);
-    }
-  }
-
-  // Convert map to sorted array (newest first)
-  const resultList = Array.from(studentsMap.values());
-  resultList.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-
-  // Update local storage with latest merged list
-  try {
-    if (typeof localStorage !== "undefined" && resultList.length > 0) {
-      localStorage.setItem("pdc_not_joined_students", JSON.stringify(resultList.slice(0, 500)));
-      localStorage.setItem("pdc_not_joined_count", String(resultList.length));
-    }
-  } catch (e) {}
-
-  return resultList;
-}
-
-/**
- * When a student subsequently joins the community, marks them as joined in Firestore and local cache.
- */
-async function markStudentJoined(whatsappNumber) {
-  const cleanNumber = String(whatsappNumber || "").replace(/[^0-9]/g, "");
-  if (!cleanNumber) return;
-
-  // Update local storage
-  try {
-    if (typeof localStorage !== "undefined") {
-      const localList = JSON.parse(localStorage.getItem("pdc_not_joined_students") || "[]");
-      const updated = localList.map(s => {
-        if (s.whatsappNumber === cleanNumber) {
-          return { ...s, status: "joined", joinedAt: new Date().toISOString() };
-        }
-        return s;
-      });
-      localStorage.setItem("pdc_not_joined_students", JSON.stringify(updated));
-    }
-  } catch (e) {}
-
-  // Update Firestore
-  if (isFirebaseConfigured && db && typeof firebase !== "undefined") {
-    try {
-      const snapshot = await db.collection(COLLECTIONS.NOT_JOINED).where("whatsappNumber", "==", cleanNumber).get();
-      if (!snapshot.empty) {
-        const batch = db.batch();
-        snapshot.forEach(doc => {
-          batch.update(doc.ref, { status: "joined", joinedAt: new Date().toISOString() });
-        });
-        await batch.commit();
-      }
-    } catch (e) {}
-  }
-}
-
 if (typeof window !== "undefined") {
   window.PDCBackend = {
     COLLECTIONS,
@@ -944,11 +721,6 @@ if (typeof window !== "undefined") {
     recordWhatsAppJoin,
     incrementWhatsAppJoinedCounter,
     getWhatsAppJoinedCount,
-    recordNotJoinedCommunity,
-    incrementNotJoinedCounter,
-    getNotJoinedCount,
-    getNotJoinedCommunityStudents,
-    markStudentJoined,
     isFirebaseConfigured: () => isFirebaseConfigured,
     getFirebaseConfig,
     flushSyncQueue
@@ -966,11 +738,6 @@ if (typeof module !== "undefined" && module.exports) {
     recordWhatsAppJoin,
     incrementWhatsAppJoinedCounter,
     getWhatsAppJoinedCount,
-    recordNotJoinedCommunity,
-    incrementNotJoinedCounter,
-    getNotJoinedCount,
-    getNotJoinedCommunityStudents,
-    markStudentJoined,
     flushSyncQueue
   };
 }
