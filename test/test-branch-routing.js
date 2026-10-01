@@ -74,6 +74,7 @@ console.log("✅ Kondhwa URL is exact C-Cube home page: https://c-cube-vit-pune.
 // 6. Inspect index.html for Common Entry Gateway, Logos, & Clean Dropdown
 console.log("\n[Test 6] Verifying index.html PDC × C-Cube Common Entry Gateway markup...");
 const indexHtml = fs.readFileSync("index.html", "utf8");
+assert(indexHtml.includes('history.scrollRestoration = "manual"'), "index.html must prevent the browser restoring a stale scroll position");
 assert(indexHtml.includes('id="branchIntroCard"'), "index.html must contain branchIntroCard");
 assert(indexHtml.includes('id="entryBranchSelect"'), "index.html must contain entryBranchSelect");
 assert(indexHtml.includes('assets/pdc-logo-official.jpg'), "index.html must use official PDC logo asset");
@@ -102,6 +103,7 @@ assert(appJs.includes("initBranchRouting"), "app.js must define initBranchRoutin
 assert(appJs.includes("enterBibwewadiAssessment"), "app.js must define enterBibwewadiAssessment");
 assert(appJs.includes("returnToBranchSelection"), "app.js must define returnToBranchSelection");
 assert(appJs.includes("enterBibwewadiAssessment(savedBranch, false, false)"), "direct #assessment loads must not scroll into the form");
+assert(appJs.includes("enterBibwewadiAssessment(branch, false, false)"), "history navigation must not force-scroll into the assessment");
 assert(appJs.includes("if (scrollToAssessment)"), "assessment entry scrolling must be optional");
 assert(appJs.includes("Change Branch"), "app.js must offer Change Branch button on Step 1");
 assert(appJs.includes("https://c-cube-vit-pune.vercel.app/"), "app.js must redirect to C-Cube for Kondhwa");

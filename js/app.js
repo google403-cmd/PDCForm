@@ -1465,7 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       const branch = formData.personal.branch || sessionStorage.getItem("pdc_selected_branch");
       if (branch && config.getCampusFromBranch(branch) === "Bibwewadi") {
-        enterBibwewadiAssessment(branch, false);
+        enterBibwewadiAssessment(branch, false, false);
       } else {
         showBranchSelection();
       }
