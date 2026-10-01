@@ -91,6 +91,8 @@ console.log('✅ Requirement 10.2: firebase-config.js records and retrieves stud
 
 const leadsHtml = fs.readFileSync('leads.html', 'utf8');
 assert(leadsHtml.includes('Assessment Leads (Not Joined WhatsApp)'), 'leads.html must be titled for assessment leads not joined');
+assert(!leadsHtml.includes('href="index.html"'), 'leads.html must not link back into the assessment website');
+assert(!leadsHtml.includes('css/styles.css'), 'leads.html must use its own styles instead of the assessment stylesheet');
 assert(leadsHtml.includes('Phone Number / WhatsApp'), 'leads.html must display phone number column');
 assert(leadsHtml.includes('Student Name'), 'leads.html must display student name column');
 assert(leadsHtml.includes('btn-wa-chat'), 'leads.html must include WhatsApp direct chat action');
@@ -100,6 +102,8 @@ console.log('✅ Requirement 10.3: leads.html displays name, phone number and qu
 
 // 11. PDC Branch-Based Campus Routing System
 const indexHtmlContent = fs.readFileSync('index.html', 'utf8');
+assert(!indexHtmlContent.includes('href="leads.html"'), 'index.html must not link to the separate leads portal');
+assert(!fs.readFileSync('result.html', 'utf8').includes('href="leads.html"'), 'result.html must not link to the separate leads portal');
 assert(indexHtmlContent.includes('id="branchIntroCard"'), 'index.html must contain branchIntroCard for new first screen');
 assert(indexHtmlContent.includes('id="entryBranchSelect"'), 'index.html must contain entryBranchSelect dropdown');
 assert(indexHtmlContent.includes('assets/pdc-logo-official.jpg'), 'index.html must use official PDC logo asset');

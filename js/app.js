@@ -1413,7 +1413,7 @@ document.addEventListener("DOMContentLoaded", () => {
       entryBranchSelect.value = savedBranch;
       formData.personal.branch = savedBranch;
       formData.personal.campus = "Bibwewadi";
-      enterBibwewadiAssessment(savedBranch, false);
+      enterBibwewadiAssessment(savedBranch, false, false);
     } else {
       showBranchSelection();
     }
@@ -1434,7 +1434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function enterBibwewadiAssessment(branch, pushHistory = true) {
+  function enterBibwewadiAssessment(branch, pushHistory = true, scrollToAssessment = true) {
     if (brandHeader) brandHeader.style.display = "block";
     if (branchIntroCard) branchIntroCard.style.display = "none";
     if (stepperContainer) stepperContainer.style.display = "block";
@@ -1453,8 +1453,9 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (e) {}
     }
 
-    // Scroll to start of form
-    stepperContainer?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scrollToAssessment) {
+      stepperContainer?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
   // Handle browser back / forward

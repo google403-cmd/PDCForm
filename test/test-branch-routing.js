@@ -101,6 +101,8 @@ const appJs = fs.readFileSync("js/app.js", "utf8");
 assert(appJs.includes("initBranchRouting"), "app.js must define initBranchRouting");
 assert(appJs.includes("enterBibwewadiAssessment"), "app.js must define enterBibwewadiAssessment");
 assert(appJs.includes("returnToBranchSelection"), "app.js must define returnToBranchSelection");
+assert(appJs.includes("enterBibwewadiAssessment(savedBranch, false, false)"), "direct #assessment loads must not scroll into the form");
+assert(appJs.includes("if (scrollToAssessment)"), "assessment entry scrolling must be optional");
 assert(appJs.includes("Change Branch"), "app.js must offer Change Branch button on Step 1");
 assert(appJs.includes("https://c-cube-vit-pune.vercel.app/"), "app.js must redirect to C-Cube for Kondhwa");
 console.log("✅ app.js implements complete branch routing, prefilling, and back-navigation");
