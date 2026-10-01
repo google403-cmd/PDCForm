@@ -290,7 +290,11 @@ async function saveTestSubmission(submissionData) {
     whatsappNumber: String(submissionData.whatsappNumber || "").trim(),
     gender: String(submissionData.gender || "").trim(),
     homeTown: String(submissionData.homeTown || "").trim(),
-    campus: String(submissionData.campus || "").trim(),
+    campus: String(
+      (typeof window !== "undefined" && window.PDC_CONFIG && typeof window.PDC_CONFIG.getCampusFromBranch === "function"
+        ? window.PDC_CONFIG.getCampusFromBranch(submissionData.branch)
+        : null) || submissionData.campus || "Bibwewadi"
+    ).trim(),
     branch: String(submissionData.branch || "").trim(),
     division: String(submissionData.division || "").trim(),
     year: String(submissionData.year || "").trim(),

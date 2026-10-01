@@ -47,6 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("nextBtn");
   const toastContainer = document.getElementById("toastContainer");
 
+  // Branch Selection Elements
+  const branchIntroCard = document.getElementById("branchIntroCard");
+  const entryBranchSelect = document.getElementById("entryBranchSelect");
+  const branchNextBtn = document.getElementById("branchNextBtn");
+  const branchSpinner = document.getElementById("branchSpinner");
+  const entryBranchError = document.getElementById("entryBranchError");
+  const campusRoutePreview = document.getElementById("campusRoutePreview");
+  const routePreviewTitle = document.getElementById("routePreviewTitle");
+  const routePreviewDesc = document.getElementById("routePreviewDesc");
+  const routePreviewIcon = document.getElementById("routePreviewIcon");
+  const stepperContainer = document.getElementById("stepperContainer");
+  const formCard = document.getElementById("formCard");
+
+  let isRouting = false;
+
   // ===================================================================
   // 1. INITIALIZE BRANDING & ABOUT ACCORDION
   // ===================================================================
@@ -135,7 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update Navigation Buttons
     if (prevBtn) {
-      prevBtn.style.visibility = currentStepIndex === 0 ? "hidden" : "visible";
+      prevBtn.style.visibility = "visible";
+      const prevSpan = prevBtn.querySelector("span");
+      if (prevSpan) {
+        prevSpan.textContent = currentStepIndex === 0 ? "Change Branch" : "Previous";
+      }
     }
 
     if (nextBtn) {
@@ -483,24 +502,23 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        // Campus Kondhwa notice handler
-        if (select.name === "campus") {
-          let kondhwaNotice = document.getElementById("kondhwa-campus-notice");
-          if (select.value === "Kondhwa") {
-            if (!kondhwaNotice) {
-              kondhwaNotice = document.createElement("div");
-              kondhwaNotice.id = "kondhwa-campus-notice";
-              kondhwaNotice.style.cssText = "margin-top:10px;padding:12px 14px;background:#FFF6F3;border:1px solid #FFBEAD;border-radius:10px;color:#C2410C;font-size:0.86rem;line-height:1.5;";
-              kondhwaNotice.innerHTML = `
-                <strong>📍 Kondhwa Campus Route:</strong> Students from Kondhwa campus can take their official assessment directly here:
-                <a href="https://bit.ly/3Qs-personality-assessment-pdc" target="_blank" rel="noopener noreferrer" style="color:#F96340;font-weight:700;text-decoration:underline;display:block;margin-top:4px;">
-                  👉 Open Kondhwa Campus Assessment (https://bit.ly/3Qs-personality-assessment-pdc)
-                </a>
-              `;
-              select.parentElement.appendChild(kondhwaNotice);
-            }
-          } else if (kondhwaNotice) {
-            kondhwaNotice.remove();
+        // Engineering branch change listener & campus consistency safeguard
+        if (select.name === "branch") {
+          const selectedVal = select.value;
+          const campus = config.getCampusFromBranch ? config.getCampusFromBranch(selectedVal) : null;
+          if (campus === "Kondhwa") {
+            showToast("This branch belongs to Kondhwa Campus. Redirecting to C-Cube assessment...", "info");
+            setTimeout(() => {
+              window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+            }, 600);
+            return;
+          } else if (campus === "Bibwewadi") {
+            formData.personal.branch = selectedVal;
+            formData.personal.campus = "Bibwewadi";
+            try {
+              sessionStorage.setItem("pdc_selected_branch", selectedVal);
+              sessionStorage.setItem("pdc_selected_campus", "Bibwewadi");
+            } catch (e) {}
           }
         }
         clearFieldError(select.name);
@@ -899,15 +917,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const userGender = (formData.personal.gender || "male").toLowerCase();
     const studentName = formData.personal.fullName || "Student";
-    const selectedCampus = String(formData.personal.campus || "").trim();
+    const selectedBranch = String(formData.personal.branch || "").trim();
+    const derivedCampus = (config && typeof config.getCampusFromBranch === "function")
+      ? (config.getCampusFromBranch(selectedBranch) || "Bibwewadi")
+      : (formData.personal.campus || "Bibwewadi");
     const selectedDivision = String(formData.personal.division || "").trim();
 
-    if (selectedCampus === "Kondhwa") {
-      const blockedMessage = "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Redirecting you to the Kondhwa page...";
+    if (derivedCampus === "Kondhwa") {
+      const blockedMessage = "Kondhwa campus registrations are handled through the C-Cube assessment portal. Redirecting you to C-Cube...";
       showToast(blockedMessage, "info");
       setTimeout(() => {
-        window.location.href = "kondhwa.html";
-      }, 1000);
+        window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+      }, 600);
       return;
     }
 
@@ -931,8 +952,8 @@ document.addEventListener("DOMContentLoaded", () => {
       whatsappNumber: String(formData.personal.whatsappNumber || "").replace(/[^0-9]/g, ""),
       gender: String(formData.personal.gender || "").trim(),
       homeTown: String(formData.personal.homeTown || "").trim(),
-      campus: selectedCampus,
-      branch: String(formData.personal.branch || "").trim(),
+      campus: derivedCampus,
+      branch: selectedBranch,
       division: selectedDivision,
       year: String(formData.personal.year || "").trim(),
       answers: { ...formData.answers },
@@ -1009,7 +1030,7 @@ document.addEventListener("DOMContentLoaded", () => {
         gender: userGender,
         fullName: studentName,
         joinedCommunity: formData.joinedCommunity || "yes",
-        campus: selectedCampus,
+        campus: derivedCampus,
         scores: {
           pq: computedScores.pq,
           iq: computedScores.iq,
@@ -1109,10 +1130,6 @@ document.addEventListener("DOMContentLoaded", () => {
       handleFormSubmit();
     } else {
       if (validateCurrentStep()) {
-        if (currentStepIndex === 0 && (formData.personal.campus || "").trim() === "Kondhwa") {
-          window.location.href = "kondhwa.html";
-          return;
-        }
         goToStep(currentStepIndex + 1);
       }
     }
@@ -1123,6 +1140,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isSubmitting) return;
     if (currentStepIndex > 0) {
       goToStep(currentStepIndex - 1);
+    } else if (currentStepIndex === 0) {
+      returnToBranchSelection();
     }
   });
 
@@ -1315,9 +1334,165 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ===================================================================
+  // 10. BRANCH SELECTION & CAMPUS ROUTING CONTROLLER
+  // ===================================================================
+  function initBranchRouting() {
+    if (!branchIntroCard || !entryBranchSelect || !branchNextBtn) return;
+
+    let savedBranch = "";
+    try {
+      savedBranch = sessionStorage.getItem("pdc_selected_branch") || "";
+    } catch (e) {}
+
+    // Live preview when dropdown changes
+    entryBranchSelect.addEventListener("change", () => {
+      if (entryBranchError) entryBranchError.style.display = "none";
+      const branch = entryBranchSelect.value;
+      const campus = config.getCampusFromBranch ? config.getCampusFromBranch(branch) : null;
+
+      if (campusRoutePreview && routePreviewTitle && routePreviewDesc) {
+        if (campus === "Bibwewadi") {
+          campusRoutePreview.className = "campus-route-preview route-bibwewadi";
+          campusRoutePreview.style.display = "block";
+          if (routePreviewIcon) routePreviewIcon.textContent = "🏛️";
+          routePreviewTitle.textContent = "Bibwewadi Campus Identified";
+          routePreviewDesc.textContent = "Your branch belongs to Bibwewadi Campus. Click Next → to enter your PDC assessment.";
+        } else if (campus === "Kondhwa") {
+          campusRoutePreview.className = "campus-route-preview route-kondhwa";
+          campusRoutePreview.style.display = "block";
+          if (routePreviewIcon) routePreviewIcon.textContent = "📍";
+          routePreviewTitle.textContent = "Kondhwa Campus Identified";
+          routePreviewDesc.textContent = "Your branch belongs to Kondhwa Campus. Click Next → to enter your C-Cube campus assessment.";
+        } else {
+          campusRoutePreview.style.display = "none";
+        }
+      }
+    });
+
+    // Next Button click
+    branchNextBtn.addEventListener("click", () => {
+      if (isRouting) return;
+
+      const branch = entryBranchSelect.value;
+      if (!branch) {
+        if (entryBranchError) {
+          entryBranchError.textContent = "⚠️ Please select your engineering branch to continue.";
+          entryBranchError.style.display = "block";
+          entryBranchError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        entryBranchSelect.focus();
+        return;
+      }
+
+      const campus = config.getCampusFromBranch ? config.getCampusFromBranch(branch) : null;
+      if (!campus) {
+        if (entryBranchError) {
+          entryBranchError.textContent = "⚠️ Could not determine campus for the selected branch. Please choose a valid branch.";
+          entryBranchError.style.display = "block";
+        }
+        return;
+      }
+
+      // Lock button to prevent double-clicks
+      isRouting = true;
+      branchNextBtn.disabled = true;
+      const btnText = branchNextBtn.querySelector(".btn-text");
+      if (branchSpinner) branchSpinner.style.display = "inline-block";
+
+      if (campus === "Kondhwa") {
+        if (btnText) btnText.textContent = "Redirecting to C-Cube assessment...";
+        console.log(`[PDC Routing] Branch: "${branch}" -> Derived Campus: Kondhwa -> Redirecting to C-Cube Website`);
+        const targetUrl = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 350);
+      } else if (campus === "Bibwewadi") {
+        if (btnText) btnText.textContent = "Loading your assessment...";
+        console.log(`[PDC Routing] Branch: "${branch}" -> Derived Campus: Bibwewadi -> Entering PDC Registration`);
+
+        formData.personal.branch = branch;
+        formData.personal.campus = "Bibwewadi";
+        try {
+          sessionStorage.setItem("pdc_selected_branch", branch);
+          sessionStorage.setItem("pdc_selected_campus", "Bibwewadi");
+        } catch (e) {}
+
+        setTimeout(() => {
+          enterBibwewadiAssessment(branch);
+          isRouting = false;
+          branchNextBtn.disabled = false;
+          if (btnText) btnText.textContent = "Next →";
+          if (branchSpinner) branchSpinner.style.display = "none";
+        }, 250);
+      }
+    });
+
+    // Check if landing directly with hash #assessment or saved branch
+    if (window.location.hash === "#assessment" && savedBranch && (config.getCampusFromBranch(savedBranch) === "Bibwewadi")) {
+      entryBranchSelect.value = savedBranch;
+      formData.personal.branch = savedBranch;
+      formData.personal.campus = "Bibwewadi";
+      enterBibwewadiAssessment(savedBranch, false);
+    } else {
+      showBranchSelection();
+    }
+  }
+
+  function showBranchSelection() {
+    if (branchIntroCard) branchIntroCard.style.display = "block";
+    if (stepperContainer) stepperContainer.style.display = "none";
+    if (formCard) formCard.style.display = "none";
+  }
+
+  function returnToBranchSelection() {
+    showBranchSelection();
+    try {
+      history.pushState(null, "", window.location.pathname);
+    } catch (e) {}
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function enterBibwewadiAssessment(branch, pushHistory = true) {
+    if (branchIntroCard) branchIntroCard.style.display = "none";
+    if (stepperContainer) stepperContainer.style.display = "block";
+    if (formCard) formCard.style.display = "block";
+
+    // Prefill branch in form
+    const formBranchSelect = document.getElementById("branch");
+    if (formBranchSelect) {
+      formBranchSelect.value = branch;
+      clearFieldError("branch");
+    }
+
+    if (pushHistory) {
+      try {
+        history.pushState({ screen: "assessment", branch }, "", "#assessment");
+      } catch (e) {}
+    }
+
+    // Scroll to start of form
+    stepperContainer?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Handle browser back / forward
+  window.addEventListener("popstate", () => {
+    if (window.location.hash !== "#assessment") {
+      showBranchSelection();
+    } else {
+      const branch = formData.personal.branch || sessionStorage.getItem("pdc_selected_branch");
+      if (branch && config.getCampusFromBranch(branch) === "Bibwewadi") {
+        enterBibwewadiAssessment(branch, false);
+      } else {
+        showBranchSelection();
+      }
+    }
+  });
+
   // Initialize Application
   initBranding();
   initStepper();
   renderStepViews();
   restoreDraft();
+  initBranchRouting();
 });

@@ -54,12 +54,81 @@ window.PDC_CONFIG = {
     }
   },
 
+  // ── Central Branch to Campus Mapping (Official Single Source of Truth) ──
+  campusMapping: {
+    CAMPUSES: {
+      BIBWEWADI: "Bibwewadi",
+      KONDHWA: "Kondhwa"
+    },
+    BIBWEWADI_BRANCHES: [
+      "Computer Engineering",
+      "Information Technology",
+      "CSE (Artificial Intelligence)",
+      "CSE (Artificial Intelligence & Machine Learning)"
+    ],
+    KONDHWA_BRANCHES: [
+      "CSE (Data Science)",
+      "Computer Engineering (Software Engineering)",
+      "CSE (IoT & Cyber Security including Blockchain)",
+      "Electronics & Telecommunication",
+      "Instrumentation & Control",
+      "Mechanical Engineering",
+      "Civil Engineering",
+      "Artificial Intelligence & Data Science"
+    ],
+    BRANCH_CAMPUS_MAP: {
+      "Computer Engineering": "Bibwewadi",
+      "Information Technology": "Bibwewadi",
+      "CSE (Artificial Intelligence)": "Bibwewadi",
+      "CSE (Artificial Intelligence & Machine Learning)": "Bibwewadi",
+
+      "CSE (Data Science)": "Kondhwa",
+      "Computer Engineering (Software Engineering)": "Kondhwa",
+      "CSE (IoT & Cyber Security including Blockchain)": "Kondhwa",
+      "Electronics & Telecommunication": "Kondhwa",
+      "Instrumentation & Control": "Kondhwa",
+      "Mechanical Engineering": "Kondhwa",
+      "Civil Engineering": "Kondhwa",
+      "Artificial Intelligence & Data Science": "Kondhwa"
+    },
+    KONDHWA_WEBSITE_URL: "https://c-cube-website-chi.vercel.app/"
+  },
+
+  /**
+   * Authoritative centralized helper to derive Campus from Branch.
+   * Returns 'Bibwewadi', 'Kondhwa', or null if unmapped.
+   */
+  getCampusFromBranch: function(branch) {
+    if (!branch || typeof branch !== "string") return null;
+    const clean = branch.trim();
+    const map = window.PDC_CONFIG?.campusMapping?.BRANCH_CAMPUS_MAP || {
+      "Computer Engineering": "Bibwewadi",
+      "Information Technology": "Bibwewadi",
+      "CSE (Artificial Intelligence)": "Bibwewadi",
+      "CSE (Artificial Intelligence & Machine Learning)": "Bibwewadi",
+      "CSE (Data Science)": "Kondhwa",
+      "Computer Engineering (Software Engineering)": "Kondhwa",
+      "CSE (IoT & Cyber Security including Blockchain)": "Kondhwa",
+      "Electronics & Telecommunication": "Kondhwa",
+      "Instrumentation & Control": "Kondhwa",
+      "Mechanical Engineering": "Kondhwa",
+      "Civil Engineering": "Kondhwa",
+      "Artificial Intelligence & Data Science": "Kondhwa"
+    };
+    if (map[clean]) return map[clean];
+    const lower = clean.toLowerCase();
+    for (const [b, c] of Object.entries(map)) {
+      if (b.toLowerCase() === lower) return c;
+    }
+    return null;
+  },
+
   // ── Kondhwa Campus Routing & Quiz Configuration ───────────────────
   campusAccess: {
     blockedMessage: "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Please proceed to the Kondhwa assessment below.",
     supportNote: "Please use the official Kondhwa pathway shared by the club coordinators.",
-    KONDHWA_QUIZ_URL: "kondhwa.html",
-    kondhwaQuizUrl: "kondhwa.html",
+    KONDHWA_QUIZ_URL: "https://c-cube-website-chi.vercel.app/",
+    kondhwaQuizUrl: "https://c-cube-website-chi.vercel.app/",
     BIBWEWADI_QUIZ_URL: "index.html",
     bibwewadiQuizUrl: "index.html",
     kondhwaLogoPath: "assets/kondhwa-logo.svg",
@@ -195,27 +264,12 @@ window.PDC_CONFIG = {
           label: "Engineering Branch",
           type: "select",
           required: true,
-          hasOtherInput: true,
-          otherPlaceholder: "e.g. Chemical, Civil, Robotics, Instrumentation, etc.",
           options: [
             "Computer Engineering",
             "Information Technology",
-            "Electronics and Telecommunication Engineering",
-            "Computer Science and Engineering (Artificial Intelligence and Machine Learning)",
-            "Computer Science and Engineering (Artificial Intelligence)",
-            "Artificial Intelligence and Data Science",
-            "Mechanical Engineering",
-            "Chemical Engineering",
-            "Instrumentation and Control Engineering",
-            "Other"
+            "CSE (Artificial Intelligence)",
+            "CSE (Artificial Intelligence & Machine Learning)"
           ]
-        },
-        {
-          name: "campus",
-          label: "Campus",
-          type: "select",
-          required: true,
-          options: ["Bibwewadi", "Kondhwa"]
         },
         {
           name: "division",
@@ -1337,6 +1391,7 @@ window.PDC_CONFIG.scoreInsights.eq = window.PDC_CONFIG.scoreInsights.sq;
   };
 
   window.PDC_CONFIG.engine = window.PDCAssessmentEngine;
+  window.getCampusFromBranch = window.PDC_CONFIG.getCampusFromBranch;
 })();
 
 if (typeof module !== "undefined" && module.exports) {

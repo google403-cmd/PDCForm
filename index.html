@@ -63,10 +63,115 @@
       </div>
     </header>
 
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- NEW FIRST SCREEN: PDC INTRODUCTION & BRANCH-BASED CAMPUS ROUTING -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="branch-intro-card" id="branchIntroCard" aria-label="Branch Selection and Campus Routing">
+      <div class="intro-badge-pill">
+        <span class="live-pulse-dot"></span>
+        <span>Official PDC Assessment • VIT Pune</span>
+      </div>
+
+      <h2 class="intro-heading">Discover Your Authentic Personality & Potential</h2>
+      
+      <p class="intro-lead">
+        Welcome to the official <strong>Personality Development Club (PDC)</strong> assessment. Discover your personality, cognitive strengths, and areas for growth through the comprehensive multi-dimensional evaluation of your <strong>Personality Quotient (PQ)</strong>, <strong>Intellectual Quotient (IQ)</strong>, and <strong>Spiritual Quotient (SQ)</strong>.
+      </p>
+
+      <!-- PDC Growth Pillars Showcase -->
+      <div class="intro-highlights-grid">
+        <div class="intro-highlight-item">
+          <span class="highlight-icon">🚀</span>
+          <div class="highlight-text">
+            <strong>Software Training (STWs)</strong>
+            <span>IIT Bombay technical masterclasses & industry skills</span>
+          </div>
+        </div>
+        <div class="intro-highlight-item">
+          <span class="highlight-icon">🎤</span>
+          <div class="highlight-text">
+            <strong>Personality Workshops (PDWs)</strong>
+            <span>Public speaking, presence & boardroom communication</span>
+          </div>
+        </div>
+        <div class="intro-highlight-item">
+          <span class="highlight-icon">🌿</span>
+          <div class="highlight-text">
+            <strong>Personal Mentor Meets</strong>
+            <span>1-on-1 confidential circles for academics & poise</span>
+          </div>
+        </div>
+        <div class="intro-highlight-item">
+          <span class="highlight-icon">⛺</span>
+          <div class="highlight-text">
+            <strong>Edutainment Outings & Camps</strong>
+            <span>High-ropes leadership treks & collaborative games</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branch Selection Section -->
+      <div class="branch-selection-box">
+        <div class="branch-select-header">
+          <span class="branch-select-kicker">STEP 1 • CAMPUS DETERMINATION</span>
+          <label class="branch-select-title" for="entryBranchSelect">
+            Select Your Engineering Branch <span class="req-star">*</span>
+          </label>
+          <p class="branch-select-desc">
+            Your official campus pathway is determined automatically from your branch.
+          </p>
+        </div>
+
+        <div class="select-field-wrap">
+          <select class="form-select branch-dropdown-entry" id="entryBranchSelect" required aria-required="true">
+            <option value="" disabled selected>— Select Your Engineering Branch —</option>
+            <optgroup label="── BIBWEWADI CAMPUS ──">
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
+              <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
+            </optgroup>
+            <optgroup label="── KONDHWA CAMPUS ──">
+              <option value="CSE (Data Science)">CSE (Data Science)</option>
+              <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
+              <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
+              <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+              <option value="Instrumentation & Control">Instrumentation & Control</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Dynamic Campus Route Preview (Feedback upon selection before clicking Next) -->
+        <div class="campus-route-preview" id="campusRoutePreview" style="display: none;">
+          <div class="route-preview-inner">
+            <span class="route-icon" id="routePreviewIcon">📍</span>
+            <div>
+              <strong class="route-title" id="routePreviewTitle">Campus Detected</strong>
+              <span class="route-desc" id="routePreviewDesc"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-error-alert" id="entryBranchError" style="display: none;" role="alert">
+          ⚠️ Please select your engineering branch to continue.
+        </div>
+
+        <div class="branch-action-row">
+          <button type="button" class="btn btn-primary btn-branch-next" id="branchNextBtn">
+            <span class="btn-text">Next →</span>
+            <span class="spinner" id="branchSpinner" style="display: none;" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <!-- Stepper Progress Tracker -->
-    <section class="stepper-container" aria-label="Assessment Progress">
+    <section class="stepper-container" id="stepperContainer" style="display: none;" aria-label="Assessment Progress">
       <div class="stepper-header">
-        <span class="step-count-label" id="stepCountLabel">Step 1 of 4: Registration</span>
+        <span class="step-count-label" id="stepCountLabel">Step 1 of 5: Profile Registration</span>
         <span class="step-percent-label" id="stepPercentLabel">0% Completed</span>
       </div>
       <div class="progress-track">
@@ -78,7 +183,7 @@
     </section>
 
     <!-- Main Dynamic Form Card -->
-    <main class="form-card" id="formCard">
+    <main class="form-card" id="formCard" style="display: none;">
       <form id="assessmentForm" novalidate>
         <div id="stepsContainer">
           <!-- Step Views dynamically rendered from content.js -->

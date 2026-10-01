@@ -12,17 +12,17 @@ assert(config.steps.length === 5, "Must have exactly 5 steps (Profile, PQ, IQ, S
 const [profileStep, pqStep, iqStep, sqStep, communityStep] = config.steps;
 assert(communityStep && communityStep.isCommunityStep, "5th step must be community step");
 
-// Profile Step Validation
+// Profile Step Validation: Campus field removed, campus derived from branch
 assert(profileStep.isPersonalDetails, "Step 0 must be personal details");
-const expectedFields = ["fullName", "whatsappNumber", "email", "gender", "homeTown", "branch", "campus", "division"];
-assert.deepStrictEqual(profileStep.fields.map(field => field.name), [...expectedFields, "year"], "Profile fields must keep Campus immediately after Branch and Division separate");
+const expectedFields = ["fullName", "whatsappNumber", "email", "gender", "homeTown", "branch", "division"];
+assert.deepStrictEqual(profileStep.fields.map(field => field.name), [...expectedFields, "year"], "Profile fields must not include campus; campus is derived from branch");
 expectedFields.forEach(f => {
   assert(profileStep.fields.some(field => field.name === f), `Profile must contain field ${f}`);
 });
 
+// Ensure campus field is completely removed from personal details
 const campusField = profileStep.fields.find(field => field.name === "campus");
-assert(campusField && campusField.type === "select", "Campus must be a select field");
-assert.deepStrictEqual(campusField.options, ["Bibwewadi", "Kondhwa"], "Campus options must be exactly Bibwewadi and Kondhwa");
+assert.strictEqual(campusField, undefined, "Campus field must be removed from student registration");
 
 const divisionField = profileStep.fields.find(field => field.name === "division");
 assert(divisionField && divisionField.type === "select", "Division must be a select field");
@@ -33,15 +33,27 @@ assert(branchField && branchField.type === "select", "Branch must be a select fi
 assert.deepStrictEqual(branchField.options, [
   "Computer Engineering",
   "Information Technology",
-  "Electronics and Telecommunication Engineering",
-  "Computer Science and Engineering (Artificial Intelligence and Machine Learning)",
-  "Computer Science and Engineering (Artificial Intelligence)",
-  "Artificial Intelligence and Data Science",
-  "Mechanical Engineering",
-  "Chemical Engineering",
-  "Instrumentation and Control Engineering",
-  "Other"
-], "Branch options must match the exact PDC list");
+  "CSE (Artificial Intelligence)",
+  "CSE (Artificial Intelligence & Machine Learning)"
+], "Registration branch options must match official Bibwewadi branches");
+
+// Central Branch-to-Campus Mapping Validation
+const mapping = config.campusMapping;
+assert(mapping, "config.campusMapping must exist");
+assert.strictEqual(mapping.BIBWEWADI_BRANCHES.length, 4, "Must have exactly 4 Bibwewadi branches");
+assert.strictEqual(mapping.KONDHWA_BRANCHES.length, 8, "Must have exactly 8 Kondhwa branches");
+assert.strictEqual(Object.keys(mapping.BRANCH_CAMPUS_MAP).length, 12, "Total branches must be exactly 12");
+assert.strictEqual(mapping.KONDHWA_WEBSITE_URL, "https://c-cube-website-chi.vercel.app/", "Kondhwa URL must be C-Cube home page");
+
+// Validate all 12 branches via getCampusFromBranch helper
+mapping.BIBWEWADI_BRANCHES.forEach(b => {
+  assert.strictEqual(config.getCampusFromBranch(b), "Bibwewadi", `${b} must map to Bibwewadi`);
+});
+mapping.KONDHWA_BRANCHES.forEach(b => {
+  assert.strictEqual(config.getCampusFromBranch(b), "Kondhwa", `${b} must map to Kondhwa`);
+});
+assert.strictEqual(config.getCampusFromBranch("Unknown Random Branch"), null, "Unknown branch must return null");
+assert.strictEqual(config.getCampusFromBranch(""), null, "Empty branch must return null");
 
 // Brand & Activity Validation
 assert(config.club.logoPath.includes("pdc-logo") || config.club.logoPath.includes("pdclogo1"), "PDC logo must point to PDC asset");

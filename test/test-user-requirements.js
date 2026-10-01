@@ -98,6 +98,31 @@ assert(leadsHtml.includes('copyAllNumbersBtn'), 'leads.html must include Copy Al
 assert(leadsHtml.includes('exportCsvBtn'), 'leads.html must include Export CSV button');
 console.log('✅ Requirement 10.3: leads.html displays name, phone number and quick WhatsApp outreach actions');
 
+// 11. PDC Branch-Based Campus Routing System
+const indexHtmlContent = fs.readFileSync('index.html', 'utf8');
+assert(indexHtmlContent.includes('id="branchIntroCard"'), 'index.html must contain branchIntroCard for new first screen');
+assert(indexHtmlContent.includes('id="entryBranchSelect"'), 'index.html must contain entryBranchSelect dropdown');
+assert(indexHtmlContent.includes('id="branchNextBtn"'), 'index.html must contain branchNextBtn button');
+assert(indexHtmlContent.includes('optgroup label="── BIBWEWADI CAMPUS ──"'), 'index.html must group Bibwewadi branches');
+assert(indexHtmlContent.includes('optgroup label="── KONDHWA CAMPUS ──"'), 'index.html must group Kondhwa branches');
+console.log('✅ Requirement 11.1: index.html contains PDC intro & branch selection screen with campus optgroups');
+
+const contentJsContent = fs.readFileSync('js/content.js', 'utf8');
+assert(contentJsContent.includes('campusMapping:'), 'content.js must define centralized campusMapping');
+assert(contentJsContent.includes('getCampusFromBranch:'), 'content.js must define getCampusFromBranch helper');
+assert(contentJsContent.includes('https://c-cube-website-chi.vercel.app/'), 'content.js must target C-Cube home page for Kondhwa');
+console.log('✅ Requirement 11.2: content.js contains central mapping for all 12 branches & C-Cube URL');
+
+assert(!contentJsContent.includes('options: ["Bibwewadi", "Kondhwa"]'), 'content.js must remove campus dropdown options from personal_details');
+console.log('✅ Requirement 11.3: Campus selection field completely removed from student registration form');
+
+const appJsContent = fs.readFileSync('js/app.js', 'utf8');
+assert(appJsContent.includes('initBranchRouting'), 'app.js must implement initBranchRouting');
+assert(appJsContent.includes('enterBibwewadiAssessment'), 'app.js must implement enterBibwewadiAssessment');
+assert(appJsContent.includes('returnToBranchSelection'), 'app.js must support returning to branch selection');
+assert(appJsContent.includes('https://c-cube-website-chi.vercel.app/'), 'app.js must redirect Kondhwa branches to C-Cube');
+console.log('✅ Requirement 11.4: app.js handles intelligent branch-to-campus routing and back navigation');
+
 console.log("==================================================");
 console.log("ALL REQUIREMENTS & POPUP SUPPRESSION TESTS PASSED!");
 console.log("==================================================");
