@@ -26,8 +26,8 @@
 
   <div class="app-container">
 
-    <!-- Header & Brand Section -->
-    <header class="brand-header" id="brandHeader">
+    <!-- Header & Brand Section (Displays during Bibwewadi PDC Assessment) -->
+    <header class="brand-header" id="brandHeader" style="display: none;">
       <div class="header-top">
         <div class="brand-logo-wrap">
           <img src="assets/pdc-logo.png" alt="Personality Development Club Logo" class="brand-logo" id="clubLogo"
@@ -64,99 +64,125 @@
     </header>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- NEW FIRST SCREEN: PDC INTRODUCTION & BRANCH-BASED CAMPUS ROUTING -->
+    <!-- COMMON GATEWAY: PDC × C-CUBE JOINT STUDENT INITIATIVE ENTRY -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <section class="branch-intro-card" id="branchIntroCard" aria-label="Branch Selection and Campus Routing">
-      <div class="intro-badge-pill">
-        <span class="live-pulse-dot"></span>
-        <span>Official PDC Assessment • VIT Pune</span>
-      </div>
-
-      <h2 class="intro-heading">Discover Your Authentic Personality & Potential</h2>
+    <section class="common-entry-card" id="branchIntroCard" aria-label="PDC and C-Cube Common Initiative Gateway">
       
-      <p class="intro-lead">
-        Welcome to the official <strong>Personality Development Club (PDC)</strong> assessment. Discover your personality, cognitive strengths, and areas for growth through the comprehensive multi-dimensional evaluation of your <strong>Personality Quotient (PQ)</strong>, <strong>Intellectual Quotient (IQ)</strong>, and <strong>Spiritual Quotient (SQ)</strong>.
-      </p>
+      <!-- Circular Logo Partnership: PDC (Left) × C-Cube (Right) -->
+      <div class="partnership-logos-wrap">
+        <div class="circular-logo-container logo-pdc" title="Personality Development Club (PDC)">
+          <img src="assets/pdc-logo-official.jpg" alt="PDC - Personality Development Club" class="partner-logo partner-logo-pdc">
+        </div>
+        <div class="partnership-symbol" aria-label="joint initiative with">&times;</div>
+        <div class="circular-logo-container logo-ccube" title="C-Cube">
+          <img src="assets/c-cube-logo-official.jpg" alt="C-Cube" class="partner-logo partner-logo-ccube">
+        </div>
+      </div>
 
-      <!-- PDC Growth Pillars Showcase -->
-      <div class="intro-highlights-grid">
-        <div class="intro-highlight-item">
-          <span class="highlight-icon">🚀</span>
-          <div class="highlight-text">
-            <strong>Software Training (STWs)</strong>
-            <span>IIT Bombay technical masterclasses & industry skills</span>
-          </div>
+      <!-- Hero Branding & Headline -->
+      <div class="common-hero-header">
+        <div class="common-pill-badge">
+          <span class="live-pulse-dot"></span>
+          <span>PDC &times; C-Cube &bull; Joint Student Initiative</span>
         </div>
-        <div class="intro-highlight-item">
-          <span class="highlight-icon">🎤</span>
-          <div class="highlight-text">
-            <strong>Personality Workshops (PDWs)</strong>
-            <span>Public speaking, presence & boardroom communication</span>
-          </div>
+        <h1 class="common-hero-headline">Discover Yourself. Understand Yourself. Grow.</h1>
+        <p class="common-hero-lead">
+          A comprehensive assessment designed to help engineering students reflect on their cognitive strengths, personality tendencies, interpersonal dynamics, and personal growth pathways.
+        </p>
+      </div>
+
+      <!-- About the Common Initiative -->
+      <div class="common-section-card initiative-about-box">
+        <h2 class="common-section-heading">About the Initiative</h2>
+        <p class="initiative-text">
+          This assessment is designed to help students reflect on their personality, cognitive strengths, interpersonal tendencies, purpose, and areas for personal development.
+        </p>
+        <div class="initiative-attribution">
+          <span class="attribution-label">A common student-development initiative presented by:</span>
+          <strong class="attribution-names">PDC &times; C-Cube</strong>
         </div>
-        <div class="intro-highlight-item">
-          <span class="highlight-icon">🌿</span>
-          <div class="highlight-text">
-            <strong>Personal Mentor Meets</strong>
-            <span>1-on-1 confidential circles for academics & poise</span>
+      </div>
+
+      <!-- What Will You Explore -->
+      <div class="common-section-card explore-box">
+        <h2 class="common-section-heading">What Will You Explore?</h2>
+        <div class="explore-pillars-grid">
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🧭</span>
+            <div class="pillar-content">
+              <strong>Personality &amp; Emotional Tendencies</strong>
+              <p>Understand your core behavioral style, emotional composure, and inner motivations.</p>
+            </div>
           </div>
-        </div>
-        <div class="intro-highlight-item">
-          <span class="highlight-icon">⛺</span>
-          <div class="highlight-text">
-            <strong>Edutainment Outings & Camps</strong>
-            <span>High-ropes leadership treks & collaborative games</span>
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🧠</span>
+            <div class="pillar-content">
+              <strong>Cognitive &amp; Problem-Solving Skills</strong>
+              <p>Assess analytical reasoning, pattern recognition, and structured problem-solving aptitude.</p>
+            </div>
+          </div>
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🤝</span>
+            <div class="pillar-content">
+              <strong>Interpersonal Awareness</strong>
+              <p>Explore communication dynamics, empathy, and collaborative teamwork habits.</p>
+            </div>
+          </div>
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🔍</span>
+            <div class="pillar-content">
+              <strong>Self-Reflection</strong>
+              <p>Develop structured clarity on your personal habits, priorities, and daily mindset.</p>
+            </div>
+          </div>
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🎯</span>
+            <div class="pillar-content">
+              <strong>Purpose &amp; Direction</strong>
+              <p>Align strengths with meaningful academic, creative, and life objectives.</p>
+            </div>
+          </div>
+          <div class="explore-pillar-item">
+            <span class="pillar-icon">🌱</span>
+            <div class="pillar-content">
+              <strong>Areas for Personal Growth</strong>
+              <p>Receive clear, constructive feedback tailored for balanced, lifelong development.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Branch Selection Section -->
-      <div class="branch-selection-box">
+      <!-- Branch Selection Section (NO CAMPUS HEADINGS, NO CAMPUS OPTIONS) -->
+      <div class="branch-selection-box" id="branchSelectionBox">
         <div class="branch-select-header">
-          <span class="branch-select-kicker">STEP 1 • CAMPUS DETERMINATION</span>
           <label class="branch-select-title" for="entryBranchSelect">
-            Select Your Engineering Branch <span class="req-star">*</span>
+            Select Your Branch <span class="req-star">*</span>
           </label>
           <p class="branch-select-desc">
-            Your official campus pathway is determined automatically from your branch.
+            Please select your official engineering branch from the list below to proceed.
           </p>
         </div>
 
         <div class="select-field-wrap">
           <select class="form-select branch-dropdown-entry" id="entryBranchSelect" required aria-required="true">
-            <option value="" disabled selected>— Select Your Engineering Branch —</option>
-            <optgroup label="── BIBWEWADI CAMPUS ──">
-              <option value="Computer Engineering">Computer Engineering</option>
-              <option value="Information Technology">Information Technology</option>
-              <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
-              <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
-            </optgroup>
-            <optgroup label="── KONDHWA CAMPUS ──">
-              <option value="CSE (Data Science)">CSE (Data Science)</option>
-              <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
-              <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
-              <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-              <option value="Instrumentation & Control">Instrumentation & Control</option>
-              <option value="Mechanical Engineering">Mechanical Engineering</option>
-              <option value="Civil Engineering">Civil Engineering</option>
-              <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
-            </optgroup>
+            <option value="" disabled selected>— Select Your Branch —</option>
+            <option value="Computer Engineering">Computer Engineering</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
+            <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
+            <option value="CSE (Data Science)">CSE (Data Science)</option>
+            <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
+            <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
+            <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+            <option value="Instrumentation & Control">Instrumentation & Control</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
           </select>
         </div>
 
-        <!-- Dynamic Campus Route Preview (Feedback upon selection before clicking Next) -->
-        <div class="campus-route-preview" id="campusRoutePreview" style="display: none;">
-          <div class="route-preview-inner">
-            <span class="route-icon" id="routePreviewIcon">📍</span>
-            <div>
-              <strong class="route-title" id="routePreviewTitle">Campus Detected</strong>
-              <span class="route-desc" id="routePreviewDesc"></span>
-            </div>
-          </div>
-        </div>
-
         <div class="branch-error-alert" id="entryBranchError" style="display: none;" role="alert">
-          ⚠️ Please select your engineering branch to continue.
+          ⚠️ Please select your branch to continue.
         </div>
 
         <div class="branch-action-row">

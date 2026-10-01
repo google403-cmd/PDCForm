@@ -507,9 +507,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const selectedVal = select.value;
           const campus = config.getCampusFromBranch ? config.getCampusFromBranch(selectedVal) : null;
           if (campus === "Kondhwa") {
-            showToast("This branch belongs to Kondhwa Campus. Redirecting to C-Cube assessment...", "info");
+            showToast("Redirecting to C-Cube assessment...", "info");
             setTimeout(() => {
-              window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+              window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-vit-pune.vercel.app/";
             }, 600);
             return;
           } else if (campus === "Bibwewadi") {
@@ -924,10 +924,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedDivision = String(formData.personal.division || "").trim();
 
     if (derivedCampus === "Kondhwa") {
-      const blockedMessage = "Kondhwa campus registrations are handled through the C-Cube assessment portal. Redirecting you to C-Cube...";
+      const blockedMessage = "Redirecting you to the C-Cube assessment portal...";
       showToast(blockedMessage, "info");
       setTimeout(() => {
-        window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+        window.location.href = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-vit-pune.vercel.app/";
       }, 600);
       return;
     }
@@ -1345,29 +1345,9 @@ document.addEventListener("DOMContentLoaded", () => {
       savedBranch = sessionStorage.getItem("pdc_selected_branch") || "";
     } catch (e) {}
 
-    // Live preview when dropdown changes
+    // Reset validation error on branch change
     entryBranchSelect.addEventListener("change", () => {
       if (entryBranchError) entryBranchError.style.display = "none";
-      const branch = entryBranchSelect.value;
-      const campus = config.getCampusFromBranch ? config.getCampusFromBranch(branch) : null;
-
-      if (campusRoutePreview && routePreviewTitle && routePreviewDesc) {
-        if (campus === "Bibwewadi") {
-          campusRoutePreview.className = "campus-route-preview route-bibwewadi";
-          campusRoutePreview.style.display = "block";
-          if (routePreviewIcon) routePreviewIcon.textContent = "🏛️";
-          routePreviewTitle.textContent = "Bibwewadi Campus Identified";
-          routePreviewDesc.textContent = "Your branch belongs to Bibwewadi Campus. Click Next → to enter your PDC assessment.";
-        } else if (campus === "Kondhwa") {
-          campusRoutePreview.className = "campus-route-preview route-kondhwa";
-          campusRoutePreview.style.display = "block";
-          if (routePreviewIcon) routePreviewIcon.textContent = "📍";
-          routePreviewTitle.textContent = "Kondhwa Campus Identified";
-          routePreviewDesc.textContent = "Your branch belongs to Kondhwa Campus. Click Next → to enter your C-Cube campus assessment.";
-        } else {
-          campusRoutePreview.style.display = "none";
-        }
-      }
     });
 
     // Next Button click
@@ -1377,7 +1357,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const branch = entryBranchSelect.value;
       if (!branch) {
         if (entryBranchError) {
-          entryBranchError.textContent = "⚠️ Please select your engineering branch to continue.";
+          entryBranchError.textContent = "⚠️ Please select your branch to continue.";
           entryBranchError.style.display = "block";
           entryBranchError.scrollIntoView({ behavior: "smooth", block: "center" });
         }
@@ -1388,7 +1368,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const campus = config.getCampusFromBranch ? config.getCampusFromBranch(branch) : null;
       if (!campus) {
         if (entryBranchError) {
-          entryBranchError.textContent = "⚠️ Could not determine campus for the selected branch. Please choose a valid branch.";
+          entryBranchError.textContent = "⚠️ Could not verify the selected branch. Please choose a valid branch from the list.";
           entryBranchError.style.display = "block";
         }
         return;
@@ -1401,14 +1381,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (branchSpinner) branchSpinner.style.display = "inline-block";
 
       if (campus === "Kondhwa") {
-        if (btnText) btnText.textContent = "Redirecting to C-Cube assessment...";
+        if (btnText) btnText.textContent = "Redirecting...";
         console.log(`[PDC Routing] Branch: "${branch}" -> Derived Campus: Kondhwa -> Redirecting to C-Cube Website`);
-        const targetUrl = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-website-chi.vercel.app/";
+        const targetUrl = config.campusMapping?.KONDHWA_WEBSITE_URL || "https://c-cube-vit-pune.vercel.app/";
         setTimeout(() => {
           window.location.href = targetUrl;
-        }, 350);
+        }, 300);
       } else if (campus === "Bibwewadi") {
-        if (btnText) btnText.textContent = "Loading your assessment...";
+        if (btnText) btnText.textContent = "Loading assessment...";
         console.log(`[PDC Routing] Branch: "${branch}" -> Derived Campus: Bibwewadi -> Entering PDC Registration`);
 
         formData.personal.branch = branch;
@@ -1440,6 +1420,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showBranchSelection() {
+    if (brandHeader) brandHeader.style.display = "none";
     if (branchIntroCard) branchIntroCard.style.display = "block";
     if (stepperContainer) stepperContainer.style.display = "none";
     if (formCard) formCard.style.display = "none";
@@ -1454,6 +1435,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function enterBibwewadiAssessment(branch, pushHistory = true) {
+    if (brandHeader) brandHeader.style.display = "block";
     if (branchIntroCard) branchIntroCard.style.display = "none";
     if (stepperContainer) stepperContainer.style.display = "block";
     if (formCard) formCard.style.display = "block";

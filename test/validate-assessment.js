@@ -43,7 +43,7 @@ assert(mapping, "config.campusMapping must exist");
 assert.strictEqual(mapping.BIBWEWADI_BRANCHES.length, 4, "Must have exactly 4 Bibwewadi branches");
 assert.strictEqual(mapping.KONDHWA_BRANCHES.length, 8, "Must have exactly 8 Kondhwa branches");
 assert.strictEqual(Object.keys(mapping.BRANCH_CAMPUS_MAP).length, 12, "Total branches must be exactly 12");
-assert.strictEqual(mapping.KONDHWA_WEBSITE_URL, "https://c-cube-website-chi.vercel.app/", "Kondhwa URL must be C-Cube home page");
+assert.strictEqual(mapping.KONDHWA_WEBSITE_URL, "https://c-cube-vit-pune.vercel.app/", "Kondhwa URL must be C-Cube home page");
 
 // Validate all 12 branches via getCampusFromBranch helper
 mapping.BIBWEWADI_BRANCHES.forEach(b => {

@@ -2393,131 +2393,234 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   PDC BRANCH-BASED CAMPUS ROUTING — INTRO & ENTRY STYLES
+   PDC × C-CUBE COMMON ENTRY GATEWAY — BRANDING & LOGOS
    ═══════════════════════════════════════════════════════════════ */
+.common-entry-card,
 .branch-intro-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
-  padding: clamp(24px, 4vw, 36px);
-  box-shadow: var(--shadow-md);
-  margin-bottom: 24px;
+  padding: clamp(24px, 4.5vw, 42px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.03);
+  margin-bottom: 28px;
   position: relative;
   overflow: hidden;
   animation: fadeInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.common-entry-card::before,
 .branch-intro-card::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; height: 5px;
-  background: var(--primary-gradient);
+  background: linear-gradient(90deg, #FB6243 0%, #EA580C 45%, #6366F1 55%, #4F46E5 100%);
 }
 
-.intro-badge-pill {
+/* Partnership Logos Presentation */
+.partnership-logos-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 36px);
+  margin: 6px auto 26px auto;
+}
+
+.circular-logo-container {
+  width: clamp(105px, 20vw, 135px);
+  height: clamp(105px, 20vw, 135px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  transition: transform var(--t-normal), box-shadow var(--t-normal);
+  flex-shrink: 0;
+}
+
+.circular-logo-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+}
+
+/* PDC circular container with official brand background */
+.circular-logo-container.logo-pdc {
+  background: #FB6243;
+  border: 3.5px solid #FFD4C8;
+}
+
+/* C-Cube circular container with crisp white card background */
+.circular-logo-container.logo-ccube {
+  background: #FFFFFF;
+  border: 3.5px solid #E2E8F0;
+}
+
+.circular-logo-container img {
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Middle '×' separator */
+.partnership-symbol {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: #94A3B8;
+  line-height: 1;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* Common Hero Branding & Header */
+.common-hero-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.common-pill-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--primary-light);
-  color: var(--primary-hover);
-  border: 1px solid var(--primary-border);
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
   padding: 5px 14px;
   border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
-.intro-heading {
+.common-hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  font-size: clamp(1.6rem, 3.4vw, 2.25rem);
   font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
   line-height: 1.25;
   letter-spacing: -0.02em;
 }
 
-.intro-lead {
-  font-size: 0.96rem;
+.common-hero-lead {
+  font-size: 0.98rem;
   line-height: 1.65;
   color: var(--text-secondary);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Common Section Cards */
+.common-section-card {
+  background: #F8FAFC;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: clamp(18px, 3vw, 24px);
   margin-bottom: 22px;
 }
 
-/* 4-Item Growth Pillar Showcase */
-.intro-highlights-grid {
+.common-section-heading {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
+}
+
+/* About the Initiative */
+.initiative-text {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.initiative-attribution {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #64748B;
+  padding-top: 10px;
+  border-top: 1px dashed #CBD5E1;
+}
+
+.attribution-names {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+/* What Will You Explore Grid */
+.explore-pillars-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  margin-bottom: 24px;
+  margin-top: 12px;
 }
 
-.intro-highlight-item {
+.explore-pillar-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 12px 14px;
-  background: #F8FAFC;
-  border: 1px solid var(--border-subtle);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   border-radius: var(--radius-md);
-  transition: transform var(--t-fast), border-color var(--t-fast);
+  padding: 13px 15px;
+  transition: border-color var(--t-fast), transform var(--t-fast);
 }
 
-.intro-highlight-item:hover {
-  border-color: var(--primary-border);
+.explore-pillar-item:hover {
+  border-color: #CBD5E1;
   transform: translateY(-1px);
 }
 
-.highlight-icon {
-  font-size: 1.45rem;
+.pillar-icon {
+  font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
-.highlight-text strong {
+.pillar-content strong {
   display: block;
   font-size: 0.88rem;
-  color: var(--text-primary);
   font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: 2px;
 }
 
-.highlight-text span {
-  display: block;
+.pillar-content p {
+  margin: 0;
   font-size: 0.78rem;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 /* Branch Selection Box */
 .branch-selection-box {
-  background: linear-gradient(180deg, #FFF9F7 0%, #FFF4F0 100%);
+  background: linear-gradient(180deg, #FFF9F7 0%, #FFF5F2 100%);
   border: 1.5px solid #FFD5C6;
   border-radius: var(--radius-lg);
-  padding: 22px 20px;
+  padding: clamp(18px, 3.5vw, 24px);
 }
 
 .branch-select-header {
   margin-bottom: 14px;
 }
 
-.branch-select-kicker {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #C2410C;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
 .branch-select-title {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1.12rem;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 4px;
@@ -2553,62 +2656,11 @@ body {
   outline: none;
 }
 
-.branch-dropdown-entry optgroup {
-  font-weight: 800;
-  color: #475569;
-  background: #F8FAFC;
-  padding: 6px 4px;
-}
-
 .branch-dropdown-entry option {
   font-weight: 500;
   color: #0F172A;
   background: #FFFFFF;
   padding: 8px 12px;
-}
-
-/* Dynamic Campus Route Preview */
-.campus-route-preview {
-  margin-bottom: 14px;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  background: #FFFFFF;
-  border: 1px solid #CBD5E1;
-  animation: fadeIn 0.25s ease-out;
-}
-
-.campus-route-preview.route-bibwewadi {
-  border-color: #86EFAC;
-  background: #F0FDF4;
-}
-
-.campus-route-preview.route-kondhwa {
-  border-color: #FDE047;
-  background: #FEFCE8;
-}
-
-.route-preview-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.route-icon {
-  font-size: 1.3rem;
-  line-height: 1;
-}
-
-.route-title {
-  display: block;
-  font-size: 0.88rem;
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-.route-desc {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-muted);
 }
 
 .branch-error-alert {
@@ -2637,7 +2689,14 @@ body {
 }
 
 @media (max-width: 640px) {
-  .intro-highlights-grid {
+  .partnership-logos-wrap {
+    gap: 12px;
+  }
+  .circular-logo-container {
+    width: 95px;
+    height: 95px;
+  }
+  .explore-pillars-grid {
     grid-template-columns: 1fr;
   }
   .branch-action-row {

@@ -66,26 +66,28 @@ console.log("✅ Unknown or unmapped branches safely return null (no guesswork)"
 console.log("\n[Test 5] Verifying exact Kondhwa C-Cube Home URL...");
 assert.strictEqual(
   campusMapping.KONDHWA_WEBSITE_URL,
-  "https://c-cube-website-chi.vercel.app/",
+  "https://c-cube-vit-pune.vercel.app/",
   "Kondhwa redirect must be exact C-Cube home page URL"
 );
-console.log("✅ Kondhwa URL is exact C-Cube home page: https://c-cube-website-chi.vercel.app/");
+console.log("✅ Kondhwa URL is exact C-Cube home page: https://c-cube-vit-pune.vercel.app/");
 
-// 6. Inspect index.html for UI & Accessibility
-console.log("\n[Test 6] Verifying index.html First Screen markup...");
+// 6. Inspect index.html for Common Entry Gateway, Logos, & Clean Dropdown
+console.log("\n[Test 6] Verifying index.html PDC × C-Cube Common Entry Gateway markup...");
 const indexHtml = fs.readFileSync("index.html", "utf8");
 assert(indexHtml.includes('id="branchIntroCard"'), "index.html must contain branchIntroCard");
 assert(indexHtml.includes('id="entryBranchSelect"'), "index.html must contain entryBranchSelect");
 assert(indexHtml.includes('id="branchNextBtn"'), "index.html must contain branchNextBtn");
-assert(indexHtml.includes('id="campusRoutePreview"'), "index.html must contain campusRoutePreview");
-assert(indexHtml.includes('optgroup label="── BIBWEWADI CAMPUS ──"'), "index.html must contain Bibwewadi optgroup");
-assert(indexHtml.includes('optgroup label="── KONDHWA CAMPUS ──"'), "index.html must contain Kondhwa optgroup");
+assert(indexHtml.includes('assets/pdc-logo-official.jpg'), "index.html must use official PDC logo asset");
+assert(indexHtml.includes('assets/c-cube-logo-official.jpg'), "index.html must use official C-Cube logo asset");
+assert(indexHtml.includes('circular-logo-container logo-pdc'), "index.html must use circular container for PDC logo");
+assert(indexHtml.includes('circular-logo-container logo-ccube'), "index.html must use circular container for C-Cube logo");
+assert(!indexHtml.includes('<optgroup'), "index.html must NOT contain campus optgroup or campus headings");
 
 // Ensure all 12 branches appear as options in index.html
 [...EXPECTED_BIBWEWADI_BRANCHES, ...EXPECTED_KONDHWA_BRANCHES].forEach(branch => {
   assert(indexHtml.includes(`value="${branch}"`), `index.html must contain option value="${branch}"`);
 });
-console.log("✅ index.html contains the complete 12-branch selector with campus optgroups");
+console.log("✅ index.html contains PDC × C-Cube common gateway with circular logos and clean 12-branch dropdown (no campus headings)");
 
 // 7. Verify Campus field removed from registration in content.js
 console.log("\n[Test 7] Verifying campus field removed from registration form...");
@@ -101,7 +103,7 @@ assert(appJs.includes("initBranchRouting"), "app.js must define initBranchRoutin
 assert(appJs.includes("enterBibwewadiAssessment"), "app.js must define enterBibwewadiAssessment");
 assert(appJs.includes("returnToBranchSelection"), "app.js must define returnToBranchSelection");
 assert(appJs.includes("Change Branch"), "app.js must offer Change Branch button on Step 1");
-assert(appJs.includes("https://c-cube-website-chi.vercel.app/"), "app.js must redirect to C-Cube for Kondhwa");
+assert(appJs.includes("https://c-cube-vit-pune.vercel.app/"), "app.js must redirect to C-Cube for Kondhwa");
 console.log("✅ app.js implements complete branch routing, prefilling, and back-navigation");
 
 console.log("\n==================================================");

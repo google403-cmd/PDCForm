@@ -91,7 +91,7 @@ window.PDC_CONFIG = {
       "Civil Engineering": "Kondhwa",
       "Artificial Intelligence & Data Science": "Kondhwa"
     },
-    KONDHWA_WEBSITE_URL: "https://c-cube-website-chi.vercel.app/"
+    KONDHWA_WEBSITE_URL: "https://c-cube-vit-pune.vercel.app/"
   },
 
   /**
@@ -127,8 +127,8 @@ window.PDC_CONFIG = {
   campusAccess: {
     blockedMessage: "Kondhwa campus registrations are handled through a dedicated Kondhwa assessment route. Please proceed to the Kondhwa assessment below.",
     supportNote: "Please use the official Kondhwa pathway shared by the club coordinators.",
-    KONDHWA_QUIZ_URL: "https://c-cube-website-chi.vercel.app/",
-    kondhwaQuizUrl: "https://c-cube-website-chi.vercel.app/",
+    KONDHWA_QUIZ_URL: "https://c-cube-vit-pune.vercel.app/",
+    kondhwaQuizUrl: "https://c-cube-vit-pune.vercel.app/",
     BIBWEWADI_QUIZ_URL: "index.html",
     bibwewadiQuizUrl: "index.html",
     kondhwaLogoPath: "assets/kondhwa-logo.svg",

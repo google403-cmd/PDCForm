@@ -103,15 +103,21 @@ const indexHtmlContent = fs.readFileSync('index.html', 'utf8');
 assert(indexHtmlContent.includes('id="branchIntroCard"'), 'index.html must contain branchIntroCard for new first screen');
 assert(indexHtmlContent.includes('id="entryBranchSelect"'), 'index.html must contain entryBranchSelect dropdown');
 assert(indexHtmlContent.includes('id="branchNextBtn"'), 'index.html must contain branchNextBtn button');
-assert(indexHtmlContent.includes('optgroup label="── BIBWEWADI CAMPUS ──"'), 'index.html must group Bibwewadi branches');
-assert(indexHtmlContent.includes('optgroup label="── KONDHWA CAMPUS ──"'), 'index.html must group Kondhwa branches');
-console.log('✅ Requirement 11.1: index.html contains PDC intro & branch selection screen with campus optgroups');
+assert(indexHtmlContent.includes('assets/pdc-logo-official.jpg'), 'index.html must use official PDC logo asset');
+assert(indexHtmlContent.includes('assets/c-cube-logo-official.jpg'), 'index.html must use official C-Cube logo asset');
+assert(indexHtmlContent.includes('circular-logo-container logo-pdc'), 'index.html must frame PDC logo in circular container');
+assert(indexHtmlContent.includes('circular-logo-container logo-ccube'), 'index.html must frame C-Cube logo in circular container');
+assert(indexHtmlContent.includes('Discover Yourself. Understand Yourself. Grow.'), 'index.html must show common hero headline');
+assert(indexHtmlContent.includes('About the Initiative'), 'index.html must contain About the Initiative section');
+assert(indexHtmlContent.includes('What Will You Explore?'), 'index.html must contain What Will You Explore section');
+assert(!indexHtmlContent.includes('<optgroup'), 'index.html must NOT show campus headings or optgroups in dropdown');
+console.log('✅ Requirement 11.1: index.html contains PDC × C-Cube common entry gateway with circular logos and clean dropdown');
 
 const contentJsContent = fs.readFileSync('js/content.js', 'utf8');
 assert(contentJsContent.includes('campusMapping:'), 'content.js must define centralized campusMapping');
 assert(contentJsContent.includes('getCampusFromBranch:'), 'content.js must define getCampusFromBranch helper');
-assert(contentJsContent.includes('https://c-cube-website-chi.vercel.app/'), 'content.js must target C-Cube home page for Kondhwa');
-console.log('✅ Requirement 11.2: content.js contains central mapping for all 12 branches & C-Cube URL');
+assert(contentJsContent.includes('https://c-cube-vit-pune.vercel.app/'), 'content.js must target new C-Cube home page URL');
+console.log('✅ Requirement 11.2: content.js contains central mapping for all 12 branches & new C-Cube URL');
 
 assert(!contentJsContent.includes('options: ["Bibwewadi", "Kondhwa"]'), 'content.js must remove campus dropdown options from personal_details');
 console.log('✅ Requirement 11.3: Campus selection field completely removed from student registration form');
@@ -120,7 +126,7 @@ const appJsContent = fs.readFileSync('js/app.js', 'utf8');
 assert(appJsContent.includes('initBranchRouting'), 'app.js must implement initBranchRouting');
 assert(appJsContent.includes('enterBibwewadiAssessment'), 'app.js must implement enterBibwewadiAssessment');
 assert(appJsContent.includes('returnToBranchSelection'), 'app.js must support returning to branch selection');
-assert(appJsContent.includes('https://c-cube-website-chi.vercel.app/'), 'app.js must redirect Kondhwa branches to C-Cube');
+assert(appJsContent.includes('https://c-cube-vit-pune.vercel.app/'), 'app.js must redirect Kondhwa branches to new C-Cube URL');
 console.log('✅ Requirement 11.4: app.js handles intelligent branch-to-campus routing and back navigation');
 
 console.log("==================================================");
