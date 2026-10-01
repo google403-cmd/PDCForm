@@ -105,7 +105,4 @@
     encryptGenderToken,
     decryptGenderToken
   };
-
-  // Backwards compatibility alias
-  window.DhruvaSecurity = window.PDCSecurity;
 })(window);

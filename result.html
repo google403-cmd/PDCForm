@@ -736,7 +736,7 @@
   <script src="js/firebase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const config = window.PDC_CONFIG || window.DHRUVA_CONFIG || {};
+      const config = window.PDC_CONFIG || {};
       const resultCard = document.getElementById("resultCard");
       const resultBadge = document.getElementById("resultBadge");
 
@@ -749,7 +749,7 @@
       sessionStorage.removeItem("pdc_auth_token");
 
       let sessionData = null;
-      const security = window.PDCSecurity || window.DhruvaSecurity;
+      const security = window.PDCSecurity;
 
       if (security && authToken) {
         sessionData = security.decryptSessionPayload(authToken);
@@ -1313,7 +1313,7 @@
         // Fetch real registration count and update counter pill
         async function updateRegistrationCounterDisplay() {
           if (!liveCounter) return;
-          const backend = window.PDCBackend || window.DhruvaBackend;
+          const backend = window.PDCBackend;
           let count = 0;
           try {
             const raw = localStorage.getItem("pdc_total_registered_count");

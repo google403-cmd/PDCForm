@@ -12,7 +12,7 @@
  * ===================================================================
  */
 
-// Retrieve configuration from window.PDC_CONFIG or defaults
+// Retrieve configuration from window.PDC_FIREBASE_CONFIG or window.PDC_CONFIG.firebase
 const getFirebaseConfig = () => {
   const globalConfig = (typeof window !== "undefined" && window.PDC_CONFIG && window.PDC_CONFIG.firebase) 
     ? window.PDC_CONFIG.firebase 
@@ -22,12 +22,13 @@ const getFirebaseConfig = () => {
     : {};
 
   return {
-    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "AIzaSyDS7leZONMPWe1UItrShq2NxFrMCFJqTjs",
-    authDomain: injectedConfig.authDomain || globalConfig.authDomain || "dhruva-7c184.firebaseapp.com",
-    projectId: injectedConfig.projectId || globalConfig.projectId || "dhruva-7c184",
-    storageBucket: injectedConfig.storageBucket || globalConfig.storageBucket || "dhruva-7c184.firebasestorage.app",
-    messagingSenderId: injectedConfig.messagingSenderId || globalConfig.messagingSenderId || "611719166487",
-    appId: injectedConfig.appId || globalConfig.appId || "1:611719166487:web:7a6d3d29fc57b90b7efa52",
+    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
+    authDomain: injectedConfig.authDomain || globalConfig.authDomain || "pdclub-e9f59.firebaseapp.com",
+    projectId: injectedConfig.projectId || globalConfig.projectId || "pdclub-e9f59",
+    storageBucket: injectedConfig.storageBucket || globalConfig.storageBucket || "pdclub-e9f59.firebasestorage.app",
+    messagingSenderId: injectedConfig.messagingSenderId || globalConfig.messagingSenderId || "609375785673",
+    appId: injectedConfig.appId || globalConfig.appId || "1:609375785673:web:a516ef1b29ebc6560ff318",
+    measurementId: injectedConfig.measurementId || globalConfig.measurementId || "G-18RNRMSJJN",
   };
 };
 
@@ -497,8 +498,6 @@ if (typeof window !== "undefined") {
     getFirebaseConfig,
     flushSyncQueue
   };
-  // Backwards compatibility alias
-  window.DhruvaBackend = window.PDCBackend;
 }
 
 if (typeof module !== "undefined" && module.exports) {

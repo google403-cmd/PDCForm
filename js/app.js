@@ -12,7 +12,7 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const config = window.PDC_CONFIG || window.DHRUVA_CONFIG;
+  const config = window.PDC_CONFIG;
 
   if (!config) {
     console.error("Configuration not loaded from content.js!");
@@ -884,7 +884,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Submitting PDC assessment payload:", payload);
 
     try {
-      const backend = window.PDCBackend || window.DhruvaBackend;
+      const backend = window.PDCBackend;
       const result = await backend.saveTestSubmission(payload);
 
       // NEVER redirect if submission explicitly failed with an error
@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear draft since submission succeeded
       clearDraft();
 
-      const security = window.PDCSecurity || window.DhruvaSecurity;
+      const security = window.PDCSecurity;
       const authToken = security
         ? security.encryptSessionPayload(sessionData)
         : btoa(JSON.stringify(sessionData));

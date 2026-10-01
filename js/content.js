@@ -81,14 +81,15 @@ window.PDC_CONFIG = {
     female: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl"
   },
 
-  // ── Firebase Configuration Placeholder for PDC Project ───────────
+  // ── Firebase Configuration for PDC Project (pdclub-e9f59) ─────────
   firebase: {
-    apiKey: "AIzaSy_PDC_OFFICIAL_FIREBASE_KEY_PLACEHOLDER",
-    authDomain: "pdc-club-assessment.firebaseapp.com",
-    projectId: "pdc-club-assessment",
-    storageBucket: "pdc-club-assessment.firebasestorage.app",
-    messagingSenderId: "102938475612",
-    appId: "1:102938475612:web:pdc9876543210abcdef"
+    apiKey: "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
+    authDomain: "pdclub-e9f59.firebaseapp.com",
+    projectId: "pdclub-e9f59",
+    storageBucket: "pdclub-e9f59.firebasestorage.app",
+    messagingSenderId: "609375785673",
+    appId: "1:609375785673:web:a516ef1b29ebc6560ff318",
+    measurementId: "G-18RNRMSJJN"
   },
 
   // ── 5 Core PDC Activities with Direct Quality Mappings ────────────
@@ -691,9 +692,8 @@ window.PDC_CONFIG = {
   }
 };
 
-// Aliases for backward compatibility
+// Backward compatibility alias for scoreInsights eq/sq
 window.PDC_CONFIG.scoreInsights.eq = window.PDC_CONFIG.scoreInsights.sq;
-window.DHRUVA_CONFIG = window.PDC_CONFIG;
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = window.PDC_CONFIG;
