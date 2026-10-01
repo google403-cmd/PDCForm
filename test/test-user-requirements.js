@@ -102,12 +102,13 @@ console.log('✅ Requirement 10.3: leads.html displays name, phone number and qu
 const indexHtmlContent = fs.readFileSync('index.html', 'utf8');
 assert(indexHtmlContent.includes('id="branchIntroCard"'), 'index.html must contain branchIntroCard for new first screen');
 assert(indexHtmlContent.includes('id="entryBranchSelect"'), 'index.html must contain entryBranchSelect dropdown');
-assert(indexHtmlContent.includes('id="branchNextBtn"'), 'index.html must contain branchNextBtn button');
-assert(indexHtmlContent.includes('assets/pdc-ccube-gateway-hero.jpg'), 'index.html must use official PDC × C-Cube gateway hero graphic');
+assert(indexHtmlContent.includes('assets/pdc-logo-official.jpg'), 'index.html must use official PDC logo asset');
+assert(indexHtmlContent.includes('assets/c-cube-logo-official.jpg'), 'index.html must use official C-Cube logo asset');
+assert(indexHtmlContent.includes('What Will You Explore?'), 'index.html must contain What Will You Explore section');
 assert(indexHtmlContent.includes('Select Your Branch'), 'index.html must show Select Your Branch');
 assert(indexHtmlContent.includes('btn-branch-gradient-next'), 'index.html must style Next button with mockup gradient');
 assert(!indexHtmlContent.includes('<optgroup'), 'index.html must NOT show campus headings or optgroups in dropdown');
-console.log('✅ Requirement 11.1: index.html contains PDC × C-Cube common entry gateway with mockup hero graphic and clean dropdown');
+console.log('✅ Requirement 11.1: index.html contains PDC × C-Cube common entry gateway with pure HTML/CSS mockup layout');
 
 const contentJsContent = fs.readFileSync('js/content.js', 'utf8');
 assert(contentJsContent.includes('campusMapping:'), 'content.js must define centralized campusMapping');

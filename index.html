@@ -71,12 +71,108 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <section class="gateway-presentation-wrap" id="branchIntroCard" aria-label="PDC and C-Cube Common Initiative Gateway">
       
-      <!-- Top Graphic: PDC × C-Cube Hero & Explore Pillars (from official design mockup) -->
-      <div class="gateway-hero-banner-card">
-        <img src="assets/pdc-ccube-gateway-hero.jpg" 
-             alt="PDC × C-Cube - Discover Yourself. Understand Yourself. Grow. Joint Student Development Initiative" 
-             class="gateway-hero-img" 
-             loading="eager">
+      <!-- Top Hero Card with Inspiring Campus Sunlit Backdrop -->
+      <div class="gateway-hero-card">
+        <div class="gateway-hero-content">
+          <!-- Circular Logos Partnership: PDC (Left) × C-Cube (Right) -->
+          <div class="partnership-logos-wrap">
+            <div class="circular-logo-container logo-pdc" title="Personality Development Club (PDC)">
+              <img src="assets/pdc-logo-official.jpg" alt="PDC - Personality Development Club" class="partner-logo partner-logo-pdc">
+            </div>
+            <div class="partnership-symbol" aria-label="joint initiative with">&times;</div>
+            <div class="circular-logo-container logo-ccube" title="C-Cube">
+              <img src="assets/c-cube-logo-official.jpg" alt="C-Cube" class="partner-logo partner-logo-ccube">
+            </div>
+          </div>
+
+          <!-- Headline & Common Initiative Introduction -->
+          <h1 class="gateway-headline">
+            <span>Discover Yourself.</span>
+            <span>Understand Yourself. <span class="gradient-text-grow">Grow.</span></span>
+          </h1>
+
+          <p class="gateway-sublead">
+            A common student development initiative by <strong>PDC</strong> and <strong>C-Cube</strong> to help you explore your personality, cognitive abilities, interpersonal tendencies, purpose and areas for personal growth.
+          </p>
+        </div>
+      </div>
+
+      <!-- What Will You Explore Card -->
+      <div class="explore-showcase-card">
+        <h2 class="explore-card-title">What Will You Explore?</h2>
+        <p class="explore-card-subtitle">
+          This assessment gives you insights into key areas that shape your overall development.
+        </p>
+
+        <div class="explore-columns-grid">
+          <!-- 1. Personality & Emotional Tendencies -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-red">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Personality &amp; Emotional Tendencies</h3>
+            <p class="pillar-item-desc">Understand your natural strengths and behavioural patterns.</p>
+          </div>
+
+          <!-- 2. Cognitive & Problem-Solving Skills -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-blue">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/>
+                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Cognitive &amp; Problem-Solving Skills</h3>
+            <p class="pillar-item-desc">Explore your analytical thinking and approach to challenges.</p>
+          </div>
+
+          <!-- 3. Interpersonal Awareness -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-green">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Interpersonal Awareness</h3>
+            <p class="pillar-item-desc">Gain insights into how you connect, communicate and work with others.</p>
+          </div>
+
+          <!-- 4. Self-Reflection & Purpose -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-purple">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
+                <path d="M12 2c-.55 0-1 .45-1 1 0 3.31-2.69 6-6 6-.55 0-1 .45-1 1 0 4.42 3.58 8 8 8s8-3.58 8-8c0-.55-.45-1-1-1-3.31 0-6-2.69-6-6 0-.55-.45-1-1-1zm0 4.2c1.78 1.96 4.14 3.25 6.78 3.65-1.12 3.48-4.38 6.05-8.28 6.13-3.9-.08-7.16-2.65-8.28-6.13 2.64-.4 5-1.69 6.78-3.65z"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Self-Reflection &amp; Purpose</h3>
+            <p class="pillar-item-desc">Think deeper about your goals, values and understanding of life.</p>
+          </div>
+
+          <!-- 5. Development Areas -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-amber">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Development Areas</h3>
+            <p class="pillar-item-desc">Identify areas where you can grow and improve.</p>
+          </div>
+
+          <!-- 6. Holistic Growth -->
+          <div class="explore-column-item">
+            <div class="pillar-icon-badge badge-teal">
+              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
+              </svg>
+            </div>
+            <h3 class="pillar-item-title">Holistic Growth</h3>
+            <p class="pillar-item-desc">Receive guidance for becoming a more balanced, confident and purpose-driven individual.</p>
+          </div>
+        </div>
       </div>
 
       <!-- Branch Selection Section (Matching design with gradient button) -->
