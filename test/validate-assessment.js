@@ -59,6 +59,10 @@ assert.strictEqual(config.getCampusFromBranch(""), null, "Empty branch must retu
 assert(config.club.logoPath.includes("pdc-logo") || config.club.logoPath.includes("pdclogo1"), "PDC logo must point to PDC asset");
 assert.strictEqual(config.club.bannerPath, "Stories/PDC Banner.png", "PDC banner must use the Stories asset");
 assert(config.whatsappLinks.COMMUNITY_URL, "PDC WhatsApp link must be configured");
+assert.strictEqual(config.whatsappLinks.BOYS_WHATSAPP_LINK, "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl", "Boys must use the boys WhatsApp group");
+assert.strictEqual(config.whatsappLinks.GIRLS_WHATSAPP_LINK, "https://chat.whatsapp.com/K26ctdpLyC85tutbp93kxu", "Girls must use the girls WhatsApp group");
+assert.strictEqual(config.getWhatsAppCommunityLink("Male"), config.whatsappLinks.BOYS_WHATSAPP_LINK, "Male students must resolve to the boys group");
+assert.strictEqual(config.getWhatsAppCommunityLink("Female"), config.whatsappLinks.GIRLS_WHATSAPP_LINK, "Female students must resolve to the girls group");
 
 const activityImages = (config.activities || config.resultPage?.activities || []).map(activity => activity.image);
 assert.deepStrictEqual(activityImages, [

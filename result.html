@@ -839,14 +839,12 @@
         ? Math.round(Number(evaluation.totalScore))
         : (sessionData.totalScore !== undefined ? Math.round(Number(sessionData.totalScore)) : 80);
 
-      // ──────────────────────────────────────────────────────────────
-      // SINGLE COMMUNITY WHATSAPP CTA
-      // Unified community URL — no boys/girls distinction visible
-      // ──────────────────────────────────────────────────────────────
-      const targetCommunityLink = config.whatsappLinks?.COMMUNITY_URL ||
-        config.whatsappLinks?.default ||
-        config.whatsappLinks?.BOYS_WHATSAPP_LINK ||
-        "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
+      const targetCommunityLink = typeof config.getWhatsAppCommunityLink === "function"
+        ? config.getWhatsAppCommunityLink(sessionData.gender)
+        : (config.whatsappLinks?.COMMUNITY_URL ||
+          config.whatsappLinks?.default ||
+          config.whatsappLinks?.BOYS_WHATSAPP_LINK ||
+          "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl");
 
       // ── Build Top Executive Summary Chips (PQ, IQ, SQ, Total Score) ──
       const rawScores = evaluation.scores || sessionData.scores || {};

@@ -139,15 +139,27 @@ window.PDC_CONFIG = {
     }
   },
 
-  // ── WhatsApp Official Community Link ──────────────────────────────
-  // Unified single CTA — no boys/girls distinction visible to users
+  // ── WhatsApp Official Community Links ─────────────────────────────
   whatsappLinks: {
     COMMUNITY_URL: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
     default: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
     BOYS_WHATSAPP_LINK: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
-    GIRLS_WHATSAPP_LINK: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
+    GIRLS_WHATSAPP_LINK: "https://chat.whatsapp.com/K26ctdpLyC85tutbp93kxu",
     male: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl",
-    female: "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl"
+    female: "https://chat.whatsapp.com/K26ctdpLyC85tutbp93kxu"
+  },
+
+  getWhatsAppCommunityLink: function(gender) {
+    const normalizedGender = String(gender || "").trim().toLowerCase();
+    const links = window.PDC_CONFIG?.whatsappLinks || {};
+
+    if (normalizedGender === "female" || normalizedGender === "girl" || normalizedGender === "girls") {
+      return links.GIRLS_WHATSAPP_LINK || links.female || links.COMMUNITY_URL || links.default;
+    }
+    if (normalizedGender === "male" || normalizedGender === "boy" || normalizedGender === "boys") {
+      return links.BOYS_WHATSAPP_LINK || links.male || links.COMMUNITY_URL || links.default;
+    }
+    return links.COMMUNITY_URL || links.default || links.BOYS_WHATSAPP_LINK || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
   },
 
   // ── Firebase Configuration for PDC Project (pdclub-e9f59) ─────────

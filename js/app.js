@@ -308,7 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         bodyHtml += `</div>`;
       } else if (step.isCommunityStep) {
-        const communityUrl = config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
+        const communityUrl = typeof config.getWhatsAppCommunityLink === "function"
+          ? config.getWhatsAppCommunityLink(formData.personal.gender)
+          : (config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl");
         bodyHtml = `
           <div class="community-step-container">
             <!-- PDC Community Invitation Card -->
@@ -458,6 +460,13 @@ document.addEventListener("DOMContentLoaded", () => {
     attachInteractiveHandlers();
   }
 
+  function updateCommunityStepLink(gender) {
+    const communityJoinBtn = document.getElementById("communityStepJoinBtn");
+    if (communityJoinBtn && typeof config.getWhatsAppCommunityLink === "function") {
+      communityJoinBtn.href = config.getWhatsAppCommunityLink(gender);
+    }
+  }
+
   // ===================================================================
   // 4. INTERACTION HANDLERS (RADIO SELECTION, KEYBOARD & OTHER DROPDOWN)
   // ===================================================================
@@ -473,7 +482,10 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.add("selected");
         card.setAttribute("aria-checked", "true");
         const radio = card.querySelector('input[type="radio"]');
-        if (radio) radio.checked = true;
+        if (radio) {
+          radio.checked = true;
+          updateCommunityStepLink(radio.value);
+        }
         clearFieldError("gender");
         saveDraft();
       };
@@ -1485,5 +1497,6 @@ if (stepperContainer) {
   initStepper();
   renderStepViews();
   restoreDraft();
+  updateCommunityStepLink(formData.personal.gender);
   initBranchRouting();
 });

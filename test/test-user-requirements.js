@@ -98,6 +98,8 @@ assert(leadsHtml.includes('Student Name'), 'leads.html must display student name
 assert(leadsHtml.includes('btn-wa-chat'), 'leads.html must include WhatsApp direct chat action');
 assert(leadsHtml.includes('copyAllNumbersBtn'), 'leads.html must include Copy All Phone Numbers button');
 assert(leadsHtml.includes('exportCsvBtn'), 'leads.html must include Export CSV button');
+assert(leadsHtml.includes('config.getWhatsAppCommunityLink(lead.gender)'), 'leads.html must include the gender-specific group link in coordinator messages');
+assert(fs.readFileSync('result.html', 'utf8').includes('config.getWhatsAppCommunityLink(sessionData.gender)'), 'result.html must select the group link using submitted gender');
 console.log('✅ Requirement 10.3: leads.html displays name, phone number and quick WhatsApp outreach actions');
 
 // 11. PDC Branch-Based Campus Routing System
@@ -125,6 +127,7 @@ console.log('✅ Requirement 11.3: Campus selection field completely removed fro
 
 const appJsContent = fs.readFileSync('js/app.js', 'utf8');
 assert(appJsContent.includes('initBranchRouting'), 'app.js must implement initBranchRouting');
+assert(appJsContent.includes('updateCommunityStepLink(radio.value)'), 'app.js must update the community step link when gender is selected');
 assert(appJsContent.includes('enterBibwewadiAssessment'), 'app.js must implement enterBibwewadiAssessment');
 assert(appJsContent.includes('returnToBranchSelection'), 'app.js must support returning to branch selection');
 assert(appJsContent.includes('https://c-cube-vit-pune.vercel.app/'), 'app.js must redirect Kondhwa branches to new C-Cube URL');

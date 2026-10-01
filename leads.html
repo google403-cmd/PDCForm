@@ -604,8 +604,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const config = window.PDC_CONFIG || {};
-      const COMMUNITY_URL = config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
-      
+
       const leadsTableBody = document.getElementById("leadsTableBody");
       const emptyState = document.getElementById("emptyState");
       const searchInput = document.getElementById("searchInput");
@@ -673,8 +672,11 @@
           const phoneClean = String(lead.whatsappNumber || "").replace(/[^0-9]/g, "");
           const phoneDisplay = formatPhone(phoneClean);
           const studentName = lead.fullName || "Student";
+          const communityUrl = typeof config.getWhatsAppCommunityLink === "function"
+            ? config.getWhatsAppCommunityLink(lead.gender)
+            : (config.whatsappLinks?.COMMUNITY_URL || "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl");
           const waMessage = encodeURIComponent(
-            `Hi ${studentName}! Thank you for completing your PDC Personality & Quotient Assessment. Connect with our mentors and join the official PDC WhatsApp community here: ${COMMUNITY_URL}`
+            `Hi ${studentName}! Thank you for completing your PDC Personality & Quotient Assessment. Connect with our mentors and join the official PDC WhatsApp community here: ${communityUrl}`
           );
           const waLink = `https://wa.me/91${phoneClean.slice(-10)}?text=${waMessage}`;
 
