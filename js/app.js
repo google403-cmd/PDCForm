@@ -580,14 +580,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const chk = document.getElementById("joinedCommunityCheckbox");
     if (chk) {
       chk.addEventListener("change", () => {
-        if (chk.checked) {
-          const selectedRadio = document.querySelector('input[name="joinedCommunityChoice"]:checked');
-          if (!selectedRadio) {
-            selectCommunityChoice("yes");
-          }
-        }
         const err = document.getElementById("error-communityChoice");
-        if (err) err.style.display = "none";
+        if (err && chk.checked) err.style.display = "none";
         saveDraft();
       });
     }
@@ -600,8 +594,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const radio = c.querySelector('input[type="radio"]');
         if (radio) radio.checked = isMatch;
       });
-      const confirmChk = document.getElementById("joinedCommunityCheckbox");
-      if (confirmChk) confirmChk.checked = true;
 
       formData.joinedCommunity = val;
       const err = document.getElementById("error-communityChoice");
@@ -728,17 +720,32 @@ document.addEventListener("DOMContentLoaded", () => {
       const checkbox = document.getElementById("joinedCommunityCheckbox");
       const err = document.getElementById("error-communityChoice");
 
-      if (!selectedRadio && (!checkbox || !checkbox.checked)) {
+      if (!selectedRadio) {
         if (err) {
+          err.textContent = "⚠️ Please select whether you have joined or will join later.";
           err.style.display = "block";
           err.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-        showToast("Please confirm whether you have joined or select No to continue.", "info");
+        showToast("Please select whether you have joined or will join later.", "info");
+        return false;
+      }
+
+      if (!checkbox || !checkbox.checked) {
+        if (err) {
+          err.textContent = "⚠️ Please check the confirmation checkbox to submit your assessment.";
+          err.style.display = "block";
+          err.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        showToast("Please check the confirmation box to submit your assessment.", "error");
+        if (checkbox) {
+          checkbox.scrollIntoView({ behavior: "smooth", block: "center" });
+          checkbox.focus();
+        }
         return false;
       }
 
       if (err) err.style.display = "none";
-      formData.joinedCommunity = selectedRadio ? selectedRadio.value : (checkbox && checkbox.checked ? "yes" : "no");
+      formData.joinedCommunity = selectedRadio.value;
       return true;
     }
 
@@ -830,6 +837,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!validateCurrentStep()) return;
+
+    // Strict consent check: user must explicitly check the confirmation checkbox
+    const consentCheckbox = document.getElementById("joinedCommunityCheckbox");
+    if (consentCheckbox && !consentCheckbox.checked) {
+      const err = document.getElementById("error-communityChoice");
+      if (err) {
+        err.textContent = "⚠️ Please check the confirmation checkbox to submit your assessment.";
+        err.style.display = "block";
+        err.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      showToast("Please check the confirmation box to submit your assessment.", "error");
+      consentCheckbox.focus();
+      return;
+    }
 
     // Hide any previous error banner
     const alertBox = document.getElementById("submissionAlertBox");
@@ -983,6 +1004,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       };
 
+      // Cache verified student registration for live social proof widget
+      try {
+        const realRegistrations = JSON.parse(localStorage.getItem("pdc_real_registrations") || "[]");
+        const studentNameParts = studentName.trim().split(/\s+/);
+        const initials = studentNameParts.length > 1
+          ? (studentNameParts[0][0] + studentNameParts[studentNameParts.length - 1][0]).toUpperCase()
+          : studentName.slice(0, 2).toUpperCase();
+        const colors = ["#2563EB", "#7C3AED", "#059669", "#D97706", "#DC2626", "#F96340", "#0891B2", "#BE123C"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        realRegistrations.unshift({
+          name: studentName,
+          branch: formData.personal.branch || "VIT Pune",
+          year: formData.personal.year || "FY",
+          initials: initials,
+          color: color,
+          time: "Just now",
+          isReal: true
+        });
+        if (realRegistrations.length > 50) realRegistrations.length = 50;
+        localStorage.setItem("pdc_real_registrations", JSON.stringify(realRegistrations));
+      } catch (e) {
+        console.warn("Could not save to pdc_real_registrations:", e);
+      }
+
       // Clear draft since submission succeeded
       clearDraft();
 
@@ -1083,11 +1129,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+      const consentChk = document.getElementById("joinedCommunityCheckbox");
       const draft = {
         currentStepIndex,
         personal: formData.personal,
         answers: formData.answers,
         joinedCommunity: formData.joinedCommunity || "",
+        consentConfirmed: !!(consentChk && consentChk.checked),
         updatedAt: Date.now()
       };
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -1184,7 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
           restoredCount++;
         }
         const chk = document.getElementById("joinedCommunityCheckbox");
-        if (chk) chk.checked = true;
+        if (chk) chk.checked = !!draft.consentConfirmed;
       }
 
       // Show friendly restoration notification if data was restored

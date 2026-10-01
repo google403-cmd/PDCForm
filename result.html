@@ -29,6 +29,13 @@
       margin: 20px 0 28px;
     }
 
+    @media (max-width: 640px) {
+      .overall-score-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+    }
+
     .overall-score-chip {
       display: flex;
       flex-direction: column;
@@ -37,13 +44,14 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 12px 8px;
+      padding: 14px 10px;
       text-align: center;
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .overall-score-chip:hover {
       transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
 
     .overall-score-chip.chip-highlight {
@@ -53,7 +61,7 @@
     }
 
     .overall-score-chip .chip-val {
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: var(--text-primary);
       line-height: 1.1;
@@ -64,16 +72,121 @@
     }
 
     .overall-score-chip .chip-label {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       font-weight: 700;
-      margin-top: 4px;
+      margin-top: 6px;
+      line-height: 1.25;
     }
 
     .overall-score-chip.chip-highlight .chip-label {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    /* ── Collapsible View More Assessment Report ── */
+    .view-more-container {
+      margin: 24px 0 32px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .view-more-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      background: #FAFAFA;
+      border-bottom: 1px solid transparent;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .view-more-container.expanded .view-more-header-bar {
+      border-bottom-color: var(--border-subtle);
+      background: #FFF7F5;
+    }
+
+    .view-more-header-bar:hover {
+      background: #F4F5F7;
+    }
+
+    .view-more-container.expanded .view-more-header-bar:hover {
+      background: #FFF2EE;
+    }
+
+    .view-more-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: left;
+    }
+
+    .view-more-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-pdc-orange);
+    }
+
+    .view-more-heading {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .view-more-subheading {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .view-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, #F96340 0%, #E24B24 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(249, 99, 64, 0.25);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .view-more-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(249, 99, 64, 0.35);
+    }
+
+    .view-more-chevron {
+      font-size: 0.72rem;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-block;
+    }
+
+    .view-more-container.expanded .view-more-chevron {
+      transform: rotate(180deg);
+    }
+
+    .view-more-content-body {
+      padding: 8px 16px 20px;
+      background: #FFFFFF;
     }
 
     /* Dimensions Score Grid */
@@ -829,22 +942,27 @@
         config.whatsappLinks?.BOYS_WHATSAPP_LINK ||
         "https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl";
 
-      // ── Build Top Executive Summary Chips ──
+      // ── Build Top Executive Summary Chips (PQ, IQ, SQ, Total Score) ──
+      const rawScores = evaluation.scores || sessionData.scores || {};
+      const pqScore = rawScores.pq !== undefined ? Math.round(Number(rawScores.pq)) : Math.round(totalScore * 0.35);
+      const iqScore = rawScores.iq !== undefined ? Math.round(Number(rawScores.iq)) : (cognitiveProfile.correctAnswers !== undefined ? cognitiveProfile.correctAnswers * 5 : 20);
+      const sqScore = rawScores.sq !== undefined ? Math.round(Number(rawScores.sq)) : (rawScores.eq !== undefined ? Math.round(Number(rawScores.eq)) : Math.round(totalScore * 0.35));
+
       const overallChipsHtml = `
-        <div class="overall-score-bar">
-          <div class="overall-score-chip">
-            <span class="chip-val" style="font-size:1.05rem;">${primaryProfile.name.split(" ")[0]}</span>
-            <span class="chip-label">Primary Profile</span>
+        <div class="overall-score-bar" role="region" aria-label="Quotient Scores Summary">
+          <div class="overall-score-chip" title="Personality Quotient (Max 35)">
+            <span class="chip-val">${pqScore} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
+            <span class="chip-label">Personality Quotient (PQ)</span>
           </div>
-          <div class="overall-score-chip">
-            <span class="chip-val">${cognitiveProfile.correctAnswers !== undefined ? cognitiveProfile.correctAnswers : 5} <span style="font-size:0.75rem;opacity:0.65;">/ 6</span></span>
-            <span class="chip-label">IQ Score</span>
+          <div class="overall-score-chip" title="Intellectual Quotient (Max 30)">
+            <span class="chip-val">${iqScore} <span style="font-size:0.75rem;opacity:0.65;">/ 30</span></span>
+            <span class="chip-label">Intellectual Quotient (IQ)</span>
           </div>
-          <div class="overall-score-chip">
-            <span class="chip-val" style="font-size:1.05rem;">${(spiritualProfile.name || spiritualProfile.level || "Spiritual").split(" ")[0]}</span>
-            <span class="chip-label">Spiritual</span>
+          <div class="overall-score-chip" title="Spiritual Quotient (Max 35)">
+            <span class="chip-val">${sqScore} <span style="font-size:0.75rem;opacity:0.65;">/ 35</span></span>
+            <span class="chip-label">Spiritual Quotient (SQ)</span>
           </div>
-          <div class="overall-score-chip chip-highlight">
+          <div class="overall-score-chip chip-highlight" title="Total Score (Max 100)">
             <span class="chip-val">${totalScore} <span style="font-size:0.75rem;opacity:0.85;">/ 100</span></span>
             <span class="chip-label">Total Score</span>
           </div>
@@ -1023,22 +1141,75 @@
         </div>
 
         ${overallChipsHtml}
-        ${primaryProfileHtml}
-        ${secondaryProfileHtml}
-        ${cognitiveProfileHtml}
-        ${spiritualProfileHtml}
-        ${strengthsHtml}
-        ${devAreasHtml}
-        ${overallProfileHtml}
+
+        <!-- 7-Part Detailed Assessment Report Inside View More Container -->
+        <div class="view-more-container" id="viewMoreContainer">
+          <div class="view-more-header-bar" id="viewMoreHeaderBar" role="button" tabindex="0" aria-expanded="false" aria-controls="viewMoreContent">
+            <div class="view-more-title-wrap">
+              <span class="view-more-badge">Detailed Evaluation • 7 Sections</span>
+              <h3 class="view-more-heading">Full Assessment Breakdown</h3>
+              <p class="view-more-subheading">Click to view Primary & Secondary Profiles, Cognitive IQ, Spiritual SQ, Strengths, Growth Areas & Overall Synthesis</p>
+            </div>
+            <button type="button" class="view-more-btn" id="viewMoreToggleBtn" aria-label="Toggle full assessment report">
+              <span id="viewMoreBtnText">View More</span>
+              <span class="view-more-chevron">▼</span>
+            </button>
+          </div>
+          <div class="view-more-content-body" id="viewMoreContent" style="display: none;">
+            ${primaryProfileHtml}
+            ${secondaryProfileHtml}
+            ${cognitiveProfileHtml}
+            ${spiritualProfileHtml}
+            ${strengthsHtml}
+            ${devAreasHtml}
+            ${overallProfileHtml}
+          </div>
+        </div>
+
         ${activitiesShowcaseHtml}
         ${whatsappCtaHtml}
       `;
+
+      // ── Wire View More Toggle Handler ──
+      const viewMoreContainer = document.getElementById("viewMoreContainer");
+      const viewMoreContent = document.getElementById("viewMoreContent");
+      const viewMoreHeaderBar = document.getElementById("viewMoreHeaderBar");
+      const viewMoreBtn = document.getElementById("viewMoreToggleBtn");
+      const viewMoreBtnText = document.getElementById("viewMoreBtnText");
+
+      function toggleViewMore() {
+        if (!viewMoreContainer || !viewMoreContent) return;
+        const isHidden = viewMoreContent.style.display === "none";
+        viewMoreContent.style.display = isHidden ? "block" : "none";
+        viewMoreContainer.classList.toggle("expanded", isHidden);
+        if (viewMoreHeaderBar) viewMoreHeaderBar.setAttribute("aria-expanded", isHidden ? "true" : "false");
+        if (viewMoreBtnText) viewMoreBtnText.textContent = isHidden ? "View Less" : "View More";
+        if (isHidden) {
+          viewMoreContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+
+      if (viewMoreHeaderBar) {
+        viewMoreHeaderBar.addEventListener("click", toggleViewMore);
+        viewMoreHeaderBar.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleViewMore();
+          }
+        });
+      }
+      if (viewMoreBtn) {
+        viewMoreBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleViewMore();
+        });
+      }
 
       // ── Initialize Interactive & Auto-Sliding Activity Carousel ──
       let activeActIndex = 0;
       const totalActivities = activitiesList.length;
       let autoSlideTimer = null;
-      const AUTO_SLIDE_INTERVAL = 3500; // Automatically slide every 3.5 seconds
+      const AUTO_SLIDE_INTERVAL = 8000; // Slide every 8 seconds so user has ample time to read descriptions
 
       function showActivityIndex(idx) {
         if (idx < 0) idx = totalActivities - 1;
@@ -1160,6 +1331,7 @@
         let cycleTimer = null;
         let hideTimer = null;
         const MIN_DISPLAY_THRESHOLD = (config.stats && config.stats.minDisplayThreshold) || 50;
+        let latestRegisteredCount = 0;
 
         // Fetch real registration count and update counter pill
         async function updateRegistrationCounterDisplay() {
@@ -1170,8 +1342,10 @@
             const raw = localStorage.getItem("pdc_total_registered_count");
             count = raw ? parseInt(raw, 10) : 0;
           } catch (e) {}
+          latestRegisteredCount = count;
 
           const renderPill = (val) => {
+            latestRegisteredCount = val;
             if (val >= MIN_DISPLAY_THRESHOLD) {
               liveCounter.style.display = "inline-block";
               liveCounter.textContent = `${val} registered in total`;
@@ -1193,21 +1367,64 @@
 
         updateRegistrationCounterDisplay();
 
+        function getNextJoiner() {
+          // After 50 submissions in forms, show real registered people instead of simulated joiners
+          if (latestRegisteredCount >= MIN_DISPLAY_THRESHOLD) {
+            let realPeople = [];
+            try {
+              realPeople = JSON.parse(localStorage.getItem("pdc_real_registrations") || "[]");
+            } catch (e) {}
+
+            if (realPeople && realPeople.length > 0) {
+              const person = realPeople[currentIndex % realPeople.length];
+              currentIndex = (currentIndex + 1) % realPeople.length;
+              return {
+                name: person.name,
+                branch: person.branch || "VIT Pune",
+                year: person.year || "FY",
+                initials: person.initials || "VP",
+                color: person.color || "#2563EB",
+                time: person.time || "Just now",
+                verified: true
+              };
+            }
+
+            // Fallback when count >= 50 on fresh browser: verified student registration proof
+            return {
+              name: "Student Registered",
+              branch: "VIT Pune",
+              year: "Verified",
+              initials: "VP",
+              color: "#F96340",
+              time: "Just now",
+              verified: true
+            };
+          }
+
+          // Before 50 submissions: cycle simulated joiners
+          const person = SIMULATED_JOINERS[currentIndex % SIMULATED_JOINERS.length];
+          currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
+          return person;
+        }
+
         function updateWidgetContent(person) {
           if (liveAvatar) {
             liveAvatar.textContent = person.initials;
             liveAvatar.style.backgroundColor = person.color;
           }
           if (liveName) liveName.textContent = person.name;
-          if (liveTag) liveTag.textContent = `${person.branch} (${person.year})`;
+          if (liveTag) {
+            liveTag.textContent = person.verified
+              ? `${person.branch} (${person.year}) • Verified`
+              : `${person.branch} (${person.year})`;
+          }
           if (liveTime) liveTime.textContent = person.time;
           updateRegistrationCounterDisplay();
         }
 
         function showNotification() {
           if (isDismissed) return;
-          const person = SIMULATED_JOINERS[currentIndex];
-          currentIndex = (currentIndex + 1) % SIMULATED_JOINERS.length;
+          const person = getNextJoiner();
 
           updateWidgetContent(person);
           widgetCard.classList.add("visible");

@@ -2,7 +2,7 @@
   "name": "pdc-assessment",
   "version": "2.0.0",
   "scripts": {
-    "test": "node test/validate-assessment.js && node test/test-scoring-and-submission.js && node test/verify-flow.js && node test/test-database-traffic.js",
+    "test": "node test/validate-assessment.js && node test/test-scoring-and-submission.js && node test/verify-flow.js && node test/test-database-traffic.js && node test/test-user-requirements.js",
     "deploy:rules": "npx -y firebase-tools deploy --only firestore:rules"
   },
   "dependencies": {
