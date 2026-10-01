@@ -1322,10 +1322,14 @@ if (stepperContainer) {
       </div>
     `;
 
-    const formCard = document.getElementById("formCard");
-    if (formCard) {
-      formCard.insertBefore(banner, formCard.firstChild);
-    }
+    const stepperContainer = document.getElementById("stepperContainer");
+
+if (stepperContainer) {
+  stepperContainer.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
 
     document.getElementById("clearDraftBtn")?.addEventListener("click", () => {
       clearDraft();
