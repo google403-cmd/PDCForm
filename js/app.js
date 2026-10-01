@@ -1474,4 +1474,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStepViews();
   restoreDraft();
   initBranchRouting();
+  window.scrollTo(0, 0);
 });
