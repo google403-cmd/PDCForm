@@ -66,106 +66,31 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- COMMON GATEWAY: PDC × C-CUBE JOINT STUDENT INITIATIVE ENTRY -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <section class="common-entry-card" id="branchIntroCard" aria-label="PDC and C-Cube Common Initiative Gateway">
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- COMMON GATEWAY: PDC × C-CUBE JOINT STUDENT INITIATIVE ENTRY -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="gateway-presentation-wrap" id="branchIntroCard" aria-label="PDC and C-Cube Common Initiative Gateway">
       
-      <!-- Circular Logo Partnership: PDC (Left) × C-Cube (Right) -->
-      <div class="partnership-logos-wrap">
-        <div class="circular-logo-container logo-pdc" title="Personality Development Club (PDC)">
-          <img src="assets/pdc-logo-official.jpg" alt="PDC - Personality Development Club" class="partner-logo partner-logo-pdc">
-        </div>
-        <div class="partnership-symbol" aria-label="joint initiative with">&times;</div>
-        <div class="circular-logo-container logo-ccube" title="C-Cube">
-          <img src="assets/c-cube-logo-official.jpg" alt="C-Cube" class="partner-logo partner-logo-ccube">
-        </div>
+      <!-- Top Graphic: PDC × C-Cube Hero & Explore Pillars (from official design mockup) -->
+      <div class="gateway-hero-banner-card">
+        <img src="assets/pdc-ccube-gateway-hero.jpg" 
+             alt="PDC × C-Cube - Discover Yourself. Understand Yourself. Grow. Joint Student Development Initiative" 
+             class="gateway-hero-img" 
+             loading="eager">
       </div>
 
-      <!-- Hero Branding & Headline -->
-      <div class="common-hero-header">
-        <div class="common-pill-badge">
-          <span class="live-pulse-dot"></span>
-          <span>PDC &times; C-Cube &bull; Joint Student Initiative</span>
-        </div>
-        <h1 class="common-hero-headline">Discover Yourself. Understand Yourself. Grow.</h1>
-        <p class="common-hero-lead">
-          A comprehensive assessment designed to help engineering students reflect on their cognitive strengths, personality tendencies, interpersonal dynamics, and personal growth pathways.
-        </p>
-      </div>
-
-      <!-- About the Common Initiative -->
-      <div class="common-section-card initiative-about-box">
-        <h2 class="common-section-heading">About the Initiative</h2>
-        <p class="initiative-text">
-          This assessment is designed to help students reflect on their personality, cognitive strengths, interpersonal tendencies, purpose, and areas for personal development.
-        </p>
-        <div class="initiative-attribution">
-          <span class="attribution-label">A common student-development initiative presented by:</span>
-          <strong class="attribution-names">PDC &times; C-Cube</strong>
-        </div>
-      </div>
-
-      <!-- What Will You Explore -->
-      <div class="common-section-card explore-box">
-        <h2 class="common-section-heading">What Will You Explore?</h2>
-        <div class="explore-pillars-grid">
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🧭</span>
-            <div class="pillar-content">
-              <strong>Personality &amp; Emotional Tendencies</strong>
-              <p>Understand your core behavioral style, emotional composure, and inner motivations.</p>
-            </div>
-          </div>
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🧠</span>
-            <div class="pillar-content">
-              <strong>Cognitive &amp; Problem-Solving Skills</strong>
-              <p>Assess analytical reasoning, pattern recognition, and structured problem-solving aptitude.</p>
-            </div>
-          </div>
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🤝</span>
-            <div class="pillar-content">
-              <strong>Interpersonal Awareness</strong>
-              <p>Explore communication dynamics, empathy, and collaborative teamwork habits.</p>
-            </div>
-          </div>
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🔍</span>
-            <div class="pillar-content">
-              <strong>Self-Reflection</strong>
-              <p>Develop structured clarity on your personal habits, priorities, and daily mindset.</p>
-            </div>
-          </div>
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🎯</span>
-            <div class="pillar-content">
-              <strong>Purpose &amp; Direction</strong>
-              <p>Align strengths with meaningful academic, creative, and life objectives.</p>
-            </div>
-          </div>
-          <div class="explore-pillar-item">
-            <span class="pillar-icon">🌱</span>
-            <div class="pillar-content">
-              <strong>Areas for Personal Growth</strong>
-              <p>Receive clear, constructive feedback tailored for balanced, lifelong development.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Branch Selection Section (NO CAMPUS HEADINGS, NO CAMPUS OPTIONS) -->
-      <div class="branch-selection-box" id="branchSelectionBox">
+      <!-- Branch Selection Section (Matching design with gradient button) -->
+      <div class="branch-selection-card" id="branchSelectionBox">
         <div class="branch-select-header">
-          <label class="branch-select-title" for="entryBranchSelect">
-            Select Your Branch <span class="req-star">*</span>
-          </label>
+          <h2 class="branch-select-title">Select Your Branch</h2>
           <p class="branch-select-desc">
-            Please select your official engineering branch from the list below to proceed.
+            Please select your <strong>engineering</strong> branch to continue with the assessment.
           </p>
         </div>
 
         <div class="select-field-wrap">
           <select class="form-select branch-dropdown-entry" id="entryBranchSelect" required aria-required="true">
-            <option value="" disabled selected>— Select Your Branch —</option>
+            <option value="" disabled selected>Select Your Branch</option>
             <option value="Computer Engineering">Computer Engineering</option>
             <option value="Information Technology">Information Technology</option>
             <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
@@ -182,15 +107,19 @@
         </div>
 
         <div class="branch-error-alert" id="entryBranchError" style="display: none;" role="alert">
-          ⚠️ Please select your branch to continue.
+          ⚠️ Please select your engineering branch to continue.
         </div>
 
         <div class="branch-action-row">
-          <button type="button" class="btn btn-primary btn-branch-next" id="branchNextBtn">
+          <button type="button" class="btn btn-branch-next btn-branch-gradient-next" id="branchNextBtn">
             <span class="btn-text">Next →</span>
             <span class="spinner" id="branchSpinner" style="display: none;" aria-hidden="true"></span>
           </button>
         </div>
+
+        <p class="branch-routing-note">
+          You will be redirected to the appropriate assessment based on your branch.
+        </p>
       </div>
     </section>
 

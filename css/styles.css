@@ -2606,53 +2606,97 @@ body {
   line-height: 1.45;
 }
 
-/* Branch Selection Box */
+/* ═══════════════════════════════════════════════════════════════
+   PDC × C-CUBE COMMON ENTRY GATEWAY — HERO & MOCKUP STYLES
+   ═══════════════════════════════════════════════════════════════ */
+.gateway-presentation-wrap,
+.common-entry-card,
+.branch-intro-card {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 28px auto;
+  position: relative;
+  animation: fadeInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Top Graphic Card (PDC × C-Cube Hero & Explore Pillars) */
+.gateway-hero-banner-card {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  background: #FFFFFF;
+  margin-bottom: 16px;
+}
+
+.gateway-hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
+/* Branch Selection Section (Matching design with gradient button) */
+.branch-selection-card,
 .branch-selection-box {
-  background: linear-gradient(180deg, #FFF9F7 0%, #FFF5F2 100%);
-  border: 1.5px solid #FFD5C6;
-  border-radius: var(--radius-lg);
-  padding: clamp(18px, 3.5vw, 24px);
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-xl);
+  padding: clamp(22px, 4vw, 32px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.03);
+  text-align: center;
 }
 
 .branch-select-header {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .branch-select-title {
-  display: block;
-  font-size: 1.12rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.8vw, 1.55rem);
   font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 4px;
+  color: #0F172A;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .branch-select-desc {
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   color: #64748B;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+.branch-select-desc strong {
+  color: #0F172A;
+  font-weight: 700;
 }
 
 .select-field-wrap {
-  margin-bottom: 12px;
+  max-width: 480px;
+  margin: 0 auto 16px auto;
 }
 
 .branch-dropdown-entry {
   width: 100%;
-  min-height: 50px;
+  min-height: 52px;
   font-size: 0.98rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #1E293B;
   background: #FFFFFF;
-  border: 2px solid #FFBEAD;
-  border-radius: var(--radius-md);
-  padding: 0 16px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 0 18px;
   cursor: pointer;
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  appearance: auto;
 }
 
 .branch-dropdown-entry:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(249, 99, 64, 0.15);
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
   outline: none;
 }
 
@@ -2660,7 +2704,7 @@ body {
   font-weight: 500;
   color: #0F172A;
   background: #FFFFFF;
-  padding: 8px 12px;
+  padding: 10px 14px;
 }
 
 .branch-error-alert {
@@ -2671,38 +2715,74 @@ body {
   color: var(--status-error);
   font-size: 0.86rem;
   font-weight: 600;
-  margin-bottom: 14px;
+  margin: 0 auto 14px auto;
+  max-width: 480px;
 }
 
 .branch-action-row {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
+  justify-content: center;
+  margin-top: 8px;
 }
 
+/* Gradient Next Button matching screenshot */
+.btn-branch-gradient-next,
 .btn-branch-next {
-  min-height: 50px;
-  padding: 0 36px;
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  width: 100%;
+  max-width: 380px;
+  min-height: 52px;
+  padding: 0 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(90deg, #F95C38 0%, #A825B8 52%, #4F46E5 100%);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(168, 37, 184, 0.28);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), filter var(--t-fast);
+}
+
+.btn-branch-gradient-next:hover:not(:disabled),
+.btn-branch-next:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(168, 37, 184, 0.38);
+  filter: brightness(1.05);
+}
+
+.btn-branch-gradient-next:active:not(:disabled),
+.btn-branch-next:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-branch-gradient-next:disabled,
+.btn-branch-next:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.branch-routing-note {
+  font-size: 0.82rem;
+  color: #94A3B8;
+  margin: 16px auto 0 auto;
+  max-width: 480px;
 }
 
 @media (max-width: 640px) {
-  .partnership-logos-wrap {
-    gap: 12px;
+  .gateway-hero-banner-card {
+    border-radius: 14px;
+    margin-bottom: 12px;
   }
-  .circular-logo-container {
-    width: 95px;
-    height: 95px;
+  .branch-selection-card {
+    border-radius: 14px;
+    padding: 20px 16px;
   }
-  .explore-pillars-grid {
-    grid-template-columns: 1fr;
-  }
-  .branch-action-row {
-    justify-content: stretch;
-  }
+  .btn-branch-gradient-next,
   .btn-branch-next {
-    width: 100%;
+    max-width: 100%;
   }
 }

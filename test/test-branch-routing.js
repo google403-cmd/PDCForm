@@ -77,10 +77,8 @@ const indexHtml = fs.readFileSync("index.html", "utf8");
 assert(indexHtml.includes('id="branchIntroCard"'), "index.html must contain branchIntroCard");
 assert(indexHtml.includes('id="entryBranchSelect"'), "index.html must contain entryBranchSelect");
 assert(indexHtml.includes('id="branchNextBtn"'), "index.html must contain branchNextBtn");
-assert(indexHtml.includes('assets/pdc-logo-official.jpg'), "index.html must use official PDC logo asset");
-assert(indexHtml.includes('assets/c-cube-logo-official.jpg'), "index.html must use official C-Cube logo asset");
-assert(indexHtml.includes('circular-logo-container logo-pdc'), "index.html must use circular container for PDC logo");
-assert(indexHtml.includes('circular-logo-container logo-ccube'), "index.html must use circular container for C-Cube logo");
+assert(indexHtml.includes('assets/pdc-ccube-gateway-hero.jpg'), "index.html must use official PDC × C-Cube gateway hero graphic");
+assert(indexHtml.includes('btn-branch-gradient-next'), "index.html must style Next button with gradient");
 assert(!indexHtml.includes('<optgroup'), "index.html must NOT contain campus optgroup or campus headings");
 
 // Ensure all 12 branches appear as options in index.html
