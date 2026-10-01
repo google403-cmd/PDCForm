@@ -819,10 +819,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgressUI();
     saveDraft();
 
-    const header = document.getElementById("header");
-    if (header) {
-      header.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    const stepperContainer = document.getElementById("stepperContainer");
+
+if (stepperContainer) {
+  stepperContainer.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
   }
 
   // ===================================================================
