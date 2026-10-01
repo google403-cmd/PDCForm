@@ -108,7 +108,7 @@ assert(appJs.includes('history.replaceState(null, "", window.location.href)'), "
 assert(appJs.includes('window.history.state?.screen !== "assessment"'), "history navigation must restore the screen from route state");
 assert(appJs.includes("enterBibwewadiAssessment(branch, false, false)"), "history navigation must not force-scroll into the assessment");
 assert(appJs.includes("if (scrollToAssessment)"), "assessment entry scrolling must be optional");
-assert(appJs.includes("window.scrollTo(0, 0)"), "application startup must begin at the top of the page");
+assert(indexHtml.includes('window.addEventListener("pageshow", () => window.scrollTo(0, 0))'), "page restoration must reset the viewport to the top");
 assert(appJs.includes("Change Branch"), "app.js must offer Change Branch button on Step 1");
 assert(appJs.includes("https://c-cube-vit-pune.vercel.app/"), "app.js must redirect to C-Cube for Kondhwa");
 console.log("✅ app.js implements complete branch routing, prefilling, and back-navigation");

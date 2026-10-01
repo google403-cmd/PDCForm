@@ -819,9 +819,9 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProgressUI();
     saveDraft();
 
-    const formCard = document.getElementById("formCard");
-    if (formCard) {
-      formCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    const header = document.getElementById("header");
+    if (header) {
+      header.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -1478,5 +1478,4 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStepViews();
   restoreDraft();
   initBranchRouting();
-  window.scrollTo(0, 0);
 });
