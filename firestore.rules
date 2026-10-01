@@ -151,7 +151,8 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if (
         request.resource.data.totalRegistered is number ||
-        request.resource.data.whatsappJoinedCount is number
+        request.resource.data.whatsappJoinedCount is number ||
+        request.resource.data.notJoinedCount is number
       );
       allow delete: if false;
     }
@@ -165,6 +166,18 @@ service cloud.firestore {
         && request.resource.data.whatsappNumber is string
         && request.resource.data.timestamp is string;
       allow update, delete: if false;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 6. STUDENTS WHO GAVE TEST BUT NOT JOINED COMMUNITY (Leads/Follow-up)
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_not_joined_community/{leadId} {
+      allow read: if true;
+      allow create: if request.resource.data.fullName is string
+        && request.resource.data.whatsappNumber is string
+        && request.resource.data.timestamp is string;
+      allow update: if request.resource.data.status is string;
+      allow delete: if false;
     }
 
     // Explicitly deny access to any other collections

@@ -80,7 +80,26 @@ assert(!resultHtml.includes('.result-score-grid'), 'result.html must not contain
 assert(!resultHtml.includes('.score-card-pq'), 'result.html must not contain unused .score-card-pq CSS');
 console.log('✅ Requirement 9: Unused score grid styles removed from result.html');
 
+// 10. Dedicated pdc_not_joined_community collection and leads display
+assert(firestoreRules.includes('match /pdc_not_joined_community/{leadId}'), 'firestore.rules must include pdc_not_joined_community collection');
+console.log('✅ Requirement 10.1: firestore.rules declares dedicated pdc_not_joined_community collection');
+
+assert(firebaseConfigJs.includes('NOT_JOINED: "pdc_not_joined_community"'), 'firebase-config.js must include NOT_JOINED collection name');
+assert(firebaseConfigJs.includes('async function recordNotJoinedCommunity'), 'firebase-config.js must implement recordNotJoinedCommunity');
+assert(firebaseConfigJs.includes('async function getNotJoinedCommunityStudents'), 'firebase-config.js must implement getNotJoinedCommunityStudents');
+console.log('✅ Requirement 10.2: firebase-config.js records and retrieves students who gave test without joining');
+
+const leadsHtml = fs.readFileSync('leads.html', 'utf8');
+assert(leadsHtml.includes('Assessment Leads (Not Joined WhatsApp)'), 'leads.html must be titled for assessment leads not joined');
+assert(leadsHtml.includes('Phone Number / WhatsApp'), 'leads.html must display phone number column');
+assert(leadsHtml.includes('Student Name'), 'leads.html must display student name column');
+assert(leadsHtml.includes('btn-wa-chat'), 'leads.html must include WhatsApp direct chat action');
+assert(leadsHtml.includes('copyAllNumbersBtn'), 'leads.html must include Copy All Phone Numbers button');
+assert(leadsHtml.includes('exportCsvBtn'), 'leads.html must include Export CSV button');
+console.log('✅ Requirement 10.3: leads.html displays name, phone number and quick WhatsApp outreach actions');
+
 console.log("==================================================");
 console.log("ALL REQUIREMENTS & POPUP SUPPRESSION TESTS PASSED!");
 console.log("==================================================");
+
 
