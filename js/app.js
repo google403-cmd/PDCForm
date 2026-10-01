@@ -1340,6 +1340,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function initBranchRouting() {
     if (!branchIntroCard || !entryBranchSelect || !branchNextBtn) return;
 
+    try {
+      history.replaceState(null, "", window.location.href);
+    } catch (e) {}
+
     let savedBranch = "";
     try {
       savedBranch = sessionStorage.getItem("pdc_selected_branch") || "";

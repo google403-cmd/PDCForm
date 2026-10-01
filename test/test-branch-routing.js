@@ -104,6 +104,7 @@ assert(appJs.includes("enterBibwewadiAssessment"), "app.js must define enterBibw
 assert(appJs.includes("returnToBranchSelection"), "app.js must define returnToBranchSelection");
 assert(appJs.includes("entryBranchSelect.value = savedBranch;"), "a saved branch may be restored without hiding the gateway");
 assert(!appJs.includes("enterBibwewadiAssessment(savedBranch, false, false)"), "direct #assessment loads must not bypass the gateway");
+assert(appJs.includes('history.replaceState(null, "", window.location.href)'), "startup must clear stale assessment route state");
 assert(appJs.includes('window.history.state?.screen !== "assessment"'), "history navigation must restore the screen from route state");
 assert(appJs.includes("enterBibwewadiAssessment(branch, false, false)"), "history navigation must not force-scroll into the assessment");
 assert(appJs.includes("if (scrollToAssessment)"), "assessment entry scrolling must be optional");
