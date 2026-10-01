@@ -1408,15 +1408,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Check if landing directly with hash #assessment or saved branch
-    if (window.location.hash === "#assessment" && savedBranch && (config.getCampusFromBranch(savedBranch) === "Bibwewadi")) {
+    // Restore the branch selection without skipping the gateway on a direct load.
+    if (savedBranch && config.getCampusFromBranch(savedBranch) === "Bibwewadi") {
       entryBranchSelect.value = savedBranch;
-      formData.personal.branch = savedBranch;
-      formData.personal.campus = "Bibwewadi";
-      enterBibwewadiAssessment(savedBranch, false, false);
-    } else {
-      showBranchSelection();
     }
+    showBranchSelection();
   }
 
   function showBranchSelection() {
@@ -1460,10 +1456,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle browser back / forward
   window.addEventListener("popstate", () => {
-    if (window.location.hash !== "#assessment") {
+    if (window.history.state?.screen !== "assessment") {
       showBranchSelection();
     } else {
-      const branch = formData.personal.branch || sessionStorage.getItem("pdc_selected_branch");
+      const branch = window.history.state.branch || formData.personal.branch || sessionStorage.getItem("pdc_selected_branch");
       if (branch && config.getCampusFromBranch(branch) === "Bibwewadi") {
         enterBibwewadiAssessment(branch, false, false);
       } else {
