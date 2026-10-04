@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (submitBtn) {
         submitBtn.disabled = true;
         const btnText = submitBtn.querySelector(".btn-text");
-        if (btnText) btnText.textContent = "Recording Registration...";
+        if (btnText) btnText.textContent = "Recording Confirmation...";
         if (submitSpinner) submitSpinner.style.display = "inline-block";
       }
 
@@ -310,23 +310,23 @@ document.addEventListener("DOMContentLoaded", () => {
         displaySuccessView(registeredStudentData, saveResult.isUpdate);
 
         if (saveResult.isUpdate) {
-          showToast("Registration already recorded for this number. Showing your saved details! ✨", "info");
+          showToast("Confirmation already recorded for this number. Showing your saved details! ✨", "info");
         } else {
-          showToast("Registration successfully submitted! 🎉", "success");
+          showToast("Confirmation successfully submitted! 🎉", "success");
         }
 
         // Refresh stats
         loadLiveCommunityStats();
 
       } catch (err) {
-        console.error("Registration error:", err);
-        showToast("Could not submit registration. Please try again.", "error");
+        console.error("Confirmation error:", err);
+        showToast("Could not submit confirmation. Please try again.", "error");
       } finally {
         isSubmitting = false;
         if (submitBtn) {
           submitBtn.disabled = false;
           const btnText = submitBtn.querySelector(".btn-text");
-          if (btnText) btnText.textContent = "Complete Registration →";
+          if (btnText) btnText.textContent = "Complete Confirmation →";
           if (submitSpinner) submitSpinner.style.display = "none";
         }
       }
