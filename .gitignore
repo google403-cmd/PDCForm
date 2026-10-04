@@ -3,6 +3,9 @@
 .env.*
 *.local
 *service-account*.json
+*firebase-adminsdk*.json
+serviceAccountKey.json
+joined_numbers.txt
 *.pem
 *.key
 

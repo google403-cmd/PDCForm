@@ -8,11 +8,11 @@
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.addEventListener("pageshow", () => window.scrollTo(0, 0));
   </script>
-  <title>PDC — Personality & Aptitude Assessment (PQ · IQ · SQ) • VIT Pune</title>
+  <title>PDC Student Registration — Personality Development Club • VIT Pune</title>
 
   <!-- SEO & Social Meta -->
   <meta name="description"
-    content="Official Personality Development Club (PDC) PQ · IQ · SQ Assessment for Engineering Students. Character | Competence | Culture • VIT Pune.">
+    content="Official Personality Development Club (PDC) student registration portal. Character | Competence | Culture • VIT Pune. Register to join leadership bootcamps and mentor cohorts.">
   <meta name="theme-color" content="#F96340">
 
   <!-- Favicon -->
@@ -30,8 +30,8 @@
 
   <div class="app-container">
 
-    <!-- Header & Brand Section (Displays during Bibwewadi PDC Assessment) -->
-    <header class="brand-header" id="brandHeader" style="display: none;">
+    <!-- Header & Brand Section -->
+    <header class="brand-header" id="brandHeader">
       <div class="header-top">
         <div class="brand-logo-wrap">
           <img src="assets/pdc-logo.png" alt="Personality Development Club Logo" class="brand-logo" id="clubLogo"
@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <div class="brand-badge" id="clubBadge">Official PQ · IQ · SQ Assessment</div>
+      <div class="brand-badge" id="clubBadge">Official Student Registration 2026</div>
       <h1 class="brand-title" id="clubName">Personality Development Club</h1>
       <p class="brand-tagline" id="clubTagline">Character | Competence | Culture • VIT Pune</p>
       
@@ -58,214 +58,194 @@
         </button>
         <div class="about-content" id="aboutContent">
           <div class="about-inner">
-            <p class="about-lead" id="aboutShortDesc"></p>
+            <p class="about-lead" id="aboutShortDesc">
+              The Personality Development Club (PDC) of VIT Pune empowers engineering students to excel across character, competence, and culture through experiential workshops, mentor cohorts, and leadership activities.
+            </p>
             <div class="pillars-grid" id="aboutPillars">
-              <!-- Dynamically populated from content.js -->
+              <div class="pillar-card">
+                <h4>Character (PQ)</h4>
+                <p>Develop resilience, integrity, articulate communication, and confidence under pressure.</p>
+              </div>
+              <div class="pillar-card">
+                <h4>Competence (IQ)</h4>
+                <p>Sharpen logical structuring, technical problem-solving, and decisive analytical thinking.</p>
+              </div>
+              <div class="pillar-card">
+                <h4>Culture (SQ)</h4>
+                <p>Cultivate self-awareness, emotional poise, timeless wisdom, and enduring ethical clarity.</p>
+              </div>
+              <div class="pillar-card">
+                <h4>Mentorship</h4>
+                <p>Gain personalized guidance and senior networking from distinguished alumni and mentors.</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- COMMON GATEWAY: PDC × C-CUBE JOINT STUDENT INITIATIVE ENTRY -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <section class="gateway-presentation-wrap" id="branchIntroCard" aria-label="PDC and C-Cube Common Initiative Gateway">
-      
-      <!-- Top Hero Card with Inspiring Campus Sunlit Backdrop -->
-      <div class="gateway-hero-card">
-        <div class="gateway-hero-content">
-          <!-- Circular Logos Partnership: PDC (Left) × C-Cube (Right) -->
-          <div class="partnership-logos-wrap">
-            <div class="circular-logo-container logo-pdc" title="Personality Development Club (PDC)">
-              <img src="assets/pdc-logo-official.jpg" alt="PDC - Personality Development Club" class="partner-logo partner-logo-pdc">
-            </div>
-            <div class="partnership-symbol" aria-label="joint initiative with">&times;</div>
-            <div class="circular-logo-container logo-ccube" title="C-Cube">
-              <img src="assets/c-cube-logo-official.jpg" alt="C-Cube" class="partner-logo partner-logo-ccube">
-            </div>
-          </div>
-
-          <!-- Headline & Common Initiative Introduction -->
-          <h1 class="gateway-headline">
-            <span>Discover Yourself.</span>
-            <span>Understand Yourself. <span class="gradient-text-grow">Grow.</span></span>
-          </h1>
-
-          <p class="gateway-sublead">
-            A common student development initiative by <strong>PDC</strong> and <strong>C-Cube</strong> to help you explore your personality, cognitive abilities, interpersonal tendencies, purpose and areas for personal growth.
-          </p>
+    <!-- Live Registration & WhatsApp Community Stats Counter Bar -->
+    <div class="community-stats-bar" id="communityStatsBar" aria-label="Community Registration Statistics">
+      <div class="stat-badge-chip">
+        <span class="stat-pulse-dot" title="Live Counter"></span>
+        <span class="stat-icon">👥</span>
+        <div class="stat-text-wrap">
+          <span class="stat-num" id="statTotalRegistered">1476+</span>
+          <span class="stat-label">Students Registered</span>
         </div>
       </div>
-
-      <!-- What Will You Explore Card -->
-      <div class="explore-showcase-card">
-        <h2 class="explore-card-title">What Will You Explore?</h2>
-        <p class="explore-card-subtitle">
-          This assessment gives you insights into key areas that shape your overall development.
-        </p>
-
-        <div class="explore-columns-grid">
-          <!-- 1. Personality & Emotional Tendencies -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-red">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Personality &amp; Emotional Tendencies</h3>
-            <p class="pillar-item-desc">Understand your natural strengths and behavioural patterns.</p>
-          </div>
-
-          <!-- 2. Cognitive & Problem-Solving Skills -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-blue">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/>
-                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Cognitive &amp; Problem-Solving Skills</h3>
-            <p class="pillar-item-desc">Explore your analytical thinking and approach to challenges.</p>
-          </div>
-
-          <!-- 3. Interpersonal Awareness -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-green">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Interpersonal Awareness</h3>
-            <p class="pillar-item-desc">Gain insights into how you connect, communicate and work with others.</p>
-          </div>
-
-          <!-- 4. Self-Reflection & Purpose -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-purple">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
-                <path d="M12 2c-.55 0-1 .45-1 1 0 3.31-2.69 6-6 6-.55 0-1 .45-1 1 0 4.42 3.58 8 8 8s8-3.58 8-8c0-.55-.45-1-1-1-3.31 0-6-2.69-6-6 0-.55-.45-1-1-1zm0 4.2c1.78 1.96 4.14 3.25 6.78 3.65-1.12 3.48-4.38 6.05-8.28 6.13-3.9-.08-7.16-2.65-8.28-6.13 2.64-.4 5-1.69 6.78-3.65z"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Self-Reflection &amp; Purpose</h3>
-            <p class="pillar-item-desc">Think deeper about your goals, values and understanding of life.</p>
-          </div>
-
-          <!-- 5. Development Areas -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-amber">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                <polyline points="17 6 23 6 23 12"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Development Areas</h3>
-            <p class="pillar-item-desc">Identify areas where you can grow and improve.</p>
-          </div>
-
-          <!-- 6. Holistic Growth -->
-          <div class="explore-column-item">
-            <div class="pillar-icon-badge badge-teal">
-              <svg viewBox="0 0 24 24" class="pillar-svg" fill="currentColor">
-                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/>
-              </svg>
-            </div>
-            <h3 class="pillar-item-title">Holistic Growth</h3>
-            <p class="pillar-item-desc">Receive guidance for becoming a more balanced, confident and purpose-driven individual.</p>
-          </div>
+      <div class="stat-divider"></div>
+      <div class="stat-badge-chip">
+        <span class="stat-icon">💬</span>
+        <div class="stat-text-wrap">
+          <span class="stat-num" id="statTotalJoined">0+</span>
+          <span class="stat-label">Joined Official WhatsApp</span>
         </div>
       </div>
+    </div>
 
-      <!-- Branch Selection Section (Matching design with gradient button) -->
-      <div class="branch-selection-card" id="branchSelectionBox">
-        <div class="branch-select-header">
-          <h2 class="branch-select-title">Select Your Branch</h2>
-          <p class="branch-select-desc">
-            Please select your <strong>engineering</strong> branch to continue with the assessment.
-          </p>
-        </div>
-
-        <div class="select-field-wrap">
-          <select class="form-select branch-dropdown-entry" id="entryBranchSelect" required aria-required="true">
-            <option value="" disabled selected>Select Your Branch</option>
-            <option value="Computer Engineering">Computer Engineering</option>
-            <option value="Information Technology">Information Technology</option>
-            <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
-            <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
-            <option value="CSE (Data Science)">CSE (Data Science)</option>
-            <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
-            <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
-            <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-            <option value="Instrumentation & Control">Instrumentation & Control</option>
-            <option value="Mechanical Engineering">Mechanical Engineering</option>
-            <option value="Civil Engineering">Civil Engineering</option>
-            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
-          </select>
-        </div>
-
-        <div class="branch-error-alert" id="entryBranchError" style="display: none;" role="alert">
-          ⚠️ Please select your engineering branch to continue.
-        </div>
-
-        <div class="branch-action-row">
-          <button type="button" class="btn btn-branch-next btn-branch-gradient-next" id="branchNextBtn">
-            <span class="btn-text">Next →</span>
-            <span class="spinner" id="branchSpinner" style="display: none;" aria-hidden="true"></span>
-          </button>
-        </div>
-
-        <p class="branch-routing-note">
-          You will be redirected to the appropriate assessment based on your branch.
+    <!-- Main Registration Form Card -->
+    <main class="form-card" id="formCard">
+      <div class="step-header">
+        <div class="step-badge">PDC Membership Registration</div>
+        <h2 class="step-title">Student Registration Form</h2>
+        <p class="step-subtitle">
+          Fill in your details below to register for PDC activities, leadership bootcamps, and official community access.
         </p>
       </div>
-    </section>
 
-    <!-- Stepper Progress Tracker -->
-    <section class="stepper-container" id="stepperContainer" style="display: none;" aria-label="Assessment Progress">
-      <div class="stepper-header">
-        <span class="step-count-label" id="stepCountLabel">Step 1 of 5: Profile Registration</span>
-        <span class="step-percent-label" id="stepPercentLabel">0% Completed</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-bar-fill" id="progressBarFill"></div>
-      </div>
-      <div class="step-dots" id="stepDotsContainer">
-        <!-- Dynamically populated step dots -->
-      </div>
-    </section>
+      <form id="registrationForm" novalidate>
+        <div class="personal-grid">
 
-    <!-- Main Dynamic Form Card -->
-    <main class="form-card" id="formCard" style="display: none;">
-      <form id="assessmentForm" novalidate>
-        <div id="stepsContainer">
-          <!-- Step Views dynamically rendered from content.js -->
+          <!-- 1. Full Name -->
+          <div class="form-group grid-full-width">
+            <label for="fullName" class="form-label">
+              Full Name <span class="req-star">*</span>
+            </label>
+            <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name (e.g. Omkar Patil)" required autocomplete="name">
+            <span class="error-msg" id="fullNameError">Please enter your full name.</span>
+          </div>
+
+          <!-- 2. WhatsApp Number -->
+          <div class="form-group">
+            <label for="whatsappNumber" class="form-label">
+              WhatsApp Number <span class="req-star">*</span>
+            </label>
+            <input type="tel" id="whatsappNumber" name="whatsappNumber" class="form-input" placeholder="10-digit mobile number (e.g. 9876543210)" maxlength="10" required autocomplete="tel">
+            <span class="error-msg" id="whatsappNumberError">Please enter a valid 10-digit WhatsApp number.</span>
+          </div>
+
+          <!-- 3. Email Address -->
+          <div class="form-group">
+            <label for="email" class="form-label">
+              Email Address <span class="req-star">*</span>
+            </label>
+            <input type="email" id="email" name="email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+            <span class="error-msg" id="emailError">Please enter a valid email address.</span>
+          </div>
+
+          <!-- 4. Gender -->
+          <div class="form-group grid-full-width">
+            <label class="form-label">
+              Gender <span class="req-star">*</span>
+            </label>
+            <div class="gender-radio-group" id="genderRadioGroup" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+              <label class="gender-radio-card" data-gender="Male">
+                <input type="radio" name="gender" value="Male" required>
+                <span>👨 Male</span>
+              </label>
+              <label class="gender-radio-card" data-gender="Female">
+                <input type="radio" name="gender" value="Female">
+                <span>👩 Female</span>
+              </label>
+              <label class="gender-radio-card" data-gender="Other">
+                <input type="radio" name="gender" value="Other">
+                <span>✨ Other</span>
+              </label>
+            </div>
+            <span class="error-msg" id="genderError">Please select your gender.</span>
+          </div>
+
+          <!-- 5. Engineering Branch -->
+          <div class="form-group">
+            <label for="branch" class="form-label">
+              Engineering Branch <span class="req-star">*</span>
+            </label>
+            <select id="branch" name="branch" class="form-select" required>
+              <option value="" disabled selected>Select Your Branch</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
+              <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
+              <option value="CSE (Data Science)">CSE (Data Science)</option>
+              <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
+              <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
+              <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+              <option value="Instrumentation & Control">Instrumentation & Control</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+              <option value="Other">Other Branch</option>
+            </select>
+            <span class="error-msg" id="branchError">Please select your engineering branch.</span>
+          </div>
+
+          <!-- 6. Division -->
+          <div class="form-group">
+            <label for="division" class="form-label">
+              Division <span class="req-star">*</span>
+            </label>
+            <select id="division" name="division" class="form-select" required>
+              <option value="" disabled selected>Select Division</option>
+              <option value="A">Division A</option>
+              <option value="B">Division B</option>
+              <option value="C">Division C</option>
+              <option value="D">Division D</option>
+              <option value="E">Division E</option>
+              <option value="F">Division F</option>
+              <option value="G">Division G</option>
+              <option value="H">Division H</option>
+              <option value="I">Division I</option>
+              <option value="J">Division J</option>
+              <option value="K">Division K</option>
+              <option value="L">Division L</option>
+              <option value="SEDA">Division SEDA</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="error-msg" id="divisionError">Please select your division.</span>
+          </div>
+
+          <!-- 7. Referred by / Reference -->
+          <div class="form-group grid-full-width form-group-referral">
+            <label for="referredBy" class="form-label">
+              Referred By / Reference (Friend, Senior, or Club Coordinator)
+            </label>
+            <input type="text" id="referredBy" name="referredBy" class="form-input" placeholder="e.g. Shaurya, Friend's Name, Senior, or Faculty (optional)">
+            <div id="referralDetectedBadge" class="referral-detected-badge" style="display: none;">
+              <span>✨</span>
+              <span id="referralDetectedText">Referred by friend via link</span>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Navigation Controls -->
-        <div class="form-navigation">
-          <button type="button" class="btn btn-secondary" id="prevBtn" style="visibility: hidden;">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-            <span>Previous</span>
-          </button>
-
-          <button type="button" class="btn btn-primary" id="nextBtn">
-            <span class="btn-text">Continue</span>
-            <span class="spinner" aria-hidden="true"></span>
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+        <!-- Submit Button Row -->
+        <div style="margin-top: 32px; display: flex; justify-content: center;">
+          <button type="submit" class="btn btn-primary" id="submitRegBtn" style="min-width: 280px; min-height: 54px; font-size: 1.05rem; font-weight: 800;">
+            <span class="btn-text">Complete Registration →</span>
+            <span class="spinner" id="submitSpinner" style="display: none;" aria-hidden="true"></span>
           </button>
         </div>
+
+        <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-top: 14px;">
+          🔒 Your information is saved securely with zero duplicate records in the PDC database.
+        </p>
       </form>
     </main>
 
     <!-- Footer -->
     <footer class="footer-text">
-      <p>&copy; Personality Development Club. Character | Competence | Culture • All rights reserved.</p>
+      <p>&copy; Personality Development Club. Character | Competence | Culture • VIT Pune. All rights reserved.</p>
     </footer>
 
   </div>
@@ -274,7 +254,6 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Application Logic Scripts -->
-  <script src="js/security.js"></script>
   <script src="js/content.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>

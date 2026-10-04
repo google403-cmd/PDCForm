@@ -1384,11 +1384,16 @@
           if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
             window.PDCBackend.recordWhatsAppJoin({
               fullName: studentName || "Student",
+              whatsappNumber: sessionData?.whatsappNumber || sessionData?.phone || "",
+              gender: sessionData?.gender || "",
               campus: sessionData?.campus || "Bibwewadi",
               source: "result_page_live_widget"
             }).catch(() => {});
           } else if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
-            window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
+            window.PDCBackend.incrementWhatsAppJoinedCounter({
+              fullName: studentName || "Student",
+              whatsappNumber: sessionData?.whatsappNumber || sessionData?.phone || ""
+            }).catch(() => {});
           }
           window.open(targetCommunityLink, "_blank", "noopener,noreferrer");
         });
@@ -1410,11 +1415,16 @@
         if (window.PDCBackend && typeof window.PDCBackend.recordWhatsAppJoin === "function") {
           window.PDCBackend.recordWhatsAppJoin({
             fullName: studentName || "Student",
+            whatsappNumber: sessionData?.whatsappNumber || sessionData?.phone || "",
+            gender: sessionData?.gender || "",
             campus: sessionData?.campus || "Bibwewadi",
             source: "result_page_cta"
           }).catch(() => {});
         } else if (window.PDCBackend && typeof window.PDCBackend.incrementWhatsAppJoinedCounter === "function") {
-          window.PDCBackend.incrementWhatsAppJoinedCounter().catch(() => {});
+          window.PDCBackend.incrementWhatsAppJoinedCounter({
+            fullName: studentName || "Student",
+            whatsappNumber: sessionData?.whatsappNumber || sessionData?.phone || ""
+          }).catch(() => {});
         }
       });
 

@@ -48,19 +48,21 @@ assert(resultHtml.includes('pdc_real_registrations'), 'result.html must check pd
 assert(appJs.includes('pdc_real_registrations'), 'app.js must cache real student registrations');
 console.log('✅ Requirement 6: Real registered people shown when registrations >= 50');
 
-// 7. Database management field for WhatsApp community joins
+// 7. Redesigned pdc_stats registration schema & WhatsApp community management
 const firestoreRules = fs.readFileSync('firestore.rules', 'utf8');
 assert(firestoreRules.includes("'joinedCommunity'"), 'firestore.rules must allow joinedCommunity in payload');
 assert(firestoreRules.includes("'whatsappJoined'"), 'firestore.rules must allow whatsappJoined in payload');
 assert(firestoreRules.includes("'hasJoinedWhatsapp'"), 'firestore.rules must allow hasJoinedWhatsapp in payload');
-assert(firestoreRules.includes('whatsappJoinedCount is number'), 'firestore.rules must allow whatsappJoinedCount in pdc_stats');
-console.log('✅ Requirement 7.1: firestore.rules validates WhatsApp joined management fields');
+assert(firestoreRules.includes('totalEntries is number') || firestoreRules.includes('whatsappJoinedCount is number'), 'firestore.rules must allow pdc_stats registration tracking');
+console.log('✅ Requirement 7.1: firestore.rules validates WhatsApp joined & redesigned stats fields');
 
 const firebaseConfigJs = fs.readFileSync('js/firebase-config.js', 'utf8');
 assert(firebaseConfigJs.includes('incrementWhatsAppJoinedCounter'), 'firebase-config.js must export incrementWhatsAppJoinedCounter');
 assert(firebaseConfigJs.includes('getWhatsAppJoinedCount'), 'firebase-config.js must export getWhatsAppJoinedCount');
-assert(firebaseConfigJs.includes('whatsappJoinedCount: firebase.firestore.FieldValue.increment(1)'), 'firebase-config.js must increment WhatsApp joined in pdc_stats');
-console.log('✅ Requirement 7.2: firebase-config.js manages WhatsApp joined counter in database');
+assert(firebaseConfigJs.includes('totalEntries'), 'firebase-config.js must track totalEntries');
+assert(firebaseConfigJs.includes('males') && firebaseConfigJs.includes('females'), 'firebase-config.js must track males and females');
+assert(firebaseConfigJs.includes('joinedWhatsApp') && firebaseConfigJs.includes('notJoinedWhatsApp'), 'firebase-config.js must track joinedWhatsApp and notJoinedWhatsApp with name and phone');
+console.log('✅ Requirement 7.2: firebase-config.js manages redesigned pdc_stats registration document (males, females, totalEntries, joinedWhatsApp, notJoinedWhatsApp)');
 
 assert(appJs.includes('whatsappJoined: formData.joinedCommunity === "yes"'), 'app.js must pass whatsappJoined field in payload');
 console.log('✅ Requirement 7.3: app.js populates database WhatsApp community management fields');

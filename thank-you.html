@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Thank You for Registering — Personality Development Club (PDC)</title>
+  <meta name="description" content="Thank you for registering with the Personality Development Club (PDC) VIT Pune. Character | Competence | Culture.">
+  <meta name="theme-color" content="#F96340">
+  <link rel="icon" type="image/png" href="assets/pdc-logo.png">
+
+  <!-- Compatibility SDKs for live Firestore updates -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .thank-you-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: clamp(28px, 5vw, 44px);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thank-you-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 5px;
+      background: linear-gradient(90deg, #F96340 0%, #FF8566 50%, #F96340 100%);
+    }
+
+    /* Celebration Animation */
+    .celebration-wrap {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      margin: 8px auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .celebration-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+      animation: scalePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .celebration-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px dashed rgba(16, 185, 129, 0.4);
+      animation: rotateRing 14s linear infinite;
+    }
+
+    @keyframes rotateRing {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes scalePop {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .celebration-svg {
+      width: 40px;
+      height: 40px;
+      stroke: #FFFFFF;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: drawCheck 0.6s ease forwards 0.25s;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .thank-you-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ECFDF5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+    }
+
+    .thank-you-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.8vw, 2.2rem);
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+    }
+
+    .thank-you-subtitle {
+      font-size: 0.98rem;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+
+    /* Registration Summary Box */
+    .member-summary-box {
+      background: #FAF8F5;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin: 24px 0 28px;
+      text-align: left;
+    }
+
+    .member-summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .member-summary-title {
+      font-family: var(--font-display);
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .registration-id-badge {
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: #FFFFFF;
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+    }
+
+    .member-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px 18px;
+    }
+
+    .member-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .member-detail-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .member-detail-val {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--navy);
+      word-break: break-word;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      width: fit-content;
+    }
+
+    .status-pill.pending {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FCD34D;
+    }
+
+    .status-pill.joined {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #6EE7B7;
+    }
+
+    /* WhatsApp Community Action Hub */
+    .whatsapp-community-hub {
+      background: linear-gradient(135deg, #075E54 0%, #128C7E 50%, #25D366 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      color: #FFFFFF;
+      margin: 28px 0;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(18, 140, 126, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wa-hub-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+      backdrop-filter: blur(4px);
+    }
+
+    .wa-hub-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .wa-hub-desc {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.92);
+      max-width: 520px;
+      margin: 0 auto 20px;
+      line-height: 1.55;
+    }
+
+    .wa-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #FFFFFF;
+      color: #075E54;
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 14px 34px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: none;
+      cursor: pointer;
+    }
+
+    .wa-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+      background: #F9FFF9;
+      color: #075E54;
+    }
+
+    .wa-cta-icon {
+      width: 22px;
+      height: 22px;
+      fill: #25D366;
+    }
+
+    .wa-note {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 12px;
+    }
+
+    /* Referral Share Card */
+    .referral-share-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin: 24px 0 28px;
+      text-align: left;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .referral-share-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .referral-share-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .referral-share-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .referral-input-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .referral-url-box {
+      flex: 1;
+      min-width: 240px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      font-family: monospace;
+      background: #F8FAFC;
+      border: 1px solid var(--border-input);
+      border-radius: var(--radius-md);
+      color: var(--navy);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .btn-copy-ref {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: var(--navy);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy-ref:hover {
+      background: var(--primary);
+    }
+
+    .btn-share-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: #25D366;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-share-wa:hover {
+      background: #1EBE5D;
+      color: #FFFFFF;
+    }
+
+    /* Benefits Grid */
+    .benefits-section {
+      text-align: left;
+      margin-top: 32px;
+    }
+
+    .benefits-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .benefit-item-card {
+      background: #FAF8F5;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: transform 0.2s;
+    }
+
+    .benefit-item-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-border);
+    }
+
+    .benefit-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      background: #FFFFFF;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .benefit-content h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .benefit-content p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-container">
+
+    <!-- Header & Brand Section -->
+    <header class="brand-header" id="brandHeader">
+      <div class="header-top">
+        <div class="brand-logo-wrap">
+          <img src="assets/pdc-logo.png" alt="PDC Club Logo" class="brand-logo" onerror="this.src='Stories/pdclogo1.png'">
+        </div>
+      </div>
+      <div class="brand-badge">Official Student Registration 2026</div>
+      <h1 class="brand-title">Personality Development Club</h1>
+      <p class="brand-tagline">Character | Competence | Culture • VIT Pune</p>
+    </header>
+
+    <!-- Main Thank You Card -->
+    <main class="thank-you-card" id="thankYouCard">
+
+      <!-- Animated Celebration Checkmark -->
+      <div class="celebration-wrap">
+        <div class="celebration-ring"></div>
+        <div class="celebration-circle">
+          <svg class="celebration-svg" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="thank-you-badge">Registration Confirmed</div>
+      <h2 class="thank-you-title" id="pageTitle">Thank You for Joining PDC! 🎉</h2>
+      <p class="thank-you-subtitle" id="personalizedSubtitle">
+        Welcome to the community! Your student registration has been successfully recorded in the club database.
+      </p>
+
+      <!-- Live Community Stats Counter Bar -->
+      <div class="community-stats-bar" id="communityStatsBar" aria-label="Community Registration Statistics">
+        <div class="stat-badge-chip">
+          <span class="stat-pulse-dot" title="Live Counter"></span>
+          <span class="stat-icon">👥</span>
+          <div class="stat-text-wrap">
+            <span class="stat-num" id="statTotalRegistered">1476+</span>
+            <span class="stat-label">Students Registered</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-badge-chip">
+          <span class="stat-icon">💬</span>
+          <div class="stat-text-wrap">
+            <span class="stat-num" id="statTotalJoined">0+</span>
+            <span class="stat-label">Joined Official WhatsApp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Registration Summary -->
+      <section class="member-summary-box" aria-label="Student Registration Details">
+        <div class="member-summary-header">
+          <h3 class="member-summary-title">
+            <span>📋</span>
+            <span>Registration Profile</span>
+          </h3>
+          <span class="registration-id-badge" id="displayRegId">ID: Verified</span>
+        </div>
+        <div class="member-details-grid" id="memberDetailsGrid">
+          <div class="member-detail-item">
+            <span class="member-detail-label">Student Name</span>
+            <span class="member-detail-val" id="summaryFullName">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">WhatsApp Number</span>
+            <span class="member-detail-val" id="summaryPhone">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Email Address</span>
+            <span class="member-detail-val" id="summaryEmail">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Gender</span>
+            <span class="member-detail-val" id="summaryGender">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Engineering Branch</span>
+            <span class="member-detail-val" id="summaryBranch">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Division</span>
+            <span class="member-detail-val" id="summaryDivision">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Referred By (Reference)</span>
+            <span class="member-detail-val" id="summaryReferredBy">—</span>
+          </div>
+          <div class="member-detail-item">
+            <span class="member-detail-label">Community Status</span>
+            <div id="summaryStatus">
+              <span class="status-pill pending">⏳ Pending WhatsApp Join</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Official WhatsApp Community Action Hub -->
+      <section class="whatsapp-community-hub" aria-label="Official WhatsApp Group">
+        <div class="wa-hub-badge">Official WhatsApp Community</div>
+        <h3 class="wa-hub-title">Stay Connected in Your Official Community Group</h3>
+        <p class="wa-hub-desc">
+          All workshop invitations, mentor interactions, personality bootcamps, and orientation notices will be shared in this group.
+        </p>
+        <a href="https://chat.whatsapp.com/CaX5fQOrSBFFQ45CrtNoRl" id="waRedirectBtn" target="_blank" rel="noopener noreferrer" class="wa-cta-btn">
+          <svg class="wa-cta-icon" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          <span id="waBtnText">Join Official WhatsApp Community</span>
+        </a>
+        <p class="wa-note">Official moderated community group for Personality Development Club students.</p>
+      </section>
+
+      <!-- Referral Sharing Card -->
+      <section class="referral-share-card" aria-label="Invite Friends with Your Referral">
+        <div class="referral-share-header">
+          <span>✨</span>
+          <h3>Invite Classmates with Your Reference</h3>
+        </div>
+        <p class="referral-share-desc">
+          Share your personal referral link with your batchmates. When they register, your name will be automatically credited as their referencer!
+        </p>
+        <div class="referral-input-group">
+          <input type="text" readonly class="referral-url-box" id="referralUrlBox" value="">
+          <button type="button" class="btn-copy-ref" id="copyRefBtn">
+            <span>📋</span>
+            <span>Copy Link</span>
+          </button>
+          <a href="#" class="btn-share-wa" id="shareRefWaBtn" target="_blank" rel="noopener noreferrer">
+            <span>💬</span>
+            <span>Share on WhatsApp</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- What to Expect at PDC -->
+      <section class="benefits-section">
+        <h3 class="benefits-title">What You Unlock with PDC</h3>
+        <div class="benefits-grid">
+          <div class="benefit-item-card">
+            <span class="benefit-icon">⚡</span>
+            <div class="benefit-content">
+              <h4>Character &amp; Confidence</h4>
+              <p>Practical sessions on overcoming fear, public speaking, decision-making, and emotional resilience.</p>
+            </div>
+          </div>
+          <div class="benefit-item-card">
+            <span class="benefit-icon">🚀</span>
+            <div class="benefit-content">
+              <h4>Competence &amp; Skills</h4>
+              <p>Aptitude sharpening, cognitive problem solving, and professional interview readiness.</p>
+            </div>
+          </div>
+          <div class="benefit-item-card">
+            <span class="benefit-icon">🤝</span>
+            <div class="benefit-content">
+              <h4>Culture &amp; Community</h4>
+              <p>Join a positive ecosystem of disciplined, motivated engineering peers across branches.</p>
+            </div>
+          </div>
+          <div class="benefit-item-card">
+            <span class="benefit-icon">🧭</span>
+            <div class="benefit-content">
+              <h4>Senior Mentorship</h4>
+              <p>Direct mentorship from accomplished seniors and industry alumni to guide your engineering journey.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="margin-top: 32px;">
+        <a href="index.html" style="color: var(--text-muted); font-size: 0.88rem; text-decoration: none;">
+          ← Need to register another student? Click here
+        </a>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-text">
+      <p>&copy; Personality Development Club. Character | Competence | Culture • VIT Pune. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Retrieve stored registration data
+      let student = null;
+      try {
+        const stored = sessionStorage.getItem("pdc_registered_student");
+        if (stored) {
+          student = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn("Could not read student profile:", e);
+      }
+
+      // If no session data, check URL params or fallback
+      if (!student) {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("name") || params.get("phone")) {
+          student = {
+            fullName: params.get("name") || "Student",
+            whatsappNumber: params.get("phone") || "",
+            email: params.get("email") || "",
+            gender: params.get("gender") || "Male",
+            branch: params.get("branch") || "",
+            division: params.get("div") || "",
+            referredBy: params.get("ref") || "Direct",
+            status: "registered"
+          };
+        }
+      }
+
+      const name = student?.fullName || "Student";
+      const phone = student?.whatsappNumber || "";
+      const email = student?.email || "—";
+      const gender = student?.gender || "—";
+      const branch = student?.branch || "—";
+      const division = student?.division || "—";
+      const referredBy = student?.referredBy || "Direct";
+
+      // 2. Hydrate summary UI
+      const subtitleEl = document.getElementById("personalizedSubtitle");
+      if (subtitleEl && student?.fullName) {
+        subtitleEl.textContent = `Welcome to the community, ${name}! Your registration has been successfully recorded in the PDC database.`;
+      }
+
+      document.getElementById("summaryFullName").textContent = name;
+      document.getElementById("summaryPhone").textContent = phone || "—";
+      document.getElementById("summaryEmail").textContent = email;
+      document.getElementById("summaryGender").textContent = gender;
+      document.getElementById("summaryBranch").textContent = branch;
+      document.getElementById("summaryDivision").textContent = division;
+      document.getElementById("summaryReferredBy").textContent = referredBy;
+
+      const regId = phone ? `PDC-VIT-${phone.slice(-4)}` : `PDC-VIT-${Math.floor(1000 + Math.random() * 9000)}`;
+      document.getElementById("displayRegId").textContent = `ID: ${regId}`;
+
+      // Check if already joined WhatsApp
+      if (student?.joinedWhatsApp || localStorage.getItem(`wa_joined_${phone}`)) {
+        markWhatsAppJoinedUI();
+      }
+
+      // 3. Setup Personal Referral Link
+      const referralUrl = `${window.location.origin}${window.location.pathname.replace('thank-you.html', '')}index.html?ref=${encodeURIComponent(name)}`;
+      const refInput = document.getElementById("referralUrlBox");
+      if (refInput) {
+        refInput.value = referralUrl;
+      }
+
+      const copyBtn = document.getElementById("copyRefBtn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(referralUrl).then(() => {
+              showToast("Referral link copied to clipboard! ✨", "success");
+            }).catch(() => fallbackCopy(referralUrl));
+          } else {
+            fallbackCopy(referralUrl);
+          }
+        });
+      }
+
+      function fallbackCopy(text) {
+        if (refInput) {
+          refInput.select();
+          document.execCommand("copy");
+          showToast("Referral link copied! ✨", "success");
+        }
+      }
+
+      const shareWaBtn = document.getElementById("shareRefWaBtn");
+      if (shareWaBtn) {
+        const shareMsg = encodeURIComponent(`Hey! I just registered for the Personality Development Club (PDC) at VIT Pune. Character, Competence, and Leadership workshops!\n\nRegister using my reference link:\n${referralUrl}`);
+        shareWaBtn.href = `https://api.whatsapp.com/send?text=${shareMsg}`;
+      }
+
+      // 4. Handle WhatsApp Community Join Click
+      const waBtn = document.getElementById("waRedirectBtn");
+      if (waBtn) {
+        waBtn.addEventListener("click", () => {
+          markWhatsAppJoinedUI();
+          if (phone) {
+            localStorage.setItem(`wa_joined_${phone}`, "true");
+            // Call backend to update Firestore
+            if (window.PDCBackend && window.PDCBackend.recordWhatsAppJoin) {
+              window.PDCBackend.recordWhatsAppJoin(phone, name);
+            }
+          }
+        });
+      }
+
+      function markWhatsAppJoinedUI() {
+        const summaryStatus = document.getElementById("summaryStatus");
+        if (summaryStatus) {
+          summaryStatus.innerHTML = `<span class="status-pill joined">✅ Joined WhatsApp</span>`;
+        }
+        const waBtnText = document.getElementById("waBtnText");
+        if (waBtnText) {
+          waBtnText.textContent = "Open WhatsApp Community Group (Joined)";
+        }
+      }
+
+      // 5. Load Live Community Stats
+      (async function loadLiveStats() {
+        try {
+          if (window.PDCBackend && window.PDCBackend.fetchLiveStats) {
+            const stats = await window.PDCBackend.fetchLiveStats();
+            if (stats) {
+              const regEl = document.getElementById("statTotalRegistered");
+              const joinEl = document.getElementById("statTotalJoined");
+              if (regEl && stats.totalRegistered) {
+                regEl.textContent = `${stats.totalRegistered}+`;
+              }
+              if (joinEl && (stats.joinedWhatsAppCount !== undefined || stats.totalJoined !== undefined)) {
+                const count = stats.joinedWhatsAppCount || stats.totalJoined || 0;
+                joinEl.textContent = `${count}+`;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Could not load stats on thank you page:", e);
+        }
+      })();
+
+      // Toast helper
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${type === 'success' ? '✅' : 'ℹ️'}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(10px)";
+          toast.style.transition = "all 0.3s ease";
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+    });
+  </script>
+</body>
+
+</html>

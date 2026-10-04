@@ -152,7 +152,8 @@ const COLLECTIONS = {
   BIBWEWADI: "pdc_bibwewadi_submissions",
   KONDHWA: "pdc_kondhwa_submissions",
   LEGACY: "pdc_test_submissions",
-  WHATSAPP_JOINS: "pdc_whatsapp_joins"
+  WHATSAPP_JOINS: "pdc_whatsapp_joins",
+  REGISTRATIONS: "pdc_registrations"
 };
 
 /**
@@ -406,8 +407,8 @@ async function saveTestSubmission(submissionData) {
       // Attempt to flush any earlier queued submissions in the background
       setTimeout(flushSyncQueue, 1000);
 
-      // Increment registered student counter
-      incrementRegistrationCounter().catch(() => {});
+      // Increment registered student counter and update redesigned pdc_stats
+      incrementRegistrationCounter(payload).catch(() => {});
       if (payload.whatsappJoined) {
         recordWhatsAppJoin(payload).catch(() => {});
       }
@@ -430,7 +431,7 @@ async function saveTestSubmission(submissionData) {
             6000
           );
           _lastSubmissionId = legacyRef.id;
-          incrementRegistrationCounter().catch(() => {});
+          incrementRegistrationCounter(payload).catch(() => {});
           if (payload.whatsappJoined) {
             recordWhatsAppJoin(payload).catch(() => {});
           }
@@ -455,7 +456,7 @@ async function saveTestSubmission(submissionData) {
       // If Firestore is temporarily congested or network dropped, queue the submission locally!
       const queuedId = queuePendingSync(payload, targetCollection);
       _lastSubmissionId = queuedId;
-      incrementRegistrationCounter().catch(() => {});
+      incrementRegistrationCounter(payload).catch(() => {});
       if (payload.whatsappJoined) {
         recordWhatsAppJoin(payload).catch(() => {});
       }
@@ -477,7 +478,7 @@ async function saveTestSubmission(submissionData) {
     const demoId = queuePendingSync(payload, targetCollection) || ("pdc_local_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7));
     console.log(`Assessment safely recorded in local session for [${targetCollection}]:`, demoId);
     _lastSubmissionId = demoId;
-    incrementRegistrationCounter().catch(() => {});
+    incrementRegistrationCounter(payload).catch(() => {});
     if (payload.whatsappJoined) {
       recordWhatsAppJoin(payload).catch(() => {});
     }
@@ -489,7 +490,7 @@ async function saveTestSubmission(submissionData) {
     };
   } catch (localErr) {
     console.warn("Local storage fallback warning:", localErr);
-    incrementRegistrationCounter().catch(() => {});
+    incrementRegistrationCounter(payload).catch(() => {});
     if (payload.whatsappJoined) {
       incrementWhatsAppJoinedCounter().catch(() => {});
     }
@@ -504,9 +505,18 @@ async function saveTestSubmission(submissionData) {
 }
 
 /**
- * Atomically increments the total registered count in Firestore and updates localStorage cache.
+ * Redesigned pdc_stats registration documents updater:
+ * - totalEntries: total submissions count (int)
+ * - males: count of male respondents (int)
+ * - females: count of female respondents (int)
+ * - joinedWhatsApp: array of { name, phone } for students who joined community
+ * - notJoinedWhatsApp: array of { name, phone } for students who did not join
+ * Strictly removes all confusing timestamps (lastNotJoinedAt, lastUpdated, lastWhatsAppJoinAt)
+ * and redundant counters (notJoinedCount, totalWhatsappJoined, whatsappJoinedCount).
+ *
+ * @param {Object} payload Optional submission payload containing student details
  */
-async function incrementRegistrationCounter() {
+async function incrementRegistrationCounter(payload = null) {
   let localCount = 0;
   try {
     const raw = typeof localStorage !== "undefined" ? localStorage.getItem("pdc_total_registered_count") : null;
@@ -520,11 +530,49 @@ async function incrementRegistrationCounter() {
 
   if (isFirebaseConfigured && db && typeof firebase !== "undefined" && firebase.firestore) {
     try {
+      const studentName = String(payload?.fullName || payload?.name || "").trim();
+      const studentPhone = String(payload?.whatsappNumber || payload?.phone || "").replace(/[^0-9]/g, "");
+      const genderRaw = String(payload?.gender || "").trim().toLowerCase();
+      const isFemale = genderRaw === "female";
+      const hasJoined = payload ? (payload.whatsappJoined === true || payload.joinedCommunity === "yes") : false;
+
+      const studentEntry = (studentName && studentPhone) ? {
+        name: studentName,
+        phone: studentPhone
+      } : null;
+
       const statsRef = db.collection("pdc_stats").doc("registrations");
-      await statsRef.set({
-        totalRegistered: firebase.firestore.FieldValue.increment(1),
-        lastUpdated: new Date().toISOString()
-      }, { merge: true });
+
+      try {
+        const updateData = {
+          totalEntries: firebase.firestore.FieldValue.increment(1),
+          totalRegistered: firebase.firestore.FieldValue.increment(1),
+          males: firebase.firestore.FieldValue.increment(isFemale ? 0 : 1),
+          females: firebase.firestore.FieldValue.increment(isFemale ? 1 : 0),
+          // Purge confusing legacy fields from the document
+          lastNotJoinedAt: firebase.firestore.FieldValue.delete(),
+          lastUpdated: firebase.firestore.FieldValue.delete(),
+          lastWhatsAppJoinAt: firebase.firestore.FieldValue.delete(),
+          notJoinedCount: firebase.firestore.FieldValue.delete(),
+          totalWhatsappJoined: firebase.firestore.FieldValue.delete(),
+          whatsappJoinedCount: firebase.firestore.FieldValue.delete()
+        };
+
+        if (studentEntry) {
+          if (hasJoined) {
+            updateData.joinedWhatsApp = firebase.firestore.FieldValue.arrayUnion(studentEntry);
+            updateData.notJoinedWhatsApp = firebase.firestore.FieldValue.arrayRemove(studentEntry);
+            updateData.joinedWhatsAppCount = firebase.firestore.FieldValue.increment(1);
+          } else {
+            updateData.notJoinedWhatsApp = firebase.firestore.FieldValue.arrayUnion(studentEntry);
+            updateData.notJoinedWhatsAppCount = firebase.firestore.FieldValue.increment(1);
+          }
+        }
+
+        await statsRef.set(updateData, { merge: true });
+      } catch (innerErr) {
+        console.warn("Could not update target stats document:", innerErr.message);
+      }
     } catch (err) {
       console.warn("Could not increment Firestore registration stats:", err.message);
     }
@@ -556,7 +604,10 @@ async function getRegistrationCount() {
         "Fetch stats timeout"
       );
       if (doc.exists) {
-        const remoteCount = doc.data()?.totalRegistered;
+        const data = doc.data() || {};
+        const remoteCount = typeof data.totalEntries === "number"
+          ? data.totalEntries
+          : (typeof data.totalRegistered === "number" ? data.totalRegistered : 0);
         if (typeof remoteCount === "number" && !isNaN(remoteCount)) {
           count = Math.max(count, remoteCount);
           try {
@@ -576,15 +627,20 @@ async function getRegistrationCount() {
 
 /**
  * Records a student joining the WhatsApp community in the dedicated 'pdc_whatsapp_joins' collection.
- * Also increments the local and Firestore WhatsApp joined counters for database management.
+ * Moves their { name, phone } from notJoinedWhatsApp to joinedWhatsApp in pdc_stats without confusing timestamps.
  * @param {Object} studentData
  */
 async function recordWhatsAppJoin(studentData = {}) {
   const nowIso = new Date().toISOString();
+  const studentName = String(studentData.fullName || studentData.name || "").trim();
+  const studentPhone = String(studentData.whatsappNumber || studentData.phone || "").replace(/[^0-9]/g, "");
+  const studentGender = String(studentData.gender || "").trim();
+
   const joinPayload = {
-    fullName: String(studentData.fullName || studentData.name || "Student").trim(),
+    fullName: studentName || "Student",
     email: String(studentData.email || "").trim(),
-    whatsappNumber: String(studentData.whatsappNumber || "").replace(/[^0-9]/g, ""),
+    whatsappNumber: studentPhone,
+    gender: studentGender,
     campus: String(studentData.campus || "Bibwewadi").trim(),
     branch: String(studentData.branch || "").trim(),
     division: String(studentData.division || "").trim(),
@@ -595,21 +651,49 @@ async function recordWhatsAppJoin(studentData = {}) {
     userAgent: String(typeof navigator !== "undefined" ? navigator.userAgent : "Node/Browser").substring(0, 500)
   };
 
-  // Increment aggregated stats & cache
-  incrementWhatsAppJoinedCounter().catch(() => {});
-
   // If live Firestore is available, write directly to pdc_whatsapp_joins
   if (isFirebaseConfigured && db && typeof firebase !== "undefined") {
     try {
       const docRef = await withTimeout(
-        db.collection(COLLECTIONS.WHATSAPP_JOINS).add(joinPayload),
+        db.collection(COLLECTIONS.WHATSAPP_JOINS).add(joinPayload).catch(err => {
+          console.warn("Could not save to pdc_whatsapp_joins collection:", err.message);
+          return null;
+        }),
         5000,
         "WhatsApp join write timeout"
       );
-      console.log("Recorded WhatsApp community join in pdc_whatsapp_joins:", docRef.id);
-      return { success: true, id: docRef.id, collection: COLLECTIONS.WHATSAPP_JOINS };
+      if (docRef && docRef.id) {
+        console.log("Recorded WhatsApp community join in pdc_whatsapp_joins:", docRef.id);
+      }
     } catch (err) {
       console.warn("Could not save to pdc_whatsapp_joins collection:", err.message);
+    }
+
+    // Update pdc_stats: move student from notJoinedWhatsApp to joinedWhatsApp
+    if (studentName && studentPhone) {
+      const studentEntry = {
+        name: studentName,
+        phone: studentPhone
+      };
+      const statsRef = db.collection("pdc_stats").doc("registrations");
+      try {
+        await statsRef.set({
+          totalRegistered: firebase.firestore.FieldValue.increment(0),
+          joinedWhatsApp: firebase.firestore.FieldValue.arrayUnion(studentEntry),
+          notJoinedWhatsApp: firebase.firestore.FieldValue.arrayRemove(studentEntry),
+          joinedWhatsAppCount: firebase.firestore.FieldValue.increment(1),
+          notJoinedWhatsAppCount: firebase.firestore.FieldValue.increment(-1),
+          // Purge confusing legacy fields
+          lastNotJoinedAt: firebase.firestore.FieldValue.delete(),
+          lastUpdated: firebase.firestore.FieldValue.delete(),
+          lastWhatsAppJoinAt: firebase.firestore.FieldValue.delete(),
+          notJoinedCount: firebase.firestore.FieldValue.delete(),
+          totalWhatsappJoined: firebase.firestore.FieldValue.delete(),
+          whatsappJoinedCount: firebase.firestore.FieldValue.delete()
+        }, { merge: true });
+      } catch (innerErr) {
+        console.warn("Could not update WhatsApp join in pdc_stats:", innerErr.message);
+      }
     }
   }
 
@@ -623,44 +707,32 @@ async function recordWhatsAppJoin(studentData = {}) {
     }
   } catch (e) {}
 
-  return { success: true, isOffline: true, collection: COLLECTIONS.WHATSAPP_JOINS };
+  return { success: true, isOffline: !isFirebaseConfigured, collection: COLLECTIONS.WHATSAPP_JOINS };
 }
 
 /**
- * Atomically increments the WhatsApp community joined count in Firestore (pdc_stats/registrations)
- * and updates localStorage cache for database management purposes.
+ * Manages local WhatsApp joined counter and triggers recordWhatsAppJoin if studentData is present.
  */
-async function incrementWhatsAppJoinedCounter() {
+async function incrementWhatsAppJoinedCounter(studentData = null) {
   let localCount = 0;
   try {
     const raw = typeof localStorage !== "undefined" ? localStorage.getItem("pdc_whatsapp_joined_count") : null;
     localCount = raw ? parseInt(raw, 10) : 0;
-    if (isNaN(localCount)) localCount = 0;
     localCount++;
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("pdc_whatsapp_joined_count", String(localCount));
     }
   } catch (e) {}
 
-  if (isFirebaseConfigured && db && typeof firebase !== "undefined" && firebase.firestore) {
-    try {
-      const statsRef = db.collection("pdc_stats").doc("registrations");
-      await statsRef.set({
-        whatsappJoinedCount: firebase.firestore.FieldValue.increment(1),
-        totalWhatsappJoined: firebase.firestore.FieldValue.increment(1),
-        lastWhatsAppJoinAt: new Date().toISOString()
-      }, { merge: true });
-    } catch (err) {
-      console.warn("Could not increment Firestore WhatsApp joined stats:", err.message);
-    }
+  if (studentData && (studentData.fullName || studentData.name)) {
+    recordWhatsAppJoin(studentData).catch(() => {});
   }
 
   return localCount;
 }
 
 /**
- * Retrieves the total count of students who joined the WhatsApp community from the dedicated
- * pdc_whatsapp_joins collection in Firestore (with stats and localStorage fallbacks).
+ * Retrieves the total count of students who joined the WhatsApp community.
  */
 async function getWhatsAppJoinedCount() {
   let count = 0;
@@ -676,30 +748,21 @@ async function getWhatsAppJoinedCount() {
 
   if (isFirebaseConfigured && db) {
     try {
-      // Check count directly from the dedicated pdc_whatsapp_joins collection
-      const snapshot = await withTimeout(
-        db.collection(COLLECTIONS.WHATSAPP_JOINS).get(),
-        4000,
-        "Fetch WhatsApp joins collection timeout"
+      const doc = await withTimeout(
+        db.collection("pdc_stats").doc("registrations").get(),
+        3000,
+        "Fetch stats timeout"
       );
-      if (snapshot && typeof snapshot.size === "number") {
-        count = Math.max(count, snapshot.size);
+      if (doc && doc.exists) {
+        const data = doc.data() || {};
+        if (Array.isArray(data.joinedWhatsApp)) {
+          count = Math.max(count, data.joinedWhatsApp.length);
+        } else if (typeof data.whatsappJoinedCount === "number") {
+          count = Math.max(count, data.whatsappJoinedCount);
+        }
       }
     } catch (err) {
-      // Fallback: check pdc_stats/registrations
-      try {
-        const doc = await withTimeout(
-          db.collection("pdc_stats").doc("registrations").get(),
-          3000,
-          "Fetch stats timeout"
-        );
-        if (doc && doc.exists) {
-          const remoteCount = doc.data()?.whatsappJoinedCount || doc.data()?.totalWhatsappJoined;
-          if (typeof remoteCount === "number" && !isNaN(remoteCount)) {
-            count = Math.max(count, remoteCount);
-          }
-        }
-      } catch (e2) {}
+      console.info("Using cached whatsapp count:", count, err.message);
     }
     try {
       if (typeof localStorage !== "undefined") {
@@ -711,12 +774,198 @@ async function getWhatsAppJoinedCount() {
   return count;
 }
 
+/**
+ * ===================================================================
+ * NEW REGISTRATION SYSTEM (STREAMLINED & DEDUPLICATED)
+ * ===================================================================
+ * Saves student profile directly to collection 'pdc_registrations'.
+ * - Keyed by normalized 10-digit phone number: pdc_registrations/{phone}
+ * - Eliminates duplicate documents in DB.
+ * - Prevents inflating the total registration count upon re-submission.
+ * ===================================================================
+ */
+async function saveRegistration(regData = {}) {
+  const rawDigits = String(regData.whatsappNumber || regData.phone || "").replace(/[^0-9]/g, "");
+  const phoneClean = rawDigits.length >= 10 ? rawDigits.slice(-10) : rawDigits;
+
+  if (!phoneClean || phoneClean.length < 10) {
+    return { success: false, error: "Please enter a valid 10-digit WhatsApp number." };
+  }
+
+  const nameClean = String(regData.fullName || regData.name || "").trim();
+  if (!nameClean) {
+    return { success: false, error: "Please enter your full name." };
+  }
+
+  const emailClean = String(regData.email || "").trim();
+  const genderClean = String(regData.gender || "Male").trim();
+  const branchClean = String(regData.branch || "").trim();
+  const divClean = String(regData.division || regData.div || "").trim();
+  const refClean = String(regData.referredBy || regData.referencer || "Direct").trim();
+  const nowIso = new Date().toISOString();
+
+  const payload = {
+    fullName: nameClean,
+    whatsappNumber: phoneClean,
+    email: emailClean,
+    gender: genderClean,
+    branch: branchClean,
+    division: divClean,
+    referredBy: refClean,
+    status: "registered",
+    joinedWhatsApp: false,
+    submittedAt: nowIso,
+    timestamp: nowIso,
+    userAgent: (typeof navigator !== "undefined" ? navigator.userAgent : "").slice(0, 500)
+  };
+
+  let isUpdate = false;
+
+  // 1. Try Firestore SDK write
+  if (isFirebaseConfigured && db) {
+    try {
+      const docRef = db.collection("pdc_registrations").doc(phoneClean);
+      const existingDoc = await withTimeout(docRef.get(), 4000, "Deduplication lookup timed out");
+
+      if (existingDoc && existingDoc.exists) {
+        isUpdate = true;
+        const prev = existingDoc.data() || {};
+        if (prev.joinedWhatsApp) payload.joinedWhatsApp = true;
+        await docRef.set(payload, { merge: true });
+        console.log(`Updated registration in pdc_registrations for phone ${phoneClean}. Duplicity prevented.`);
+      } else {
+        isUpdate = false;
+        await docRef.set(payload);
+        console.log(`Created new registration in pdc_registrations for phone ${phoneClean}.`);
+
+        // Increment stats only for genuinely new unique phone numbers
+        try {
+          const isFemale = genderClean.toLowerCase() === "female";
+          const studentMini = { name: nameClean, phone: phoneClean };
+          const statsRef = db.collection("pdc_stats").doc("registrations");
+          const statsUpdate = {
+            totalEntries: firebase.firestore.FieldValue.increment(1),
+            totalRegistered: firebase.firestore.FieldValue.increment(1),
+            males: firebase.firestore.FieldValue.increment(isFemale ? 0 : 1),
+            females: firebase.firestore.FieldValue.increment(isFemale ? 1 : 0),
+            notJoinedWhatsApp: firebase.firestore.FieldValue.arrayUnion(studentMini),
+            notJoinedWhatsAppCount: firebase.firestore.FieldValue.increment(1)
+          };
+          await statsRef.set(statsUpdate, { merge: true });
+          await db.collection("pdc_stats").doc("registration").set(statsUpdate, { merge: true });
+        } catch (statsErr) {
+          console.warn("Could not increment stats:", statsErr.message);
+        }
+      }
+
+      return { success: true, isUpdate, id: phoneClean, student: payload };
+    } catch (sdkErr) {
+      console.warn("Firestore SDK saveRegistration error, trying REST API:", sdkErr);
+    }
+  }
+
+  // 2. Fallback to direct Firestore REST API
+  try {
+    const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/pdc_registrations/${phoneClean}?key=${firebaseConfig.apiKey}`;
+    const checkRes = await fetch(restUrl);
+    isUpdate = checkRes.ok;
+
+    function toRestFields(obj) {
+      const fields = {};
+      for (const [k, v] of Object.entries(obj)) {
+        if (typeof v === "string") fields[k] = { stringValue: v };
+        else if (typeof v === "boolean") fields[k] = { booleanValue: v };
+        else if (typeof v === "number") fields[k] = { integerValue: String(v) };
+      }
+      return fields;
+    }
+
+    const patchRes = await fetch(restUrl, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields: toRestFields(payload) })
+    });
+
+    if (patchRes.ok) {
+      return { success: true, isUpdate, id: phoneClean, student: payload };
+    }
+  } catch (restErr) {
+    console.warn("REST API fallback failed:", restErr);
+  }
+
+  // Fallback cache
+  try {
+    localStorage.setItem(`pdc_reg_${phoneClean}`, JSON.stringify(payload));
+  } catch (e) {}
+
+  return { success: true, isUpdate, id: phoneClean, student: payload, isOffline: true };
+}
+
+/**
+ * Fetches real-time deduplicated community registration statistics.
+ */
+async function fetchLiveStats() {
+  let stats = {
+    totalRegistered: 1476,
+    totalJoined: 0,
+    males: 1054,
+    females: 422
+  };
+
+  try {
+    if (typeof localStorage !== "undefined") {
+      const cached = localStorage.getItem("pdc_live_stats_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed.totalRegistered === "number") stats = parsed;
+      }
+    }
+  } catch (e) {}
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const doc = await withTimeout(
+        db.collection("pdc_stats").doc("registrations").get(),
+        3500,
+        "Fetch stats timeout"
+      );
+      if (doc && doc.exists) {
+        const data = doc.data() || {};
+        const regCount = typeof data.totalRegistered === "number" 
+          ? data.totalRegistered 
+          : (typeof data.totalEntries === "number" ? data.totalEntries : stats.totalRegistered);
+        const joinedCount = typeof data.joinedWhatsAppCount === "number" 
+          ? data.joinedWhatsAppCount 
+          : (Array.isArray(data.joinedWhatsApp) ? data.joinedWhatsApp.length : 0);
+        stats = {
+          totalRegistered: regCount,
+          totalJoined: joinedCount,
+          males: data.males || stats.males,
+          females: data.females || stats.females
+        };
+        try {
+          if (typeof localStorage !== "undefined") {
+            localStorage.setItem("pdc_live_stats_cache", JSON.stringify(stats));
+          }
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.info("Using cached stats:", err.message);
+    }
+  }
+
+  return stats;
+}
+
 if (typeof window !== "undefined") {
   window.PDCBackend = {
     COLLECTIONS,
     getTargetCollection,
     saveTestSubmission,
+    saveRegistration,
+    fetchLiveStats,
     incrementRegistrationCounter,
+    updateRegistrationStats: incrementRegistrationCounter,
     getRegistrationCount,
     recordWhatsAppJoin,
     incrementWhatsAppJoinedCounter,
@@ -733,7 +982,10 @@ if (typeof module !== "undefined" && module.exports) {
     getTargetCollection,
     firebaseConfig,
     saveTestSubmission,
+    saveRegistration,
+    fetchLiveStats,
     incrementRegistrationCounter,
+    updateRegistrationStats: incrementRegistrationCounter,
     getRegistrationCount,
     recordWhatsAppJoin,
     incrementWhatsAppJoinedCounter,

@@ -145,19 +145,40 @@ service cloud.firestore {
     }
 
     // ───────────────────────────────────────────────────────────────────
-    // 4. PUBLIC AGGREGATED STATS (Live registration & WhatsApp counter)
+    // 4. PUBLIC AGGREGATED STATS (Redesigned registration & WhatsApp statistics)
     // ───────────────────────────────────────────────────────────────────
     match /pdc_stats/{docId} {
       allow read: if true;
       allow create, update: if (
+        request.resource.data.totalEntries is number ||
+        request.resource.data.males is number ||
+        request.resource.data.females is number ||
         request.resource.data.totalRegistered is number ||
+        request.resource.data.joinedWhatsAppCount is number ||
         request.resource.data.whatsappJoinedCount is number
       );
       allow delete: if false;
     }
 
     // ───────────────────────────────────────────────────────────────────
-    // 5. WHATSAPP COMMUNITY JOINS (Dedicated collection to check joins)
+    // 5. PDC STUDENT REGISTRATIONS (Clean deduplicated student registrations)
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_registrations/{phoneId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.fullName is string
+        && request.resource.data.fullName.size() > 0
+        && request.resource.data.whatsappNumber is string
+        && request.resource.data.whatsappNumber.size() >= 10
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.gender is string
+        && request.resource.data.branch is string
+        && request.resource.data.division is string;
+      allow delete: if false;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 6. WHATSAPP COMMUNITY JOINS (Dedicated collection to check joins)
     // ───────────────────────────────────────────────────────────────────
     match /pdc_whatsapp_joins/{joinId} {
       allow read: if true;
