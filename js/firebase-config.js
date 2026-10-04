@@ -1037,10 +1037,7 @@ async function saveSimpleRegistration(regData = {}) {
 
       // Write to confirmation stst, confirmation_stats, and compatibility collections
       const targetCollections = [
-        COLLECTIONS.CONFIRMATION_STST,
-        COLLECTIONS.CONFIRMATION_STATS,
-        COLLECTIONS.SIMPLE_REGISTRATIONS,
-        COLLECTIONS.REGISTRATIONS
+        COLLECTIONS.CONFIRMATION_STST
       ];
 
       for (const colName of targetCollections) {
@@ -1098,10 +1095,7 @@ async function saveSimpleRegistration(regData = {}) {
     }
 
     const restCols = [
-      COLLECTIONS.CONFIRMATION_STST,
-      COLLECTIONS.CONFIRMATION_STATS,
-      COLLECTIONS.SIMPLE_REGISTRATIONS,
-      COLLECTIONS.REGISTRATIONS
+      COLLECTIONS.CONFIRMATION_STST
     ];
     for (const cName of restCols) {
       const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${cName}/${phoneClean}?key=${firebaseConfig.apiKey}`;
