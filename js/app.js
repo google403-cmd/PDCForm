@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.innerHTML = `
-      <span>${type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️')}</span>
+      <span>${type === 'error' ? '❌' : (type === 'success' ? '✅' : 'ℹ️')}</span>
       <span>${message}</span>
     `;
     toastContainer.appendChild(toast);
