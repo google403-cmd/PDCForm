@@ -205,6 +205,21 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ───────────────────────────────────────────────────────────────────
+    // 8. PROGRAM CONFIRMATION SUBMISSIONS (confirmation_stst & confirmation_stats)
+    // ───────────────────────────────────────────────────────────────────
+    match /confirmation_stst/{phoneId} {
+      allow read, write: if true;
+    }
+
+    match /confirmation_stats/{phoneId} {
+      allow read, write: if true;
+    }
+
+    match /confirmation stst/{phoneId} {
+      allow read, write: if true;
+    }
+
     // Explicitly deny access to any other collections
     match /{document=**} {
       allow read, write: if false;

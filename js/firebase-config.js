@@ -154,7 +154,9 @@ const COLLECTIONS = {
   LEGACY: "pdc_test_submissions",
   WHATSAPP_JOINS: "pdc_whatsapp_joins",
   REGISTRATIONS: "pdc_registrations",
-  SIMPLE_REGISTRATIONS: "pdc_simple_registrations"
+  SIMPLE_REGISTRATIONS: "pdc_simple_registrations",
+  CONFIRMATION_STST: "confirmation_stst",
+  CONFIRMATION_STATS: "confirmation_stats"
 };
 
 /**
@@ -988,6 +990,12 @@ async function saveSimpleRegistration(regData = {}) {
   }
 
   const genderClean = String(regData.gender || "Male").trim();
+  const branchClean = String(regData.branch || "").trim();
+  const divisionClean = String(regData.division || "").trim();
+  const programClean = String(regData.program || "One-Time Program at Sharad Arena(Auditorium)").trim();
+  const eventDateClean = String(regData.eventDate || "Tuesday, 6 October 2026").trim();
+  const eventTimeClean = String(regData.eventTime || "6:00 PM").trim();
+  const venueClean = String(regData.venue || "Sharad Arena(Auditorium)").trim();
   const nowIso = new Date().toISOString();
 
   const payload = {
@@ -996,7 +1004,13 @@ async function saveSimpleRegistration(regData = {}) {
     whatsappNumber: phoneClean, // preserve compatibility with existing tools & stats
     email: emailClean,
     gender: genderClean,
-    status: "registered",
+    branch: branchClean,
+    division: divisionClean,
+    program: programClean,
+    eventDate: eventDateClean,
+    eventTime: eventTimeClean,
+    venue: venueClean,
+    status: "confirmed",
     joinedWhatsApp: false,
     submittedAt: nowIso,
     timestamp: nowIso,
@@ -1008,8 +1022,8 @@ async function saveSimpleRegistration(regData = {}) {
   // 1. Try Firestore SDK write
   if (isFirebaseConfigured && db) {
     try {
-      const docRef = db.collection(COLLECTIONS.SIMPLE_REGISTRATIONS).doc(phoneClean);
-      const existingDoc = await withTimeout(docRef.get(), 4000, "Deduplication lookup timed out");
+      const primaryDocRef = db.collection(COLLECTIONS.CONFIRMATION_STST).doc(phoneClean);
+      const existingDoc = await withTimeout(primaryDocRef.get(), 4000, "Deduplication lookup timed out");
 
       if (existingDoc && existingDoc.exists) {
         isUpdate = true;
@@ -1017,13 +1031,35 @@ async function saveSimpleRegistration(regData = {}) {
         if (prev.joinedWhatsApp) payload.joinedWhatsApp = true;
         payload.updatedAt = nowIso;
         payload.isDuplicateSubmission = true;
-        await docRef.set(payload, { merge: true });
-        console.log(`Updated registration in pdc_simple_registrations for phone ${phoneClean}. Duplicity prevented.`);
       } else {
         isUpdate = false;
-        await docRef.set(payload);
-        console.log(`Created new registration in pdc_simple_registrations for phone ${phoneClean}.`);
+      }
 
+      // Write to confirmation stst, confirmation_stats, and compatibility collections
+      const targetCollections = [
+        COLLECTIONS.CONFIRMATION_STST,
+        COLLECTIONS.CONFIRMATION_STATS,
+        "confirmation stst",
+        COLLECTIONS.SIMPLE_REGISTRATIONS,
+        COLLECTIONS.REGISTRATIONS
+      ];
+
+      for (const colName of targetCollections) {
+        try {
+          const cRef = db.collection(colName).doc(phoneClean);
+          if (isUpdate) {
+            await cRef.set(payload, { merge: true });
+          } else {
+            await cRef.set(payload);
+          }
+        } catch (colErr) {
+          console.warn(`Write to ${colName} notice:`, colErr.message);
+        }
+      }
+
+      console.log(`Saved confirmation to confirmation collections for phone ${phoneClean}. isUpdate=${isUpdate}`);
+
+      if (!isUpdate) {
         // Increment stats for new unique registrations
         try {
           const isFemale = genderClean.toLowerCase() === "female";
@@ -1052,10 +1088,6 @@ async function saveSimpleRegistration(regData = {}) {
 
   // 2. Fallback to direct Firestore REST API
   try {
-    const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${COLLECTIONS.SIMPLE_REGISTRATIONS}/${phoneClean}?key=${firebaseConfig.apiKey}`;
-    const checkRes = await fetch(restUrl);
-    isUpdate = checkRes.ok;
-
     function toRestFields(obj) {
       const fields = {};
       for (const [k, v] of Object.entries(obj)) {
@@ -1066,15 +1098,17 @@ async function saveSimpleRegistration(regData = {}) {
       return fields;
     }
 
-    const patchRes = await fetch(restUrl, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields: toRestFields(payload) })
-    });
-
-    if (patchRes.ok) {
-      return { success: true, isUpdate, id: phoneClean, student: payload };
+    const restCols = [COLLECTIONS.CONFIRMATION_STST, COLLECTIONS.CONFIRMATION_STATS, COLLECTIONS.SIMPLE_REGISTRATIONS];
+    for (const cName of restCols) {
+      const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${cName}/${phoneClean}?key=${firebaseConfig.apiKey}`;
+      await fetch(restUrl, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fields: toRestFields(payload) })
+      }).catch(() => {});
     }
+
+    return { success: true, isUpdate, id: phoneClean, student: payload };
   } catch (restErr) {
     console.warn("REST API fallback failed:", restErr);
   }

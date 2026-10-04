@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fullNameInput = document.getElementById("fullName");
   const phoneNumberInput = document.getElementById("phoneNumber") || document.getElementById("whatsappNumber");
   const emailInput = document.getElementById("email");
+  const branchInput = document.getElementById("branch");
+  const divisionInput = document.getElementById("division");
   const genderRadioCards = document.querySelectorAll(".gender-radio-card");
   const submitBtn = document.getElementById("submitRegBtn");
   const submitSpinner = document.getElementById("submitSpinner");
@@ -63,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneNumberInput.value = params.get("phone").replace(/[^0-9]/g, "").slice(-10);
       }
       if (params.get("email") && emailInput) emailInput.value = params.get("email");
+      if (params.get("branch") && branchInput) branchInput.value = params.get("branch");
+      if ((params.get("division") || params.get("div")) && divisionInput) {
+        divisionInput.value = params.get("division") || params.get("div");
+      }
       if (params.get("gender")) {
         const targetGender = params.get("gender");
         const matchRadio = document.querySelector(`input[name="gender"][value="${targetGender}"]`);
@@ -106,6 +112,24 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target.value.length === 10) {
         hideError("phoneNumberError");
         e.target.classList.remove("error");
+      }
+    });
+  }
+
+  if (branchInput) {
+    branchInput.addEventListener("change", () => {
+      if (branchInput.value) {
+        hideError("branchError");
+        branchInput.classList.remove("error");
+      }
+    });
+  }
+
+  if (divisionInput) {
+    divisionInput.addEventListener("change", () => {
+      if (divisionInput.value) {
+        hideError("divisionError");
+        divisionInput.classList.remove("error");
       }
     });
   }
@@ -189,7 +213,29 @@ document.addEventListener("DOMContentLoaded", () => {
       if (emailInput) emailInput.classList.remove("error");
     }
 
-    // 4. Gender
+    // 4. Engineering Branch
+    const branch = (branchInput ? branchInput.value : "").trim();
+    if (!branch) {
+      showError("branchError", "Please select your engineering branch.");
+      if (branchInput) branchInput.classList.add("error");
+      isValid = false;
+    } else {
+      hideError("branchError");
+      if (branchInput) branchInput.classList.remove("error");
+    }
+
+    // 5. Division
+    const division = (divisionInput ? divisionInput.value : "").trim();
+    if (!division) {
+      showError("divisionError", "Please select your division.");
+      if (divisionInput) divisionInput.classList.add("error");
+      isValid = false;
+    } else {
+      hideError("divisionError");
+      if (divisionInput) divisionInput.classList.remove("error");
+    }
+
+    // 6. Gender
     const selectedGenderRadio = document.querySelector('input[name="gender"]:checked');
     if (!selectedGenderRadio) {
       showError("genderError", "Please select your gender.");
@@ -232,7 +278,14 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneNumber: cleanPhone,
         whatsappNumber: cleanPhone,
         email: emailInput.value.trim(),
-        gender: selectedGenderRadio ? selectedGenderRadio.value : "Male"
+        gender: selectedGenderRadio ? selectedGenderRadio.value : "Male",
+        branch: branchInput ? branchInput.value : "",
+        division: divisionInput ? divisionInput.value : "",
+        program: "One-Time Program at Sharad Arena(Auditorium)",
+        eventDate: "Tuesday, 6 October 2026",
+        eventTime: "6:00 PM",
+        venue: "Sharad Arena(Auditorium)",
+        status: "confirmed"
       };
 
       try {

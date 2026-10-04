@@ -73,7 +73,7 @@
             </div>
 
             <!-- 2. Phone Number -->
-            <div class="form-group grid-full-width">
+            <div class="form-group">
               <label for="phoneNumber" class="form-label">
                 Phone Number (WhatsApp) <span class="req-star">*</span>
               </label>
@@ -82,7 +82,7 @@
             </div>
 
             <!-- 3. Email Address -->
-            <div class="form-group grid-full-width">
+            <div class="form-group">
               <label for="email" class="form-label">
                 Email Address <span class="req-star">*</span>
               </label>
@@ -90,7 +90,56 @@
               <span class="error-msg" id="emailError">Please enter a valid email address.</span>
             </div>
 
-            <!-- 4. Gender -->
+            <!-- 4. Engineering Branch -->
+            <div class="form-group">
+              <label for="branch" class="form-label">
+                Engineering Branch <span class="req-star">*</span>
+              </label>
+              <select id="branch" name="branch" class="form-select" required>
+                <option value="" disabled selected>Select Your Branch</option>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
+                <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
+                <option value="CSE (Data Science)">CSE (Data Science)</option>
+                <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
+                <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
+                <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+                <option value="Instrumentation & Control">Instrumentation & Control</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                <option value="Other">Other Branch</option>
+              </select>
+              <span class="error-msg" id="branchError">Please select your engineering branch.</span>
+            </div>
+
+            <!-- 5. Division -->
+            <div class="form-group">
+              <label for="division" class="form-label">
+                Division <span class="req-star">*</span>
+              </label>
+              <select id="division" name="division" class="form-select" required>
+                <option value="" disabled selected>Select Division</option>
+                <option value="A">Division A</option>
+                <option value="B">Division B</option>
+                <option value="C">Division C</option>
+                <option value="D">Division D</option>
+                <option value="E">Division E</option>
+                <option value="F">Division F</option>
+                <option value="G">Division G</option>
+                <option value="H">Division H</option>
+                <option value="I">Division I</option>
+                <option value="J">Division J</option>
+                <option value="K">Division K</option>
+                <option value="L">Division L</option>
+                <option value="SEDA">Division SEDA</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="error-msg" id="divisionError">Please select your division.</span>
+            </div>
+
+            <!-- 6. Gender -->
             <div class="form-group grid-full-width">
               <label class="form-label">
                 Gender <span class="req-star">*</span>

@@ -172,6 +172,46 @@ async function runTests() {
   // Clean simple test doc
   await simpleDocRef.delete();
 
+  // Test 5: NEW COLLECTION confirmation_stst & confirmation_stats (With Branch, Division, Program Details)
+  console.log('\n--- TEST 5: [confirmation_stst] & [confirmation_stats] with Branch and Division ---');
+  const confirmPhone = '9999900003';
+  const confirmData = {
+    fullName: 'Shaurya O. Panigrahi',
+    phoneNumber: confirmPhone,
+    whatsappNumber: confirmPhone,
+    email: 'scouttiger2@gmail.com',
+    gender: 'Male',
+    branch: 'Computer Engineering',
+    division: 'A',
+    program: 'One-Time Program at Sharad Arena(Auditorium)',
+    eventDate: 'Tuesday, 6 October 2026',
+    eventTime: '6:00 PM',
+    venue: 'Sharad Arena(Auditorium)',
+    status: 'confirmed',
+    submittedAt: new Date().toISOString(),
+    timestamp: new Date().toISOString()
+  };
+
+  const cStstRef = db.collection('confirmation_stst').doc(confirmPhone);
+  const cStatsRef = db.collection('confirmation_stats').doc(confirmPhone);
+  await cStstRef.set(confirmData);
+  await cStatsRef.set(confirmData);
+
+  const checkStst = await cStstRef.get();
+  const checkStats = await cStatsRef.get();
+
+  if (!checkStst.exists || checkStst.data().branch !== 'Computer Engineering' || checkStst.data().division !== 'A') {
+    throw new Error('confirmation_stst document was not created correctly');
+  }
+  if (!checkStats.exists || checkStats.data().program !== 'One-Time Program at Sharad Arena(Auditorium)') {
+    throw new Error('confirmation_stats document was not created correctly');
+  }
+  console.log('✅ Successfully stored and verified student data in [confirmation_stst] and [confirmation_stats]!');
+
+  // Cleanup test documents
+  await cStstRef.delete();
+  await cStatsRef.delete();
+
   // Cleanup test document and restore stats
   console.log('\n--- CLEANUP ---');
   await testRegRef.delete();
