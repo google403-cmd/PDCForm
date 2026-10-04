@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
         gender: selectedGenderRadio ? selectedGenderRadio.value : "Male",
         branch: branchInput ? branchInput.value : "",
         division: divisionInput ? divisionInput.value : "",
-        program: "Pcd Course and Camps Orientation Program Program at Sharad Arena(Auditorium)",
+        program: "PDC Course and Camps Orientation Program at Sharad Arena(Auditorium)",
         eventDate: "Tuesday, 6 October 2026",
         eventTime: "6:00 PM",
         venue: "Sharad Arena(Auditorium)",
