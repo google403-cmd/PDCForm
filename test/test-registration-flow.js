@@ -183,7 +183,7 @@ async function runTests() {
     gender: 'Male',
     branch: 'Computer Engineering',
     division: 'A',
-    program: 'One-Time Program at Sharad Arena(Auditorium)',
+    program: 'Pcd Course and Camps Orientation Program Program at Sharad Arena(Auditorium)',
     eventDate: 'Tuesday, 6 October 2026',
     eventTime: '6:00 PM',
     venue: 'Sharad Arena(Auditorium)',
@@ -203,7 +203,7 @@ async function runTests() {
   if (!checkStst.exists || checkStst.data().branch !== 'Computer Engineering' || checkStst.data().division !== 'A') {
     throw new Error('confirmation_stst document was not created correctly');
   }
-  if (!checkStats.exists || checkStats.data().program !== 'One-Time Program at Sharad Arena(Auditorium)') {
+  if (!checkStats.exists || checkStats.data().program !== 'Pcd Course and Camps Orientation Program Program at Sharad Arena(Auditorium)') {
     throw new Error('confirmation_stats document was not created correctly');
   }
   console.log('✅ Successfully stored and verified student data in [confirmation_stst] and [confirmation_stats]!');

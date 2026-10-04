@@ -14,11 +14,11 @@
 
 // Retrieve configuration from window.PDC_FIREBASE_CONFIG or window.PDC_CONFIG.firebase
 const getFirebaseConfig = () => {
-  const globalConfig = (typeof window !== "undefined" && window.PDC_CONFIG && window.PDC_CONFIG.firebase) 
-    ? window.PDC_CONFIG.firebase 
+  const globalConfig = (typeof window !== "undefined" && window.PDC_CONFIG && window.PDC_CONFIG.firebase)
+    ? window.PDC_CONFIG.firebase
     : {};
-  const injectedConfig = (typeof window !== "undefined" && window.PDC_FIREBASE_CONFIG) 
-    ? window.PDC_FIREBASE_CONFIG 
+  const injectedConfig = (typeof window !== "undefined" && window.PDC_FIREBASE_CONFIG)
+    ? window.PDC_FIREBASE_CONFIG
     : {};
 
   return {
@@ -279,12 +279,12 @@ async function saveTestSubmission(submissionData) {
 
   // Format timestamp
   const nowIso = new Date().toISOString();
-  
+
   // Normalize scores (supports SQ as primary and EQ as alias)
   const pqScore = Number(submissionData.scores?.pq || 0);
   const iqScore = Number(submissionData.scores?.iq || 0);
-  const sqScore = Number(submissionData.scores?.sq !== undefined 
-    ? submissionData.scores.sq 
+  const sqScore = Number(submissionData.scores?.sq !== undefined
+    ? submissionData.scores.sq
     : (submissionData.scores?.eq || 0));
 
   const payload = {
@@ -321,8 +321,8 @@ async function saveTestSubmission(submissionData) {
       spiritualProfile: submissionData.scores?.spiritualProfile || submissionData.spiritualProfile || "",
       report: submissionData.scores?.report || submissionData.report || {}
     },
-    totalScore: Number(submissionData.totalScore !== undefined 
-      ? submissionData.totalScore 
+    totalScore: Number(submissionData.totalScore !== undefined
+      ? submissionData.totalScore
       : (pqScore + iqScore + sqScore)),
     timestamp: submissionData.timestamp || nowIso,
     submittedAt: submissionData.submittedAt || nowIso,
@@ -411,9 +411,9 @@ async function saveTestSubmission(submissionData) {
       setTimeout(flushSyncQueue, 1000);
 
       // Increment registered student counter and update redesigned pdc_stats
-      incrementRegistrationCounter(payload).catch(() => {});
+      incrementRegistrationCounter(payload).catch(() => { });
       if (payload.whatsappJoined) {
-        recordWhatsAppJoin(payload).catch(() => {});
+        recordWhatsAppJoin(payload).catch(() => { });
       }
 
       return {
@@ -434,9 +434,9 @@ async function saveTestSubmission(submissionData) {
             6000
           );
           _lastSubmissionId = legacyRef.id;
-          incrementRegistrationCounter(payload).catch(() => {});
+          incrementRegistrationCounter(payload).catch(() => { });
           if (payload.whatsappJoined) {
-            recordWhatsAppJoin(payload).catch(() => {});
+            recordWhatsAppJoin(payload).catch(() => { });
           }
           return {
             success: true,
@@ -459,9 +459,9 @@ async function saveTestSubmission(submissionData) {
       // If Firestore is temporarily congested or network dropped, queue the submission locally!
       const queuedId = queuePendingSync(payload, targetCollection);
       _lastSubmissionId = queuedId;
-      incrementRegistrationCounter(payload).catch(() => {});
+      incrementRegistrationCounter(payload).catch(() => { });
       if (payload.whatsappJoined) {
-        recordWhatsAppJoin(payload).catch(() => {});
+        recordWhatsAppJoin(payload).catch(() => { });
       }
 
       return {
@@ -481,9 +481,9 @@ async function saveTestSubmission(submissionData) {
     const demoId = queuePendingSync(payload, targetCollection) || ("pdc_local_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7));
     console.log(`Assessment safely recorded in local session for [${targetCollection}]:`, demoId);
     _lastSubmissionId = demoId;
-    incrementRegistrationCounter(payload).catch(() => {});
+    incrementRegistrationCounter(payload).catch(() => { });
     if (payload.whatsappJoined) {
-      recordWhatsAppJoin(payload).catch(() => {});
+      recordWhatsAppJoin(payload).catch(() => { });
     }
     return {
       success: true,
@@ -493,9 +493,9 @@ async function saveTestSubmission(submissionData) {
     };
   } catch (localErr) {
     console.warn("Local storage fallback warning:", localErr);
-    incrementRegistrationCounter(payload).catch(() => {});
+    incrementRegistrationCounter(payload).catch(() => { });
     if (payload.whatsappJoined) {
-      incrementWhatsAppJoinedCounter().catch(() => {});
+      incrementWhatsAppJoinedCounter().catch(() => { });
     }
     return {
       success: true,
@@ -529,7 +529,7 @@ async function incrementRegistrationCounter(payload = null) {
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("pdc_total_registered_count", String(localCount));
     }
-  } catch (e) {}
+  } catch (e) { }
 
   if (isFirebaseConfigured && db && typeof firebase !== "undefined" && firebase.firestore) {
     try {
@@ -597,7 +597,7 @@ async function getRegistrationCount() {
         if (!isNaN(parsed)) count = parsed;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   if (isFirebaseConfigured && db) {
     try {
@@ -617,7 +617,7 @@ async function getRegistrationCount() {
             if (typeof localStorage !== "undefined") {
               localStorage.setItem("pdc_total_registered_count", String(count));
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     } catch (err) {
@@ -708,7 +708,7 @@ async function recordWhatsAppJoin(studentData = {}) {
       if (localQueue.length > 100) localQueue.length = 100;
       localStorage.setItem("pdc_whatsapp_joins_queue", JSON.stringify(localQueue));
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return { success: true, isOffline: !isFirebaseConfigured, collection: COLLECTIONS.WHATSAPP_JOINS };
 }
@@ -725,10 +725,10 @@ async function incrementWhatsAppJoinedCounter(studentData = null) {
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("pdc_whatsapp_joined_count", String(localCount));
     }
-  } catch (e) {}
+  } catch (e) { }
 
   if (studentData && (studentData.fullName || studentData.name)) {
-    recordWhatsAppJoin(studentData).catch(() => {});
+    recordWhatsAppJoin(studentData).catch(() => { });
   }
 
   return localCount;
@@ -747,7 +747,7 @@ async function getWhatsAppJoinedCount() {
         if (!isNaN(parsed)) count = parsed;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   if (isFirebaseConfigured && db) {
     try {
@@ -771,7 +771,7 @@ async function getWhatsAppJoinedCount() {
       if (typeof localStorage !== "undefined") {
         localStorage.setItem("pdc_whatsapp_joined_count", String(count));
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return count;
@@ -899,7 +899,7 @@ async function saveRegistration(regData = {}) {
   // Fallback cache
   try {
     localStorage.setItem(`pdc_reg_${phoneClean}`, JSON.stringify(payload));
-  } catch (e) {}
+  } catch (e) { }
 
   return { success: true, isUpdate, id: phoneClean, student: payload, isOffline: true };
 }
@@ -923,7 +923,7 @@ async function fetchLiveStats() {
         if (parsed && typeof parsed.totalRegistered === "number") stats = parsed;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   if (isFirebaseConfigured && db) {
     try {
@@ -934,11 +934,11 @@ async function fetchLiveStats() {
       );
       if (doc && doc.exists) {
         const data = doc.data() || {};
-        const regCount = typeof data.totalRegistered === "number" 
-          ? data.totalRegistered 
+        const regCount = typeof data.totalRegistered === "number"
+          ? data.totalRegistered
           : (typeof data.totalEntries === "number" ? data.totalEntries : stats.totalRegistered);
-        const joinedCount = typeof data.joinedWhatsAppCount === "number" 
-          ? data.joinedWhatsAppCount 
+        const joinedCount = typeof data.joinedWhatsAppCount === "number"
+          ? data.joinedWhatsAppCount
           : (Array.isArray(data.joinedWhatsApp) ? data.joinedWhatsApp.length : 0);
         stats = {
           totalRegistered: regCount,
@@ -950,7 +950,7 @@ async function fetchLiveStats() {
           if (typeof localStorage !== "undefined") {
             localStorage.setItem("pdc_live_stats_cache", JSON.stringify(stats));
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     } catch (err) {
       console.info("Using cached stats:", err.message);
@@ -992,7 +992,7 @@ async function saveSimpleRegistration(regData = {}) {
   const genderClean = String(regData.gender || "Male").trim();
   const branchClean = String(regData.branch || "").trim();
   const divisionClean = String(regData.division || "").trim();
-  const programClean = String(regData.program || "One-Time Program at Sharad Arena(Auditorium)").trim();
+  const programClean = String(regData.program || "Pcd Course and Camps Orientation Program Program at Sharad Arena(Auditorium)").trim();
   const eventDateClean = String(regData.eventDate || "Tuesday, 6 October 2026").trim();
   const eventTimeClean = String(regData.eventTime || "6:00 PM").trim();
   const venueClean = String(regData.venue || "Sharad Arena(Auditorium)").trim();
@@ -1105,7 +1105,7 @@ async function saveSimpleRegistration(regData = {}) {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fields: toRestFields(payload) })
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     return { success: true, isUpdate, id: phoneClean, student: payload };
@@ -1116,7 +1116,7 @@ async function saveSimpleRegistration(regData = {}) {
   // Fallback cache
   try {
     localStorage.setItem(`pdc_simple_reg_${phoneClean}`, JSON.stringify(payload));
-  } catch (e) {}
+  } catch (e) { }
 
   return { success: true, isUpdate, id: phoneClean, student: payload, isOffline: true };
 }
