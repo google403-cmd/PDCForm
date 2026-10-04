@@ -286,26 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function displaySuccessView(student, isUpdate = false) {
     if (!successView) return;
 
-    if (displayFullName) displayFullName.textContent = student.fullName || "Student";
-    if (displayPhoneNumber) displayPhoneNumber.textContent = student.phoneNumber || student.whatsappNumber || "—";
-    if (displayEmail) displayEmail.textContent = student.email || "—";
-    if (displayGender) displayGender.textContent = student.gender || "—";
-
-    const phoneDigits = (student.phoneNumber || student.whatsappNumber || "").slice(-4);
-    if (successRegId) {
-      successRegId.textContent = `ID: PDC-VIT-${phoneDigits || "2026"}`;
-    }
-
-    if (successTitle) {
-      successTitle.textContent = isUpdate ? `Welcome Back, ${student.fullName}! ✨` : `Welcome to PDC, ${student.fullName}! 🎉`;
-    }
-
-    if (successSubtitle) {
-      successSubtitle.textContent = isUpdate
-        ? "Your registration is already confirmed in the PDC database."
-        : "Your registration has been securely submitted to the PDC database.";
-    }
-
     // Toggle views
     if (formView) formView.style.display = "none";
     successView.style.display = "block";

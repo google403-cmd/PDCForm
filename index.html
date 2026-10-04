@@ -45,42 +45,6 @@
       <div class="banner-wrapper">
         <img src="Stories/PDC Banner.png" alt="Personality Development Club activities" class="pdc-banner" loading="eager">
       </div>
-
-      <!-- Compact Collapsible About Section -->
-      <div class="about-accordion">
-        <button type="button" class="about-toggle-btn" id="aboutToggleBtn" aria-expanded="false">
-          <span>About PDC</span>
-          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="about-content" id="aboutContent">
-          <div class="about-inner">
-            <p class="about-lead" id="aboutShortDesc">
-              The Personality Development Club (PDC) of VIT Pune empowers engineering students to excel across character, competence, and culture through experiential workshops, mentor cohorts, and leadership activities.
-            </p>
-            <div class="pillars-grid" id="aboutPillars">
-              <div class="pillar-card">
-                <h4>Character (PQ)</h4>
-                <p>Develop resilience, integrity, articulate communication, and confidence under pressure.</p>
-              </div>
-              <div class="pillar-card">
-                <h4>Competence (IQ)</h4>
-                <p>Sharpen logical structuring, technical problem-solving, and decisive analytical thinking.</p>
-              </div>
-              <div class="pillar-card">
-                <h4>Culture (SQ)</h4>
-                <p>Cultivate self-awareness, emotional poise, timeless wisdom, and enduring ethical clarity.</p>
-              </div>
-              <div class="pillar-card">
-                <h4>Mentorship</h4>
-                <p>Gain personalized guidance and senior networking from distinguished alumni and mentors.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </header>
 
     <!-- Main Registration & Success Container -->
@@ -157,40 +121,37 @@
       </section>
 
       <!-- 2. Successfully Submitted View -->
-      <section id="successView" class="success-view-card" style="display: none;">
-        <h2 class="success-title" id="successTitle">Welcome to PDC! 🎉</h2>
-        <p class="success-subtitle" id="successSubtitle">
-          Your registration has been securely recorded in the PDC database.
+      <section id="successView" class="success-view-card confirmation-card" style="display: none;">
+        <h2 class="confirmation-title" id="successTitle">🙏 Confirmation Successful! 🎉</h2>
+        <p class="confirmation-subtitle" id="successSubtitle">
+          Your confirmation for the One-Time Program at Sharad Arena(Auditorium) is successfully done! ✨
         </p>
 
-        <!-- Summary Details Box -->
-        <div class="summary-box">
-          <div class="summary-header">
-            <h3 class="summary-title">
-              <span>📋</span>
-              <span>Registration Summary</span>
-            </h3>
-            <span class="reg-id-badge" id="successRegId">ID: PDC-VIT</span>
+        <!-- Event Details Box -->
+        <div class="event-schedule-card">
+          <div class="event-schedule-item">
+            <span class="event-icon">📅</span>
+            <span class="event-schedule-text">Tuesday, 6 October 2026</span>
           </div>
+          <div class="event-schedule-divider"></div>
+          <div class="event-schedule-item">
+            <span class="event-icon">🕕</span>
+            <span class="event-schedule-text">6:00 PM</span>
+          </div>
+        </div>
 
-          <div class="summary-grid">
-            <div class="summary-item">
-              <span class="summary-label">Full Name</span>
-              <span class="summary-value" id="displayFullName">—</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Phone Number</span>
-              <span class="summary-value" id="displayPhoneNumber">—</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Email Address</span>
-              <span class="summary-value" id="displayEmail">—</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Gender</span>
-              <span class="summary-value" id="displayGender">—</span>
-            </div>
-          </div>
+        <div class="confirmation-notes">
+          <p class="confirmation-excited">We’re excited to have you with us! 🌸</p>
+          <p class="confirmation-reminder">
+            <strong>Don’t miss this special opportunity—make sure you’re there on time.</strong>
+          </p>
+          <p class="confirmation-seeyou">✨ See you on Tuesday at 6 PM!</p>
+        </div>
+
+        <div style="margin-top: 26px;">
+          <button type="button" class="btn-register-another" id="registerAnotherBtn">
+            ← Register another student
+          </button>
         </div>
       </section>
 
