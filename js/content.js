@@ -18,6 +18,17 @@ if (typeof window === "undefined") {
 }
 
 window.PDC_CONFIG = {
+  // ── Firebase Configuration ──────────────────────────────────────
+  firebase: {
+    apiKey: "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
+    authDomain: "pdclub-e9f59.firebaseapp.com",
+    projectId: "pdclub-e9f59",
+    storageBucket: "pdclub-e9f59.firebasestorage.app",
+    messagingSenderId: "609375785673",
+    appId: "1:609375785673:web:a516ef1b29ebc6560ff318",
+    measurementId: "G-18RNRMSJJN"
+  },
+
   // ── Brand & Club Information ─────────────────────────────────────
   club: {
     name: "Personality Development Club",

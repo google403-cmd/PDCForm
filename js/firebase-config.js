@@ -22,7 +22,7 @@ const getFirebaseConfig = () => {
     : {};
 
   return {
-    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "",
+    apiKey: injectedConfig.apiKey || globalConfig.apiKey || "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
     authDomain: injectedConfig.authDomain || globalConfig.authDomain || "pdclub-e9f59.firebaseapp.com",
     projectId: injectedConfig.projectId || globalConfig.projectId || "pdclub-e9f59",
     storageBucket: injectedConfig.storageBucket || globalConfig.storageBucket || "pdclub-e9f59.firebasestorage.app",
@@ -1039,7 +1039,6 @@ async function saveSimpleRegistration(regData = {}) {
       const targetCollections = [
         COLLECTIONS.CONFIRMATION_STST,
         COLLECTIONS.CONFIRMATION_STATS,
-        "confirmation stst",
         COLLECTIONS.SIMPLE_REGISTRATIONS,
         COLLECTIONS.REGISTRATIONS
       ];
@@ -1098,7 +1097,12 @@ async function saveSimpleRegistration(regData = {}) {
       return fields;
     }
 
-    const restCols = [COLLECTIONS.CONFIRMATION_STST, COLLECTIONS.CONFIRMATION_STATS, COLLECTIONS.SIMPLE_REGISTRATIONS];
+    const restCols = [
+      COLLECTIONS.CONFIRMATION_STST,
+      COLLECTIONS.CONFIRMATION_STATS,
+      COLLECTIONS.SIMPLE_REGISTRATIONS,
+      COLLECTIONS.REGISTRATIONS
+    ];
     for (const cName of restCols) {
       const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${cName}/${phoneClean}?key=${firebaseConfig.apiKey}`;
       await fetch(restUrl, {
