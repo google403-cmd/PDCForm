@@ -153,7 +153,8 @@ const COLLECTIONS = {
   KONDHWA: "pdc_kondhwa_submissions",
   LEGACY: "pdc_test_submissions",
   WHATSAPP_JOINS: "pdc_whatsapp_joins",
-  REGISTRATIONS: "pdc_registrations"
+  REGISTRATIONS: "pdc_registrations",
+  SIMPLE_REGISTRATIONS: "pdc_simple_registrations"
 };
 
 /**
@@ -957,12 +958,142 @@ async function fetchLiveStats() {
   return stats;
 }
 
+/**
+ * ===================================================================
+ * NEW SIMPLE REGISTRATION SYSTEM (4 FIELDS & STRICT DEDUPLICATION)
+ * ===================================================================
+ * Saves student profile directly to collection 'pdc_simple_registrations'.
+ * - Fields: fullName, phoneNumber, email, gender
+ * - Keyed by normalized 10-digit phone number: pdc_simple_registrations/{phone}
+ * - Eliminates duplicate documents in DB.
+ * - Prevents inflating the total registration count upon re-submission.
+ * ===================================================================
+ */
+async function saveSimpleRegistration(regData = {}) {
+  const rawDigits = String(regData.phoneNumber || regData.whatsappNumber || regData.phone || "").replace(/[^0-9]/g, "");
+  const phoneClean = rawDigits.length >= 10 ? rawDigits.slice(-10) : rawDigits;
+
+  if (!phoneClean || phoneClean.length < 10) {
+    return { success: false, error: "Please enter a valid 10-digit phone number." };
+  }
+
+  const nameClean = String(regData.fullName || regData.name || "").trim();
+  if (!nameClean || nameClean.length < 2) {
+    return { success: false, error: "Please enter your full name." };
+  }
+
+  const emailClean = String(regData.email || "").trim();
+  if (!emailClean) {
+    return { success: false, error: "Please enter your email address." };
+  }
+
+  const genderClean = String(regData.gender || "Male").trim();
+  const nowIso = new Date().toISOString();
+
+  const payload = {
+    fullName: nameClean,
+    phoneNumber: phoneClean,
+    whatsappNumber: phoneClean, // preserve compatibility with existing tools & stats
+    email: emailClean,
+    gender: genderClean,
+    status: "registered",
+    joinedWhatsApp: false,
+    submittedAt: nowIso,
+    timestamp: nowIso,
+    userAgent: (typeof navigator !== "undefined" ? navigator.userAgent : "").slice(0, 500)
+  };
+
+  let isUpdate = false;
+
+  // 1. Try Firestore SDK write
+  if (isFirebaseConfigured && db) {
+    try {
+      const docRef = db.collection(COLLECTIONS.SIMPLE_REGISTRATIONS).doc(phoneClean);
+      const existingDoc = await withTimeout(docRef.get(), 4000, "Deduplication lookup timed out");
+
+      if (existingDoc && existingDoc.exists) {
+        isUpdate = true;
+        const prev = existingDoc.data() || {};
+        if (prev.joinedWhatsApp) payload.joinedWhatsApp = true;
+        payload.updatedAt = nowIso;
+        payload.isDuplicateSubmission = true;
+        await docRef.set(payload, { merge: true });
+        console.log(`Updated registration in pdc_simple_registrations for phone ${phoneClean}. Duplicity prevented.`);
+      } else {
+        isUpdate = false;
+        await docRef.set(payload);
+        console.log(`Created new registration in pdc_simple_registrations for phone ${phoneClean}.`);
+
+        // Increment stats for new unique registrations
+        try {
+          const isFemale = genderClean.toLowerCase() === "female";
+          const studentMini = { name: nameClean, phone: phoneClean };
+          const statsRef = db.collection("pdc_stats").doc("registrations");
+          const statsUpdate = {
+            totalEntries: firebase.firestore.FieldValue.increment(1),
+            totalRegistered: firebase.firestore.FieldValue.increment(1),
+            males: firebase.firestore.FieldValue.increment(isFemale ? 0 : 1),
+            females: firebase.firestore.FieldValue.increment(isFemale ? 1 : 0),
+            notJoinedWhatsApp: firebase.firestore.FieldValue.arrayUnion(studentMini),
+            notJoinedWhatsAppCount: firebase.firestore.FieldValue.increment(1)
+          };
+          await statsRef.set(statsUpdate, { merge: true });
+          await db.collection("pdc_stats").doc("registration").set(statsUpdate, { merge: true });
+        } catch (statsErr) {
+          console.warn("Could not increment stats:", statsErr.message);
+        }
+      }
+
+      return { success: true, isUpdate, id: phoneClean, student: payload };
+    } catch (sdkErr) {
+      console.warn("Firestore SDK saveSimpleRegistration error, trying REST API:", sdkErr);
+    }
+  }
+
+  // 2. Fallback to direct Firestore REST API
+  try {
+    const restUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${COLLECTIONS.SIMPLE_REGISTRATIONS}/${phoneClean}?key=${firebaseConfig.apiKey}`;
+    const checkRes = await fetch(restUrl);
+    isUpdate = checkRes.ok;
+
+    function toRestFields(obj) {
+      const fields = {};
+      for (const [k, v] of Object.entries(obj)) {
+        if (typeof v === "string") fields[k] = { stringValue: v };
+        else if (typeof v === "boolean") fields[k] = { booleanValue: v };
+        else if (typeof v === "number") fields[k] = { integerValue: String(v) };
+      }
+      return fields;
+    }
+
+    const patchRes = await fetch(restUrl, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields: toRestFields(payload) })
+    });
+
+    if (patchRes.ok) {
+      return { success: true, isUpdate, id: phoneClean, student: payload };
+    }
+  } catch (restErr) {
+    console.warn("REST API fallback failed:", restErr);
+  }
+
+  // Fallback cache
+  try {
+    localStorage.setItem(`pdc_simple_reg_${phoneClean}`, JSON.stringify(payload));
+  } catch (e) {}
+
+  return { success: true, isUpdate, id: phoneClean, student: payload, isOffline: true };
+}
+
 if (typeof window !== "undefined") {
   window.PDCBackend = {
     COLLECTIONS,
     getTargetCollection,
     saveTestSubmission,
     saveRegistration,
+    saveSimpleRegistration,
     fetchLiveStats,
     incrementRegistrationCounter,
     updateRegistrationStats: incrementRegistrationCounter,
@@ -983,6 +1114,7 @@ if (typeof module !== "undefined" && module.exports) {
     firebaseConfig,
     saveTestSubmission,
     saveRegistration,
+    saveSimpleRegistration,
     fetchLiveStats,
     incrementRegistrationCounter,
     updateRegistrationStats: incrementRegistrationCounter,

@@ -188,6 +188,23 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ───────────────────────────────────────────────────────────────────
+    // 7. PDC SIMPLE REGISTRATIONS (Clean deduplicated 4-field registrations: Name, Phone, Email, Gender)
+    // ───────────────────────────────────────────────────────────────────
+    match /pdc_simple_registrations/{phoneId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.fullName is string
+        && request.resource.data.fullName.size() > 0
+        && (
+          (request.resource.data.keys().hasAny(['phoneNumber']) && request.resource.data.phoneNumber is string && request.resource.data.phoneNumber.size() >= 10) ||
+          (request.resource.data.keys().hasAny(['whatsappNumber']) && request.resource.data.whatsappNumber is string && request.resource.data.whatsappNumber.size() >= 10)
+        )
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.gender is string;
+      allow delete: if false;
+    }
+
     // Explicitly deny access to any other collections
     match /{document=**} {
       allow read, write: if false;

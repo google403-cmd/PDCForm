@@ -684,12 +684,12 @@
       }
 
       const name = student?.fullName || "Student";
-      const phone = student?.whatsappNumber || "";
+      const phone = student?.phoneNumber || student?.whatsappNumber || "";
       const email = student?.email || "—";
       const gender = student?.gender || "—";
-      const branch = student?.branch || "—";
-      const division = student?.division || "—";
-      const referredBy = student?.referredBy || "Direct";
+      const branch = student?.branch || "";
+      const division = student?.division || "";
+      const referredBy = student?.referredBy || "";
 
       // 2. Hydrate summary UI
       const subtitleEl = document.getElementById("personalizedSubtitle");
@@ -701,9 +701,28 @@
       document.getElementById("summaryPhone").textContent = phone || "—";
       document.getElementById("summaryEmail").textContent = email;
       document.getElementById("summaryGender").textContent = gender;
-      document.getElementById("summaryBranch").textContent = branch;
-      document.getElementById("summaryDivision").textContent = division;
-      document.getElementById("summaryReferredBy").textContent = referredBy;
+      
+      const branchItem = document.getElementById("summaryBranch")?.closest(".member-detail-item");
+      const divItem = document.getElementById("summaryDivision")?.closest(".member-detail-item");
+      const refItem = document.getElementById("summaryReferredBy")?.closest(".member-detail-item");
+
+      if (branch) {
+        document.getElementById("summaryBranch").textContent = branch;
+      } else if (branchItem) {
+        branchItem.style.display = "none";
+      }
+
+      if (division) {
+        document.getElementById("summaryDivision").textContent = division;
+      } else if (divItem) {
+        divItem.style.display = "none";
+      }
+
+      if (referredBy && referredBy !== "Direct") {
+        document.getElementById("summaryReferredBy").textContent = referredBy;
+      } else if (refItem) {
+        refItem.style.display = "none";
+      }
 
       const regId = phone ? `PDC-VIT-${phone.slice(-4)}` : `PDC-VIT-${Math.floor(1000 + Math.random() * 9000)}`;
       document.getElementById("displayRegId").textContent = `ID: ${regId}`;

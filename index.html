@@ -104,143 +104,127 @@
       </div>
     </div>
 
-    <!-- Main Registration Form Card -->
+    <!-- Main Registration & Success Container -->
     <main class="form-card" id="formCard">
-      <div class="step-header">
-        <div class="step-badge">PDC Membership Registration</div>
-        <h2 class="step-title">Student Registration Form</h2>
-        <p class="step-subtitle">
-          Fill in your details below to register for PDC activities, leadership bootcamps, and official community access.
-        </p>
-      </div>
 
-      <form id="registrationForm" novalidate>
-        <div class="personal-grid">
-
-          <!-- 1. Full Name -->
-          <div class="form-group grid-full-width">
-            <label for="fullName" class="form-label">
-              Full Name <span class="req-star">*</span>
-            </label>
-            <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name (e.g. Omkar Patil)" required autocomplete="name">
-            <span class="error-msg" id="fullNameError">Please enter your full name.</span>
-          </div>
-
-          <!-- 2. WhatsApp Number -->
-          <div class="form-group">
-            <label for="whatsappNumber" class="form-label">
-              WhatsApp Number <span class="req-star">*</span>
-            </label>
-            <input type="tel" id="whatsappNumber" name="whatsappNumber" class="form-input" placeholder="10-digit mobile number (e.g. 9876543210)" maxlength="10" required autocomplete="tel">
-            <span class="error-msg" id="whatsappNumberError">Please enter a valid 10-digit WhatsApp number.</span>
-          </div>
-
-          <!-- 3. Email Address -->
-          <div class="form-group">
-            <label for="email" class="form-label">
-              Email Address <span class="req-star">*</span>
-            </label>
-            <input type="email" id="email" name="email" class="form-input" placeholder="name@example.com" required autocomplete="email">
-            <span class="error-msg" id="emailError">Please enter a valid email address.</span>
-          </div>
-
-          <!-- 4. Gender -->
-          <div class="form-group grid-full-width">
-            <label class="form-label">
-              Gender <span class="req-star">*</span>
-            </label>
-            <div class="gender-radio-group" id="genderRadioGroup" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
-              <label class="gender-radio-card" data-gender="Male">
-                <input type="radio" name="gender" value="Male" required>
-                <span>👨 Male</span>
-              </label>
-              <label class="gender-radio-card" data-gender="Female">
-                <input type="radio" name="gender" value="Female">
-                <span>👩 Female</span>
-              </label>
-              <label class="gender-radio-card" data-gender="Other">
-                <input type="radio" name="gender" value="Other">
-                <span>✨ Other</span>
-              </label>
-            </div>
-            <span class="error-msg" id="genderError">Please select your gender.</span>
-          </div>
-
-          <!-- 5. Engineering Branch -->
-          <div class="form-group">
-            <label for="branch" class="form-label">
-              Engineering Branch <span class="req-star">*</span>
-            </label>
-            <select id="branch" name="branch" class="form-select" required>
-              <option value="" disabled selected>Select Your Branch</option>
-              <option value="Computer Engineering">Computer Engineering</option>
-              <option value="Information Technology">Information Technology</option>
-              <option value="CSE (Artificial Intelligence)">CSE (Artificial Intelligence)</option>
-              <option value="CSE (Artificial Intelligence & Machine Learning)">CSE (Artificial Intelligence & Machine Learning)</option>
-              <option value="CSE (Data Science)">CSE (Data Science)</option>
-              <option value="Computer Engineering (Software Engineering)">Computer Engineering (Software Engineering)</option>
-              <option value="CSE (IoT & Cyber Security including Blockchain)">CSE (IoT & Cyber Security including Blockchain)</option>
-              <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-              <option value="Instrumentation & Control">Instrumentation & Control</option>
-              <option value="Mechanical Engineering">Mechanical Engineering</option>
-              <option value="Civil Engineering">Civil Engineering</option>
-              <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
-              <option value="Other">Other Branch</option>
-            </select>
-            <span class="error-msg" id="branchError">Please select your engineering branch.</span>
-          </div>
-
-          <!-- 6. Division -->
-          <div class="form-group">
-            <label for="division" class="form-label">
-              Division <span class="req-star">*</span>
-            </label>
-            <select id="division" name="division" class="form-select" required>
-              <option value="" disabled selected>Select Division</option>
-              <option value="A">Division A</option>
-              <option value="B">Division B</option>
-              <option value="C">Division C</option>
-              <option value="D">Division D</option>
-              <option value="E">Division E</option>
-              <option value="F">Division F</option>
-              <option value="G">Division G</option>
-              <option value="H">Division H</option>
-              <option value="I">Division I</option>
-              <option value="J">Division J</option>
-              <option value="K">Division K</option>
-              <option value="L">Division L</option>
-              <option value="SEDA">Division SEDA</option>
-              <option value="Other">Other</option>
-            </select>
-            <span class="error-msg" id="divisionError">Please select your division.</span>
-          </div>
-
-          <!-- 7. Referred by / Reference -->
-          <div class="form-group grid-full-width form-group-referral">
-            <label for="referredBy" class="form-label">
-              Referred By / Reference (Friend, Senior, or Club Coordinator)
-            </label>
-            <input type="text" id="referredBy" name="referredBy" class="form-input" placeholder="e.g. Shaurya, Friend's Name, Senior, or Faculty (optional)">
-            <div id="referralDetectedBadge" class="referral-detected-badge" style="display: none;">
-              <span>✨</span>
-              <span id="referralDetectedText">Referred by friend via link</span>
-            </div>
-          </div>
-
+      <!-- 1. Streamlined Registration Form View (Name, Phone Number, Email, Gender) -->
+      <section id="formView">
+        <div class="step-header">
+          <div class="step-badge">PDC Membership Registration</div>
+          <h2 class="step-title">Student Registration Form</h2>
+          <p class="step-subtitle">
+            Fill in your details below to register for PDC activities, leadership bootcamps, and official community access.
+          </p>
         </div>
 
-        <!-- Submit Button Row -->
-        <div style="margin-top: 32px; display: flex; justify-content: center;">
-          <button type="submit" class="btn btn-primary" id="submitRegBtn" style="min-width: 280px; min-height: 54px; font-size: 1.05rem; font-weight: 800;">
-            <span class="btn-text">Complete Registration →</span>
-            <span class="spinner" id="submitSpinner" style="display: none;" aria-hidden="true"></span>
-          </button>
+        <form id="registrationForm" novalidate>
+          <div class="personal-grid">
+
+            <!-- 1. Full Name -->
+            <div class="form-group grid-full-width">
+              <label for="fullName" class="form-label">
+                Full Name <span class="req-star">*</span>
+              </label>
+              <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name (e.g. Omkar Patil)" required autocomplete="name">
+              <span class="error-msg" id="fullNameError">Please enter your full name.</span>
+            </div>
+
+            <!-- 2. Phone Number -->
+            <div class="form-group grid-full-width">
+              <label for="phoneNumber" class="form-label">
+                Phone Number (WhatsApp) <span class="req-star">*</span>
+              </label>
+              <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="10-digit mobile number (e.g. 9876543210)" maxlength="10" required autocomplete="tel">
+              <span class="error-msg" id="phoneNumberError">Please enter a valid 10-digit phone number.</span>
+            </div>
+
+            <!-- 3. Email Address -->
+            <div class="form-group grid-full-width">
+              <label for="email" class="form-label">
+                Email Address <span class="req-star">*</span>
+              </label>
+              <input type="email" id="email" name="email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+              <span class="error-msg" id="emailError">Please enter a valid email address.</span>
+            </div>
+
+            <!-- 4. Gender -->
+            <div class="form-group grid-full-width">
+              <label class="form-label">
+                Gender <span class="req-star">*</span>
+              </label>
+              <div class="gender-radio-group" id="genderRadioGroup" style="grid-template-columns: repeat(2, 1fr);">
+                <label class="gender-radio-card" data-gender="Male">
+                  <input type="radio" name="gender" value="Male" required>
+                  <span>👨 Male</span>
+                </label>
+                <label class="gender-radio-card" data-gender="Female">
+                  <input type="radio" name="gender" value="Female">
+                  <span>👩 Female</span>
+                </label>
+              </div>
+              <span class="error-msg" id="genderError">Please select your gender.</span>
+            </div>
+
+          </div>
+
+          <!-- Submit Button Row -->
+          <div style="margin-top: 32px; display: flex; justify-content: center;">
+            <button type="submit" class="btn btn-primary" id="submitRegBtn" style="min-width: 280px; min-height: 54px; font-size: 1.05rem; font-weight: 800;">
+              <span class="btn-text">Complete Registration →</span>
+              <span class="spinner" id="submitSpinner" style="display: none;" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 2. Successfully Submitted View -->
+      <section id="successView" class="success-view-card" style="display: none;">
+        <div class="celebration-wrap">
+          <div class="celebration-ring"></div>
+          <div class="celebration-circle">
+            <svg class="celebration-svg" viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
         </div>
 
-        <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-top: 14px;">
-          🔒 Your information is saved securely with zero duplicate records in the PDC database.
+        <div class="success-badge">✅ Successfully Submitted</div>
+        <h2 class="success-title" id="successTitle">Welcome to PDC! 🎉</h2>
+        <p class="success-subtitle" id="successSubtitle">
+          Your registration has been securely recorded in the PDC database.
         </p>
-      </form>
+
+        <!-- Summary Details Box -->
+        <div class="summary-box">
+          <div class="summary-header">
+            <h3 class="summary-title">
+              <span>📋</span>
+              <span>Registration Summary</span>
+            </h3>
+            <span class="reg-id-badge" id="successRegId">ID: PDC-VIT</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Full Name</span>
+              <span class="summary-value" id="displayFullName">—</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Phone Number</span>
+              <span class="summary-value" id="displayPhoneNumber">—</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Email Address</span>
+              <span class="summary-value" id="displayEmail">—</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Gender</span>
+              <span class="summary-value" id="displayGender">—</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Footer -->

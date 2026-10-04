@@ -2,11 +2,12 @@
  * ===================================================================
  * PDC (PERSONALITY DEVELOPMENT CLUB) — STUDENT REGISTRATION LOGIC
  * ===================================================================
- * - Handles registration submission directly to 'pdc_registrations'
- * - Guarantees zero duplicity by keying document ID with WhatsApp number
- * - Auto-detects and binds referral query parameters (?ref, ?referrer, ?referencer)
+ * - Handles 4-field registration: Name, Phone Number, Email, Gender
+ * - Submits directly to new collection 'pdc_simple_registrations'
+ * - Guarantees ZERO duplicate values by keying document ID with 10-digit phone number
+ * - In-page smooth transition to "Successfully Submitted" view
  * - Live real-time community statistics counter hydration
- * - Smooth transition to thank-you.html upon successful registration
+ * - Syncs session for full confirmation receipt on thank-you.html
  * ===================================================================
  */
 
@@ -14,13 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   const form = document.getElementById("registrationForm");
   const fullNameInput = document.getElementById("fullName");
-  const whatsappNumberInput = document.getElementById("whatsappNumber");
+  const phoneNumberInput = document.getElementById("phoneNumber") || document.getElementById("whatsappNumber");
   const emailInput = document.getElementById("email");
-  const branchSelect = document.getElementById("branch");
-  const divisionSelect = document.getElementById("division");
-  const referredByInput = document.getElementById("referredBy");
-  const referralDetectedBadge = document.getElementById("referralDetectedBadge");
-  const referralDetectedText = document.getElementById("referralDetectedText");
   const genderRadioCards = document.querySelectorAll(".gender-radio-card");
   const submitBtn = document.getElementById("submitRegBtn");
   const submitSpinner = document.getElementById("submitSpinner");
@@ -28,7 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const aboutToggleBtn = document.getElementById("aboutToggleBtn");
   const aboutContent = document.getElementById("aboutContent");
 
+  // Single-page views
+  const formView = document.getElementById("formView");
+  const successView = document.getElementById("successView");
+  const successTitle = document.getElementById("successTitle");
+  const successSubtitle = document.getElementById("successSubtitle");
+  const successRegId = document.getElementById("successRegId");
+  const displayFullName = document.getElementById("displayFullName");
+  const displayPhoneNumber = document.getElementById("displayPhoneNumber");
+  const displayEmail = document.getElementById("displayEmail");
+  const displayGender = document.getElementById("displayGender");
+  const successWaBtn = document.getElementById("successWaBtn");
+  const registerAnotherBtn = document.getElementById("registerAnotherBtn");
+
   let isSubmitting = false;
+  let registeredStudentData = null;
 
   // ===================================================================
   // 1. COLLAPSIBLE ABOUT ACCORDION
@@ -43,35 +53,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 2. REFERRAL PARAMETER AUTO-DETECTION
+  // 2. QUERY PARAMETER AUTO-PREFILL
   // ===================================================================
-  function initReferral() {
+  function initQueryPrefill() {
     try {
       const params = new URLSearchParams(window.location.search);
-      const referrer = params.get("ref") || 
-                       params.get("referrer") || 
-                       params.get("referencer") || 
-                       params.get("reference") || 
-                       "";
-
-      if (referrer && referredByInput) {
-        referredByInput.value = referrer;
-        if (referralDetectedBadge) {
-          referralDetectedBadge.style.display = "inline-flex";
-          if (referralDetectedText) {
-            referralDetectedText.textContent = `Referred by: ${referrer}`;
+      if (params.get("name") && fullNameInput) fullNameInput.value = params.get("name");
+      if (params.get("phone") && phoneNumberInput) {
+        phoneNumberInput.value = params.get("phone").replace(/[^0-9]/g, "").slice(-10);
+      }
+      if (params.get("email") && emailInput) emailInput.value = params.get("email");
+      if (params.get("gender")) {
+        const targetGender = params.get("gender");
+        const matchRadio = document.querySelector(`input[name="gender"][value="${targetGender}"]`);
+        if (matchRadio) {
+          matchRadio.checked = true;
+          const card = matchRadio.closest(".gender-radio-card");
+          if (card) {
+            genderRadioCards.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
           }
         }
-        referredByInput.style.borderColor = "#FCD34D";
-        referredByInput.style.backgroundColor = "#FFFDF5";
       }
-
-      // Pre-fill student info if provided in query
-      if (params.get("name") && fullNameInput) fullNameInput.value = params.get("name");
-      if (params.get("phone") && whatsappNumberInput) whatsappNumberInput.value = params.get("phone").replace(/[^0-9]/g, "").slice(-10);
-      if (params.get("email") && emailInput) emailInput.value = params.get("email");
-      if (params.get("branch") && branchSelect) branchSelect.value = params.get("branch");
-      if (params.get("div") && divisionSelect) divisionSelect.value = params.get("div");
     } catch (e) {
       console.warn("Could not parse query parameters:", e);
     }
@@ -95,13 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===================================================================
-  // 4. PHONE NUMBER FORMATTING / NUMERIC ENFORCEMENT
+  // 4. PHONE NUMBER FORMATTING (NUMERIC 10 DIGITS)
   // ===================================================================
-  if (whatsappNumberInput) {
-    whatsappNumberInput.addEventListener("input", (e) => {
+  if (phoneNumberInput) {
+    phoneNumberInput.addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
       if (e.target.value.length === 10) {
-        hideError("whatsappNumberError");
+        hideError("phoneNumberError");
         e.target.classList.remove("error");
       }
     });
@@ -152,41 +155,41 @@ document.addEventListener("DOMContentLoaded", () => {
   function validateForm() {
     let isValid = true;
 
-    // Full Name
-    const name = (fullNameInput.value || "").trim();
+    // 1. Full Name
+    const name = (fullNameInput ? fullNameInput.value : "").trim();
     if (!name || name.length < 2) {
       showError("fullNameError", "Please enter your full name (at least 2 characters).");
-      fullNameInput.classList.add("error");
+      if (fullNameInput) fullNameInput.classList.add("error");
       isValid = false;
     } else {
       hideError("fullNameError");
-      fullNameInput.classList.remove("error");
+      if (fullNameInput) fullNameInput.classList.remove("error");
     }
 
-    // WhatsApp Number
-    const phone = (whatsappNumberInput.value || "").replace(/[^0-9]/g, "");
+    // 2. Phone Number
+    const phone = (phoneNumberInput ? phoneNumberInput.value : "").replace(/[^0-9]/g, "");
     if (!phone || phone.length !== 10) {
-      showError("whatsappNumberError", "Please enter a valid 10-digit mobile number.");
-      whatsappNumberInput.classList.add("error");
+      showError("phoneNumberError", "Please enter a valid 10-digit phone number.");
+      if (phoneNumberInput) phoneNumberInput.classList.add("error");
       isValid = false;
     } else {
-      hideError("whatsappNumberError");
-      whatsappNumberInput.classList.remove("error");
+      hideError("phoneNumberError");
+      if (phoneNumberInput) phoneNumberInput.classList.remove("error");
     }
 
-    // Email
-    const email = (emailInput.value || "").trim();
+    // 3. Email Address
+    const email = (emailInput ? emailInput.value : "").trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
       showError("emailError", "Please enter a valid email address.");
-      emailInput.classList.add("error");
+      if (emailInput) emailInput.classList.add("error");
       isValid = false;
     } else {
       hideError("emailError");
-      emailInput.classList.remove("error");
+      if (emailInput) emailInput.classList.remove("error");
     }
 
-    // Gender
+    // 4. Gender
     const selectedGenderRadio = document.querySelector('input[name="gender"]:checked');
     if (!selectedGenderRadio) {
       showError("genderError", "Please select your gender.");
@@ -195,33 +198,11 @@ document.addEventListener("DOMContentLoaded", () => {
       hideError("genderError");
     }
 
-    // Engineering Branch
-    const branch = branchSelect.value;
-    if (!branch) {
-      showError("branchError", "Please select your engineering branch.");
-      branchSelect.classList.add("error");
-      isValid = false;
-    } else {
-      hideError("branchError");
-      branchSelect.classList.remove("error");
-    }
-
-    // Division
-    const division = divisionSelect.value;
-    if (!division) {
-      showError("divisionError", "Please select your division.");
-      divisionSelect.classList.add("error");
-      isValid = false;
-    } else {
-      hideError("divisionError");
-      divisionSelect.classList.remove("error");
-    }
-
     return isValid;
   }
 
   // ===================================================================
-  // 7. FORM SUBMISSION
+  // 7. FORM SUBMISSION (NEW COLLECTION 'pdc_simple_registrations')
   // ===================================================================
   if (form) {
     form.addEventListener("submit", async (e) => {
@@ -243,53 +224,133 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const selectedGenderRadio = document.querySelector('input[name="gender"]:checked');
+      const cleanPhone = phoneNumberInput.value.replace(/[^0-9]/g, "").slice(-10);
+      const studentName = fullNameInput.value.trim();
+
       const payload = {
-        fullName: fullNameInput.value.trim(),
-        whatsappNumber: whatsappNumberInput.value.replace(/[^0-9]/g, "").slice(-10),
+        fullName: studentName,
+        phoneNumber: cleanPhone,
+        whatsappNumber: cleanPhone,
         email: emailInput.value.trim(),
-        gender: selectedGenderRadio ? selectedGenderRadio.value : "Male",
-        branch: branchSelect.value,
-        division: divisionSelect.value,
-        referredBy: (referredByInput.value || "Direct").trim()
+        gender: selectedGenderRadio ? selectedGenderRadio.value : "Male"
       };
 
       try {
         let saveResult = { success: true };
-        if (window.PDCBackend && window.PDCBackend.saveRegistration) {
+        if (window.PDCBackend && window.PDCBackend.saveSimpleRegistration) {
+          saveResult = await window.PDCBackend.saveSimpleRegistration(payload);
+        } else if (window.PDCBackend && window.PDCBackend.saveRegistration) {
           saveResult = await window.PDCBackend.saveRegistration(payload);
         }
 
-        // Store profile in sessionStorage for thank-you.html
+        registeredStudentData = saveResult.student || payload;
+
+        // Store profile in storage for persistence and thank-you.html
         try {
-          sessionStorage.setItem("pdc_registered_student", JSON.stringify(saveResult.student || payload));
-          localStorage.setItem(`pdc_student_${payload.whatsappNumber}`, JSON.stringify(saveResult.student || payload));
+          sessionStorage.setItem("pdc_registered_student", JSON.stringify(registeredStudentData));
+          localStorage.setItem(`pdc_student_${cleanPhone}`, JSON.stringify(registeredStudentData));
         } catch (storageErr) {
           console.warn("Storage warning:", storageErr);
         }
 
-        showToast("Registration completed! Redirecting to confirmation page...", "success");
+        // Hydrate and display the Successfully Submitted view on page
+        displaySuccessView(registeredStudentData, saveResult.isUpdate);
 
-        // Small smooth delay for UX
-        setTimeout(() => {
-          window.location.href = "thank-you.html";
-        }, 600);
+        if (saveResult.isUpdate) {
+          showToast("Registration already recorded for this number. Showing your saved details! ✨", "info");
+        } else {
+          showToast("Registration successfully submitted! 🎉", "success");
+        }
+
+        // Refresh stats
+        loadLiveCommunityStats();
 
       } catch (err) {
         console.error("Registration error:", err);
-        showToast("Could not complete registration. Please check your connection and try again.", "error");
+        showToast("Could not submit registration. Please try again.", "error");
+      } finally {
+        isSubmitting = false;
         if (submitBtn) {
           submitBtn.disabled = false;
           const btnText = submitBtn.querySelector(".btn-text");
           if (btnText) btnText.textContent = "Complete Registration →";
           if (submitSpinner) submitSpinner.style.display = "none";
         }
-        isSubmitting = false;
       }
     });
   }
 
   // ===================================================================
-  // 8. TOAST NOTIFICATION HELPER
+  // 8. SHOW SUCCESSFULLY SUBMITTED VIEW
+  // ===================================================================
+  function displaySuccessView(student, isUpdate = false) {
+    if (!successView) return;
+
+    if (displayFullName) displayFullName.textContent = student.fullName || "Student";
+    if (displayPhoneNumber) displayPhoneNumber.textContent = student.phoneNumber || student.whatsappNumber || "—";
+    if (displayEmail) displayEmail.textContent = student.email || "—";
+    if (displayGender) displayGender.textContent = student.gender || "—";
+
+    const phoneDigits = (student.phoneNumber || student.whatsappNumber || "").slice(-4);
+    if (successRegId) {
+      successRegId.textContent = `ID: PDC-VIT-${phoneDigits || "2026"}`;
+    }
+
+    if (successTitle) {
+      successTitle.textContent = isUpdate ? `Welcome Back, ${student.fullName}! ✨` : `Welcome to PDC, ${student.fullName}! 🎉`;
+    }
+
+    if (successSubtitle) {
+      successSubtitle.textContent = isUpdate
+        ? "Your registration is already confirmed in the PDC database."
+        : "Your registration has been securely submitted to the PDC database.";
+    }
+
+    // Toggle views
+    if (formView) formView.style.display = "none";
+    successView.style.display = "block";
+
+    // Smooth scroll to top of card
+    const formCard = document.getElementById("formCard");
+    if (formCard) {
+      formCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  // ===================================================================
+  // 9. REGISTER ANOTHER STUDENT (RESET VIEW)
+  // ===================================================================
+  if (registerAnotherBtn) {
+    registerAnotherBtn.addEventListener("click", () => {
+      if (form) form.reset();
+      genderRadioCards.forEach(c => c.classList.remove("selected"));
+      hideError("fullNameError");
+      hideError("phoneNumberError");
+      hideError("emailError");
+      hideError("genderError");
+
+      if (successView) successView.style.display = "none";
+      if (formView) {
+        formView.style.display = "block";
+        const formCard = document.getElementById("formCard");
+        if (formCard) formCard.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+
+  // ===================================================================
+  // 10. WHATSAPP JOIN RECORDING
+  // ===================================================================
+  if (successWaBtn) {
+    successWaBtn.addEventListener("click", () => {
+      if (registeredStudentData && window.PDCBackend && window.PDCBackend.recordWhatsAppJoin) {
+        window.PDCBackend.recordWhatsAppJoin(registeredStudentData).catch(() => {});
+      }
+    });
+  }
+
+  // ===================================================================
+  // 11. TOAST NOTIFICATION HELPER
   // ===================================================================
   function showToast(message, type = "info") {
     if (!toastContainer) return;
@@ -310,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Initialize
-  initReferral();
+  initQueryPrefill();
   initGenderSelection();
   loadLiveCommunityStats();
 });

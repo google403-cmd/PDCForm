@@ -120,6 +120,58 @@ async function runTests() {
   }
   console.log('✅ WhatsApp join recorded cleanly in pdc_registrations.');
 
+  // Test 4: NEW COLLECTION pdc_simple_registrations (4 fields & Deduplication)
+  console.log('\n--- TEST 4: [pdc_simple_registrations] 4-Field & Deduplication ---');
+  const simplePhone = '9999900002';
+  const simpleDocRef = db.collection('pdc_simple_registrations').doc(simplePhone);
+  await simpleDocRef.delete();
+
+  // First simple submission
+  const simpleData1 = {
+    fullName: 'Rohan Deshmukh',
+    phoneNumber: simplePhone,
+    whatsappNumber: simplePhone,
+    email: 'rohan.deshmukh@vit.edu',
+    gender: 'Male',
+    status: 'registered',
+    submittedAt: new Date().toISOString()
+  };
+  await simpleDocRef.set(simpleData1);
+  console.log('✅ Created document in new collection [pdc_simple_registrations] with doc ID = phone number.');
+
+  const checkSimple1 = await simpleDocRef.get();
+  if (!checkSimple1.exists || checkSimple1.data().fullName !== 'Rohan Deshmukh') {
+    throw new Error('pdc_simple_registrations document was not created correctly');
+  }
+
+  // Duplicate submission with same phone number
+  const simpleData2 = {
+    fullName: 'Rohan V. Deshmukh',
+    phoneNumber: simplePhone,
+    whatsappNumber: simplePhone,
+    email: 'rohan.new@vit.edu',
+    gender: 'Male',
+    status: 'registered',
+    isDuplicateSubmission: true,
+    updatedAt: new Date().toISOString()
+  };
+
+  const existingSimpleDoc = await simpleDocRef.get();
+  if (existingSimpleDoc.exists) {
+    console.log('Duplicate phone detected in [pdc_simple_registrations]. Merging in-place without duplicate doc.');
+    await simpleDocRef.set(simpleData2, { merge: true });
+  }
+
+  // Check that only 1 document exists and data is updated
+  const checkSimple2 = await simpleDocRef.get();
+  if (checkSimple2.data().fullName !== 'Rohan V. Deshmukh' || checkSimple2.data().email !== 'rohan.new@vit.edu') {
+    throw new Error('pdc_simple_registrations document update failed');
+  }
+  console.log('✅ Verified zero duplicates in [pdc_simple_registrations]. Record updated in-place.');
+
+  // Clean simple test doc
+  await simpleDocRef.delete();
+
   // Cleanup test document and restore stats
   console.log('\n--- CLEANUP ---');
   await testRegRef.delete();
