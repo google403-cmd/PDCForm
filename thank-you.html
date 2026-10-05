@@ -634,6 +634,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/content.js"></script>
   <script src="js/supabase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -755,7 +757,7 @@
           markWhatsAppJoinedUI();
           if (phone) {
             localStorage.setItem(`wa_joined_${phone}`, "true");
-            // Call backend to update Firestore
+            // Call backend to update Supabase
             if (window.PDCBackend && window.PDCBackend.recordWhatsAppJoin) {
               window.PDCBackend.recordWhatsAppJoin(phone, name);
             }

@@ -6,7 +6,7 @@
  * - PDC Branding, Logo & Theme Details
  * - WhatsApp Official Community URL
  * - Kondhwa Campus Routing & Quiz URL
- * - Firebase Project Credentials
+ * - Supabase Database Credentials
  * - Assessment Structure (PQ, IQ, EQ)
  * - Activity Data & Direct Quality Linkages
  * - Concise, Actionable Evaluation Report Content

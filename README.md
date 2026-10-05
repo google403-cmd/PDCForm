@@ -32,9 +32,8 @@ A responsive, high-performance web application designed for the **Personality De
 ├── index.html              # Main assessment page with multi-step test (Bibwewadi)
 ├── kondhwa.html            # Dedicated Kondhwa Campus assessment route
 ├── result.html             # Actionable score report, activity gallery & community CTA
-├── firestore.rules         # Production Firestore security rules for pdc_test_submissions
 ├── vercel.json             # Vercel deployment headers & cache-control policies
-├── .env.example            # Environment variables template for Firebase & URLs
+├── .env.example            # Environment variables template for Supabase & URLs
 ├── package.json            # Scripts & dependencies
 ├── assets/
 │   ├── pdc-logo.png        # Official PDC square logo
@@ -51,9 +50,9 @@ A responsive, high-performance web application designed for the **Personality De
 │   └── styles.css          # Design system, PDC tokens, responsive layouts
 ├── js/
 │   ├── content.js          # Master configuration (copy, scoring, questions, links)
-│   ├── firebase-config.js  # PDC Firebase credentials & Firestore connector
+│   ├── supabase-config.js  # PDC Supabase database connector (confirmation_stst & bibwewadi)
 │   ├── security.js         # Checksum signature & session encryption
-│   └── app.js              # Multi-step state, validation & submission logic
+│   └── app.js              # Confirmation form state, validation & submission logic
 └── test/
     ├── validate-assessment.js         # Question & structure validation suite
     └── test-scoring-and-submission.js # Scoring engine & payload schema tests
@@ -96,7 +95,7 @@ All club configuration is centralized in [`js/content.js`](file:///c:/Users/ADMI
 
 - **PDC WhatsApp Community URL**: Update `whatsappLinks.COMMUNITY_URL`.
 - **Kondhwa Quiz URL**: Update `campusAccess.KONDHWA_QUIZ_URL`.
-- **Firebase Project**: Update `firebase` in `js/content.js` or via environment variables in `js/firebase-config.js`.
+- **Supabase Project**: Configured via `.env` or in `js/content.js`.
 
 ---
 
