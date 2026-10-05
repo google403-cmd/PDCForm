@@ -7,10 +7,20 @@
  * ===================================================================
  */
 
-if (typeof require === "function") {
-  const supabaseBackend = require("./supabase-config.js");
-  module.exports = supabaseBackend;
-  if (typeof window !== "undefined") {
-    window.PDCBackend = supabaseBackend;
+if (typeof window !== "undefined") {
+  if (window.PDCSupabaseBackend) {
+    window.PDCBackend = window.PDCSupabaseBackend;
   }
+}
+
+if (typeof require === "function") {
+  try {
+    const supabaseBackend = require("./supabase-config.js");
+    if (typeof module !== "undefined" && module.exports) {
+      module.exports = supabaseBackend;
+    }
+    if (typeof window !== "undefined") {
+      window.PDCBackend = supabaseBackend;
+    }
+  } catch (e) { }
 }
