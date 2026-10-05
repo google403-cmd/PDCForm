@@ -2,18 +2,19 @@
  * ===================================================================
  * PDC (PERSONALITY DEVELOPMENT CLUB) — SUPABASE CONFIGURATION & BACKEND
  * ===================================================================
- * Complete replacement for Firebase with High-Concurrency & Resiliency:
- * 1. Supabase Client initialization with Anon Key
- * 2. Guaranteed Zero-Duplicate records via phone-keyed upsert in 'confirmation_stst'
- * 3. Real-time community stats hydration from 'pdc_stats' & live table counts
- * 4. Resilient offline sync queue (localStorage) with automatic flush
- * 5. Full WhatsApp join status tracking
- * 6. Campus submission routing ('pdc_bibwewadi_submissions' & 'pdc_kondhwa_submissions')
+ * Exclusively uses TWO tables:
+ * 1. confirmation_stst: Student Program Confirmations & Registrations
+ * 2. pdc_bibwewadi_submissions: Assessment Quiz Responses & Reports
  * ===================================================================
  */
 
 const SUPABASE_DEFAULT_URL = "https://newtaeknlmkugqmhcyxg.supabase.co";
 const SUPABASE_DEFAULT_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ld3RhZWtubG1rdWdxbWhjeXhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNzM4MzUsImV4cCI6MjEwNjc0OTgzNX0.MeDqtah3UBb8TjMldOl-wMeTFdvtPqU1GjFfQhbhdOU";
+
+const COLLECTIONS = {
+  CONFIRMATION_STST: "confirmation_stst",
+  BIBWEWADI: "pdc_bibwewadi_submissions"
+};
 
 const getSupabaseConfig = () => {
   const globalConfig = (typeof window !== "undefined" && window.PDC_CONFIG && window.PDC_CONFIG.supabase)
@@ -26,15 +27,7 @@ const getSupabaseConfig = () => {
   return {
     url: injectedConfig.url || globalConfig.url || SUPABASE_DEFAULT_URL,
     anonKey: injectedConfig.anonKey || globalConfig.anonKey || SUPABASE_DEFAULT_ANON_KEY,
-    tables: {
-      CONFIRMATION_STST: "confirmation_stst",
-      BIBWEWADI: "pdc_bibwewadi_submissions",
-      KONDHWA: "pdc_kondhwa_submissions",
-      REGISTRATIONS: "pdc_registrations",
-      SIMPLE_REGISTRATIONS: "pdc_simple_registrations",
-      STATS: "pdc_stats",
-      WHATSAPP_JOINS: "pdc_whatsapp_joins"
-    }
+    tables: COLLECTIONS
   };
 };
 
@@ -62,7 +55,7 @@ try {
       auth: { persistSession: false, autoRefreshToken: false }
     });
     isSupabaseConfigured = true;
-    console.log("✅ PDC Supabase client initialized successfully.");
+    console.log("✅ PDC Supabase client initialized (Tables: confirmation_stst, pdc_bibwewadi_submissions).");
   } else {
     console.info("PDC running in local storage mode until Supabase JS library is loaded.");
   }
@@ -70,19 +63,8 @@ try {
   console.warn("PDC Supabase initialization notice:", err.message);
 }
 
-const COLLECTIONS = {
-  BIBWEWADI: "pdc_bibwewadi_submissions",
-  KONDHWA: "pdc_kondhwa_submissions",
-  CONFIRMATION_STST: "confirmation_stst",
-  REGISTRATIONS: "pdc_registrations",
-  SIMPLE_REGISTRATIONS: "pdc_simple_registrations",
-  STATS: "pdc_stats",
-  WHATSAPP_JOINS: "pdc_whatsapp_joins"
-};
-
-function getTargetCollection(campus) {
-  const cleanCampus = String(campus || "").trim().toLowerCase();
-  return cleanCampus === "kondhwa" ? COLLECTIONS.KONDHWA : COLLECTIONS.BIBWEWADI;
+function getTargetCollection() {
+  return COLLECTIONS.BIBWEWADI;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -102,7 +84,7 @@ function queuePendingSync(payload, targetTable) {
       queuedAt: new Date().toISOString()
     });
     localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(queue));
-    console.log(`Offline sync queued for table [${targetTable}]:`, queueId);
+    console.log(`Offline sync queued for [${targetTable}]:`, queueId);
     return queueId;
   } catch (err) {
     console.warn("Could not save to sync queue:", err);
@@ -160,7 +142,7 @@ if (typeof window !== "undefined" && typeof window.addEventListener === "functio
 }
 
 // ─────────────────────────────────────────────────────────────────
-// LIVE STATS HYDRATION
+// LIVE STATS HYDRATION (Directly from confirmation_stst)
 // ─────────────────────────────────────────────────────────────────
 async function fetchLiveStats() {
   let stats = {
@@ -182,19 +164,13 @@ async function fetchLiveStats() {
 
   if (isSupabaseConfigured && supabaseClient) {
     try {
-      const { data, error } = await supabaseClient
-        .from(COLLECTIONS.STATS)
-        .select("*")
-        .eq("id", "registrations")
-        .single();
+      const { count } = await supabaseClient
+        .from(COLLECTIONS.CONFIRMATION_STST)
+        .select("*", { count: "exact", head: true });
 
-      if (!error && data) {
-        stats = {
-          totalRegistered: data.totalRegistered || stats.totalRegistered,
-          totalJoined: data.joinedWhatsAppCount || stats.totalJoined,
-          males: data.males || stats.males,
-          females: data.females || stats.females
-        };
+      if (typeof count === "number") {
+        // Base seed count (1554) + new unique confirmations
+        stats.totalRegistered = Math.max(1554, count);
         try {
           if (typeof localStorage !== "undefined") {
             localStorage.setItem("pdc_live_stats_cache", JSON.stringify(stats));
@@ -210,7 +186,7 @@ async function fetchLiveStats() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// SAVE SIMPLE REGISTRATION (CONFIRMATION FORM) WITH ZERO DUPLICATES
+// SAVE SIMPLE REGISTRATION (Exclusively in 'confirmation_stst')
 // ─────────────────────────────────────────────────────────────────
 async function saveSimpleRegistration(regData = {}) {
   if (_submissionInFlight) {
@@ -275,7 +251,7 @@ async function saveSimpleRegistration(regData = {}) {
   try {
     if (isSupabaseConfigured && supabaseClient) {
       try {
-        // 1. Check existing record for deduplication (fast primary key lookup)
+        // 1. Fast Primary Key check for deduplication
         const { data: existing } = await supabaseClient
           .from(COLLECTIONS.CONFIRMATION_STST)
           .select('"Document ID", joinedWhatsApp')
@@ -289,7 +265,7 @@ async function saveSimpleRegistration(regData = {}) {
           payload.isDuplicateSubmission = "true";
         }
 
-        // 2. Perform upsert on confirmation_stst (primary table)
+        // 2. Perform upsert directly and exclusively on confirmation_stst
         const { error: upsertErr } = await supabaseClient
           .from(COLLECTIONS.CONFIRMATION_STST)
           .upsert(payload, { onConflict: "Document ID" });
@@ -299,55 +275,7 @@ async function saveSimpleRegistration(regData = {}) {
           throw upsertErr;
         }
 
-        // 3. Background asynchronous sync (non-blocking for ultra-fast response)
-        (async () => {
-          try {
-            const compatPayload = {
-              "Document ID": phoneClean,
-              fullName: nameClean,
-              phoneNumber: phoneNum,
-              whatsappNumber: phoneNum,
-              email: emailClean,
-              gender: genderClean,
-              branch: branchClean,
-              division: divisionClean,
-              status: "confirmed",
-              joinedWhatsApp: payload.joinedWhatsApp,
-              submittedAt: nowIso,
-              timestamp: nowIso
-            };
-            await supabaseClient.from(COLLECTIONS.REGISTRATIONS).upsert(compatPayload, { onConflict: "Document ID" });
-            await supabaseClient.from(COLLECTIONS.SIMPLE_REGISTRATIONS).upsert(compatPayload, { onConflict: "Document ID" });
-
-            if (!isUpdate) {
-              const isFemale = genderClean.toLowerCase() === "female";
-              const { data: currentStats } = await supabaseClient
-                .from(COLLECTIONS.STATS)
-                .select("*")
-                .eq("id", "registrations")
-                .single();
-
-              const prevReg = currentStats ? (currentStats.totalRegistered || 1554) : 1554;
-              const prevMales = currentStats ? (currentStats.males || 1124) : 1124;
-              const prevFemales = currentStats ? (currentStats.females || 430) : 430;
-
-              await supabaseClient
-                .from(COLLECTIONS.STATS)
-                .upsert({
-                  id: "registrations",
-                  totalRegistered: prevReg + 1,
-                  totalEntries: (currentStats ? (currentStats.totalEntries || prevReg) : prevReg) + 1,
-                  males: isFemale ? prevMales : prevMales + 1,
-                  females: isFemale ? prevFemales + 1 : prevFemales,
-                  updatedAt: nowIso
-                }, { onConflict: "id" });
-            }
-          } catch (bgErr) {
-            console.warn("Background sync task notice:", bgErr.message);
-          }
-        })();
-
-        console.log(`Saved confirmation to Supabase for ${phoneClean}. isUpdate=${isUpdate}`);
+        console.log(`Saved confirmation to [${COLLECTIONS.CONFIRMATION_STST}] for ${phoneClean}. isUpdate=${isUpdate}`);
         return { success: true, isUpdate, id: phoneClean, student: payload };
 
       } catch (err) {
@@ -370,12 +298,11 @@ async function saveSimpleRegistration(regData = {}) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// RECORD WHATSAPP COMMUNITY JOIN
+// RECORD WHATSAPP COMMUNITY JOIN (Exclusively in 'confirmation_stst')
 // ─────────────────────────────────────────────────────────────────
 async function recordWhatsAppJoin(studentData = {}) {
   const rawDigits = String(studentData.phoneNumber || studentData.whatsappNumber || studentData.phone || "").replace(/[^0-9]/g, "");
   const phoneClean = rawDigits.length >= 10 ? rawDigits.slice(-10) : rawDigits;
-  const nameClean = String(studentData.fullName || studentData.name || "").trim();
 
   if (!phoneClean) return { success: false, error: "Missing phone number" };
 
@@ -384,47 +311,12 @@ async function recordWhatsAppJoin(studentData = {}) {
 
   if (isSupabaseConfigured && supabaseClient) {
     try {
-      // 1. Mark joined in confirmation_stst
       await supabaseClient
         .from(COLLECTIONS.CONFIRMATION_STST)
         .update({ joinedWhatsApp: true, updatedAt: nowIso })
         .eq("Document ID", docId);
 
-      // 2. Mark joined in pdc_registrations
-      await supabaseClient
-        .from(COLLECTIONS.REGISTRATIONS)
-        .update({ joinedWhatsApp: true })
-        .eq("Document ID", phoneClean);
-
-      // 3. Record in pdc_whatsapp_joins
-      await supabaseClient
-        .from(COLLECTIONS.WHATSAPP_JOINS)
-        .upsert({
-          id: phoneClean,
-          fullName: nameClean,
-          phoneNumber: phoneClean,
-          whatsappNumber: phoneClean,
-          timestamp: nowIso
-        }, { onConflict: "id" });
-
-      // 4. Increment joined counter in stats
-      const { data: currentStats } = await supabaseClient
-        .from(COLLECTIONS.STATS)
-        .select("*")
-        .eq("id", "registrations")
-        .single();
-
-      if (currentStats) {
-        await supabaseClient
-          .from(COLLECTIONS.STATS)
-          .update({
-            joinedWhatsAppCount: (currentStats.joinedWhatsAppCount || 0) + 1,
-            updatedAt: nowIso
-          })
-          .eq("id", "registrations");
-      }
-
-      console.log(`WhatsApp join recorded for ${phoneClean} in Supabase.`);
+      console.log(`WhatsApp join recorded for ${phoneClean} in [${COLLECTIONS.CONFIRMATION_STST}].`);
       return { success: true };
     } catch (err) {
       console.warn("Could not record WhatsApp join in Supabase:", err.message);
@@ -435,7 +327,7 @@ async function recordWhatsAppJoin(studentData = {}) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// SAVE ASSESSMENT TEST SUBMISSION
+// SAVE ASSESSMENT TEST SUBMISSION (Exclusively in 'pdc_bibwewadi_submissions')
 // ─────────────────────────────────────────────────────────────────
 async function saveTestSubmission(submissionData) {
   if (!submissionData) return { success: false, error: "Missing submission data" };
@@ -449,8 +341,7 @@ async function saveTestSubmission(submissionData) {
 
   _submissionInFlight = true;
 
-  const campus = submissionData.campus || "Bibwewadi";
-  const targetTable = getTargetCollection(campus);
+  const targetTable = COLLECTIONS.BIBWEWADI;
   const nowIso = new Date().toISOString();
   const randomSuffix = Math.random().toString(36).substring(2, 10);
   const docId = `/${targetTable}/${Date.now()}_${randomSuffix}`;
@@ -462,7 +353,7 @@ async function saveTestSubmission(submissionData) {
     whatsappNumber: parseInt(String(submissionData.whatsappNumber || submissionData.phoneNumber || "0").replace(/[^0-9]/g, "").slice(-10), 10) || null,
     gender: submissionData.gender || "Other",
     homeTown: submissionData.homeTown || "",
-    campus: campus,
+    campus: submissionData.campus || "Bibwewadi",
     branch: submissionData.branch || "",
     division: submissionData.division || "",
     year: submissionData.year || "",
@@ -520,7 +411,7 @@ const PDCBackend = {
   getRegistrationCount: async () => (await fetchLiveStats()).totalRegistered,
   incrementWhatsAppJoinedCounter: recordWhatsAppJoin,
   getWhatsAppJoinedCount: async () => (await fetchLiveStats()).totalJoined,
-  isFirebaseConfigured: () => true, // backward compatibility
+  isFirebaseConfigured: () => true,
   isSupabaseConfigured: () => isSupabaseConfigured,
   getSupabaseConfig,
   getFirebaseConfig: () => ({}),

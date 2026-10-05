@@ -3,10 +3,12 @@
  * PDC SUPABASE DATABASE DEDUPLICATION & INTEGRITY ENGINE
  * ===================================================================
  * 
- * 1. Scans confirmation_stst and submission tables
- * 2. Identifies and removes duplicate records (keeping newest per phone)
- * 3. Enforces unique B-tree performance indexes
- * 4. Recalculates clean deduplicated live statistics in pdc_stats
+ * Exclusively maintains TWO tables:
+ * 1. confirmation_stst
+ * 2. pdc_bibwewadi_submissions
+ * 
+ * - Identifies and removes any duplicate records (keeps newest per phone)
+ * - Enforces unique B-Tree performance indexes on both tables
  * 
  * Usage:
  *   node deduplicate-db.js
@@ -14,15 +16,12 @@
  */
 
 const { Client } = require('pg');
-const { createClient } = require('@supabase/supabase-js');
 
 const connectionString = process.env.SUPABASE_DB_URL || 'postgresql://postgres:bkRy4Syw!%2Fu!SWR@db.newtaeknlmkugqmhcyxg.supabase.co:5432/postgres';
-const supabaseUrl = process.env.SUPABASE_URL || 'https://newtaeknlmkugqmhcyxg.supabase.co';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ld3RhZWtubG1rdWdxbWhjeXhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNzM4MzUsImV4cCI6MjEwNjc0OTgzNX0.MeDqtah3UBb8TjMldOl-wMeTFdvtPqU1GjFfQhbhdOU';
 
 async function runDeduplication() {
   console.log('========================================================');
-  console.log('   PDC SUPABASE DEDUPLICATION & INTEGRITY ENGINE        ');
+  console.log('   PDC SUPABASE DEDUPLICATION ENGINE (2 TABLES ONLY)    ');
   console.log('========================================================\n');
 
   const client = new Client({
@@ -79,42 +78,13 @@ async function runDeduplication() {
     `);
     console.log('   ✅ Unique B-Tree indexes verified and active.');
 
-    // 4. Recalculate Live Statistics
-    console.log('\n--- Recalculating Real-Time Statistics in pdc_stats ---');
-    const statsQuery = await client.query(`
-      SELECT 
-        count(DISTINCT "phoneNumber") as total_reg,
-        count(CASE WHEN lower("gender") = 'male' THEN 1 END) as males,
-        count(CASE WHEN lower("gender") = 'female' THEN 1 END) as females,
-        count(CASE WHEN "joinedWhatsApp" = true THEN 1 END) as joined_wa
-      FROM "confirmation_stst";
-    `);
+    // 4. Verification summary
+    const bibCount = await client.query('SELECT count(*) as total, count(DISTINCT "whatsappNumber") as unique_count FROM "pdc_bibwewadi_submissions";');
+    const confCount = await client.query('SELECT count(*) as total, count(DISTINCT "phoneNumber") as unique_count FROM "confirmation_stst";');
 
-    const row = statsQuery.rows[0];
-    const totalReg = Math.max(parseInt(row.total_reg, 10), 1554);
-    const males = Math.max(parseInt(row.males, 10), 1124);
-    const females = Math.max(parseInt(row.females, 10), 430);
-    const joinedWa = Math.max(parseInt(row.joined_wa, 10), 73);
-
-    await client.query(`
-      INSERT INTO "pdc_stats" ("id", "totalRegistered", "totalEntries", "males", "females", "joinedWhatsAppCount", "notJoinedWhatsAppCount", "updatedAt")
-      VALUES ('registrations', $1, $1, $2, $3, $4, $5, now())
-      ON CONFLICT ("id") DO UPDATE SET
-        "totalRegistered" = EXCLUDED."totalRegistered",
-        "totalEntries" = EXCLUDED."totalEntries",
-        "males" = EXCLUDED."males",
-        "females" = EXCLUDED."females",
-        "joinedWhatsAppCount" = EXCLUDED."joinedWhatsAppCount",
-        "notJoinedWhatsAppCount" = EXCLUDED."notJoinedWhatsAppCount",
-        "updatedAt" = now();
-    `, [totalReg, males, females, joinedWa, totalReg - joinedWa]);
-
-    console.log('   ✅ Statistics refreshed:', {
-      totalRegistered: totalReg,
-      males,
-      females,
-      joinedWhatsAppCount: joinedWa
-    });
+    console.log('\n--- Database Integrity Verification ---');
+    console.log(`   [confirmation_stst]:           Total=${confCount.rows[0].total}, Unique Phones=${confCount.rows[0].unique_count}`);
+    console.log(`   [pdc_bibwewadi_submissions]:  Total=${bibCount.rows[0].total}, Unique Phones=${bibCount.rows[0].unique_count}`);
 
     console.log('\n========================================================');
     console.log('🎉 DEDUPLICATION & PERFORMANCE OPTIMIZATION COMPLETE');

@@ -24,12 +24,7 @@ window.PDC_CONFIG = {
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ld3RhZWtubG1rdWdxbWhjeXhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNzM4MzUsImV4cCI6MjEwNjc0OTgzNX0.MeDqtah3UBb8TjMldOl-wMeTFdvtPqU1GjFfQhbhdOU",
     tables: {
       CONFIRMATION_STST: "confirmation_stst",
-      BIBWEWADI: "pdc_bibwewadi_submissions",
-      KONDHWA: "pdc_kondhwa_submissions",
-      REGISTRATIONS: "pdc_registrations",
-      SIMPLE_REGISTRATIONS: "pdc_simple_registrations",
-      STATS: "pdc_stats",
-      WHATSAPP_JOINS: "pdc_whatsapp_joins"
+      BIBWEWADI: "pdc_bibwewadi_submissions"
     }
   },
 

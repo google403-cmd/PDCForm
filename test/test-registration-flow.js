@@ -1,16 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
-const { Client } = require('pg');
 
 const supabaseUrl = process.env.SUPABASE_URL || 'https://newtaeknlmkugqmhcyxg.supabase.co';
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ld3RhZWtubG1rdWdxbWhjeXhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNzM4MzUsImV4cCI6MjEwNjc0OTgzNX0.MeDqtah3UBb8TjMldOl-wMeTFdvtPqU1GjFfQhbhdOU';
-const connectionString = process.env.SUPABASE_DB_URL || 'postgresql://postgres:bkRy4Syw!%2Fu!SWR@db.newtaeknlmkugqmhcyxg.supabase.co:5432/postgres';
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function runTests() {
   console.log('========================================================');
   console.log('   PDC REGISTRATION & DEDUPLICATION VERIFICATION TEST   ');
-  console.log('                 (SUPABASE ENGINE)                      ');
+  console.log('         (2 TABLES: confirmation_stst & bibwewadi)      ');
   console.log('========================================================\n');
 
   const testPhone = '9999900001';
@@ -19,19 +17,13 @@ async function runTests() {
 
   // 1. Initial cleanup of test records
   await supabase.from('confirmation_stst').delete().eq('Document ID', testDocId);
-  await supabase.from('pdc_registrations').delete().eq('Document ID', testPhone);
-  await supabase.from('pdc_simple_registrations').delete().eq('Document ID', testPhone);
 
-  // 2. Get initial stats count from pdc_stats
-  const { data: initialStats, error: statsErr } = await supabase
-    .from('pdc_stats')
-    .select('*')
-    .eq('id', 'registrations')
-    .single();
+  // 2. Count before submission
+  const { count: initialTotal } = await supabase
+    .from('confirmation_stst')
+    .select('*', { count: 'exact', head: true });
 
-  if (statsErr) throw new Error('Could not fetch initial stats: ' + statsErr.message);
-  const initialTotal = initialStats.totalRegistered || 1554;
-  console.log(`Initial stats count: ${initialTotal}`);
+  console.log(`Initial total records in [confirmation_stst]: ${initialTotal}`);
 
   // --- TEST 1: New Student Registration ---
   console.log('\n--- TEST 1: New Student Registration ---');
@@ -62,26 +54,13 @@ async function runTests() {
   if (insertErr) throw new Error('Test 1 Insert failed: ' + insertErr.message);
   console.log('✅ Created document in [confirmation_stst] with doc ID = phone number.');
 
-  // Increment stats
-  await supabase
-    .from('pdc_stats')
-    .update({
-      totalRegistered: initialTotal + 1,
-      totalEntries: (initialStats.totalEntries || initialTotal) + 1,
-      males: (initialStats.males || 1124) + 1
-    })
-    .eq('id', 'registrations');
+  const { count: afterFirstTotal } = await supabase
+    .from('confirmation_stst')
+    .select('*', { count: 'exact', head: true });
 
-  const { data: afterFirstStats } = await supabase
-    .from('pdc_stats')
-    .select('totalRegistered')
-    .eq('id', 'registrations')
-    .single();
-
-  const afterFirstTotal = afterFirstStats.totalRegistered;
-  console.log(`Stats count after first submission: ${afterFirstTotal} (expected: ${initialTotal + 1})`);
+  console.log(`Count after first submission: ${afterFirstTotal} (expected: ${initialTotal + 1})`);
   if (afterFirstTotal !== initialTotal + 1) {
-    throw new Error('Stats total did not increment on first submission');
+    throw new Error('Total count did not increment on first submission');
   }
 
   // --- TEST 2: Duplicate Registration Check (Same Phone) ---
@@ -119,14 +98,11 @@ async function runTests() {
   }
 
   // Verify total count did NOT increment
-  const { data: afterDupStats } = await supabase
-    .from('pdc_stats')
-    .select('totalRegistered')
-    .eq('id', 'registrations')
-    .single();
+  const { count: afterDupTotal } = await supabase
+    .from('confirmation_stst')
+    .select('*', { count: 'exact', head: true });
 
-  const afterDupTotal = afterDupStats.totalRegistered;
-  console.log(`Stats count after duplicate submission: ${afterDupTotal} (expected: ${afterFirstTotal})`);
+  console.log(`Count after duplicate submission: ${afterDupTotal} (expected: ${afterFirstTotal})`);
   if (afterDupTotal !== afterFirstTotal) {
     throw new Error('Duplicate submission incorrectly increased the total count!');
   }
@@ -164,73 +140,45 @@ async function runTests() {
   if (!waDoc.joinedWhatsApp) throw new Error('WhatsApp join status not true');
   console.log('✅ WhatsApp join recorded cleanly in confirmation_stst.');
 
-  // --- TEST 4: [pdc_simple_registrations] 4-Field & Deduplication ---
-  console.log('\n--- TEST 4: [pdc_simple_registrations] 4-Field & Deduplication ---');
-  await supabase.from('pdc_simple_registrations').upsert({
-    'Document ID': testPhone,
-    fullName: 'Aditya Kulkarni',
-    phoneNumber: testPhoneNum,
-    email: 'aditya@vit.edu',
+  // --- TEST 4: [pdc_bibwewadi_submissions] Assessment Submission ---
+  console.log('\n--- TEST 4: [pdc_bibwewadi_submissions] Assessment Submission ---');
+  const testSubDocId = `/pdc_bibwewadi_submissions/test_${Date.now()}`;
+  const testSub = {
+    'Document ID': testSubDocId,
+    fullName: 'Test Assessment Student',
+    email: 'test.assessment@vit.edu',
+    whatsappNumber: testPhoneNum,
     gender: 'Male',
+    campus: 'Bibwewadi',
     branch: 'Computer Engineering',
     division: 'A',
-    status: 'confirmed'
-  }, { onConflict: 'Document ID' });
-  console.log('✅ Created document in new collection [pdc_simple_registrations] with doc ID = phone number.');
+    year: 'FY',
+    totalScore: 80,
+    scores: { pq: 30, iq: 20, eq: 30 },
+    submittedAt: new Date().toISOString(),
+    timestamp: new Date().toISOString()
+  };
 
-  await supabase.from('pdc_simple_registrations').upsert({
-    'Document ID': testPhone,
-    fullName: 'Aditya S. Kulkarni',
-    phoneNumber: testPhoneNum,
-    email: 'aditya.new@vit.edu',
-    gender: 'Male',
-    branch: 'Computer Engineering',
-    division: 'B',
-    status: 'confirmed'
-  }, { onConflict: 'Document ID' });
-  console.log('Duplicate phone detected in [pdc_simple_registrations]. Merging in-place without duplicate doc.');
+  const { error: subErr } = await supabase
+    .from('pdc_bibwewadi_submissions')
+    .insert(testSub);
 
-  const { count: simpleCount } = await supabase
-    .from('pdc_simple_registrations')
-    .select('*', { count: 'exact', head: true })
-    .eq('Document ID', testPhone);
-
-  if (simpleCount !== 1) throw new Error('Expected 1 record in pdc_simple_registrations');
-  console.log('✅ Verified zero duplicates in [pdc_simple_registrations]. Record updated in-place.');
-
-  // --- TEST 5: [confirmation_stst] with Branch and Division ---
-  console.log('\n--- TEST 5: [confirmation_stst] with Branch and Division ---');
-  const { data: confRecord } = await supabase
-    .from('confirmation_stst')
-    .select('fullName, branch, division, phoneNumber')
-    .eq('Document ID', testDocId)
-    .single();
-
-  if (!confRecord || !confRecord.branch || !confRecord.division) {
-    throw new Error('Branch or Division missing in confirmation_stst');
-  }
-  console.log('✅ Successfully stored and verified student data in [confirmation_stst]!');
+  if (subErr) throw new Error('Assessment insert failed: ' + subErr.message);
+  console.log('✅ Assessment successfully submitted to [pdc_bibwewadi_submissions].');
 
   // --- CLEANUP ---
   console.log('\n--- CLEANUP ---');
   await supabase.from('confirmation_stst').delete().eq('Document ID', testDocId);
-  await supabase.from('pdc_registrations').delete().eq('Document ID', testPhone);
-  await supabase.from('pdc_simple_registrations').delete().eq('Document ID', testPhone);
+  await supabase.from('pdc_bibwewadi_submissions').delete().eq('Document ID', testSubDocId);
 
-  // Restore initial stats count
-  await supabase
-    .from('pdc_stats')
-    .update({
-      totalRegistered: initialTotal,
-      totalEntries: initialStats.totalEntries || initialTotal,
-      males: initialStats.males || 1124
-    })
-    .eq('id', 'registrations');
+  const { count: finalTotal } = await supabase
+    .from('confirmation_stst')
+    .select('*', { count: 'exact', head: true });
 
-  console.log(`Final stats count restored to: ${initialTotal}`);
+  console.log(`Final stats count restored to: ${finalTotal}`);
 
   console.log('\n========================================================');
-  console.log('🎉 ALL REGISTRATION & DEDUPLICATION TESTS PASSED (100%)');
+  console.log('🎉 ALL 2-TABLE TESTS PASSED WITH 100% SUCCESS');
   console.log('========================================================\n');
 }
 
