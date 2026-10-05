@@ -301,7 +301,10 @@ async function saveSimpleRegistration(regData = {}) {
 // RECORD WHATSAPP COMMUNITY JOIN (Exclusively in 'confirmation_stst')
 // ─────────────────────────────────────────────────────────────────
 async function recordWhatsAppJoin(studentData = {}) {
-  const rawDigits = String(studentData.phoneNumber || studentData.whatsappNumber || studentData.phone || "").replace(/[^0-9]/g, "");
+  const phoneInput = (typeof studentData === "string" || typeof studentData === "number")
+    ? String(studentData)
+    : String((studentData && (studentData.phoneNumber || studentData.whatsappNumber || studentData.phone)) || "");
+  const rawDigits = phoneInput.replace(/[^0-9]/g, "");
   const phoneClean = rawDigits.length >= 10 ? rawDigits.slice(-10) : rawDigits;
 
   if (!phoneClean) return { success: false, error: "Missing phone number" };

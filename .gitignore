@@ -13,5 +13,6 @@ joined_numbers.txt
 node_modules/
 .vercel/
 dist/
+scratch/
 .DS_Store
 Thumbs.db

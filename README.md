@@ -1,6 +1,6 @@
 # Personality Development Club (PDC) — PQ · IQ · EQ Assessment
 
-A responsive, high-performance web application designed for the **Personality Development Club (PDC)** of VIT Pune. Built with pure HTML5, Vanilla CSS, and JavaScript, ready for direct deployment on **GitHub Pages**, **Vercel**, or any static hosting platform with a **Firebase Firestore** cloud database backend.
+A responsive, high-performance web application designed for the **Personality Development Club (PDC)** of VIT Pune. Built with pure HTML5, Vanilla CSS, and JavaScript, ready for direct deployment on **GitHub Pages**, **Vercel**, or any static hosting platform with a **Supabase PostgreSQL** cloud database backend.
 
 ---
 
@@ -21,7 +21,7 @@ A responsive, high-performance web application designed for the **Personality De
   5. Timeless Wisdom Sessions
 - **Unified WhatsApp Community CTA**: Single, prominent **"Join WhatsApp Community"** call to action with no gender segregation.
 - **Dedicated Kondhwa Campus Pathway**: Standalone `kondhwa.html` portal featuring dedicated Kondhwa Club branding and independent quiz routing.
-- **Firebase Firestore Backend**: Submits to the `pdc_test_submissions` collection with strict security validation rules and local offline fallback.
+- **Supabase Backend**: Submits to `confirmation_stst` and `pdc_bibwewadi_submissions` with instant deduplication and offline fallback.
 
 ---
 
