@@ -18,15 +18,19 @@ if (typeof window === "undefined") {
 }
 
 window.PDC_CONFIG = {
-  // ── Firebase Configuration ──────────────────────────────────────
-  firebase: {
-    apiKey: "AIzaSyCN-C2smI3uHC22-UPtRwi8lNGdY6xQieI",
-    authDomain: "pdclub-e9f59.firebaseapp.com",
-    projectId: "pdclub-e9f59",
-    storageBucket: "pdclub-e9f59.firebasestorage.app",
-    messagingSenderId: "609375785673",
-    appId: "1:609375785673:web:a516ef1b29ebc6560ff318",
-    measurementId: "G-18RNRMSJJN"
+  // ── Supabase Configuration ──────────────────────────────────────
+  supabase: {
+    url: "https://newtaeknlmkugqmhcyxg.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ld3RhZWtubG1rdWdxbWhjeXhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNzM4MzUsImV4cCI6MjEwNjc0OTgzNX0.MeDqtah3UBb8TjMldOl-wMeTFdvtPqU1GjFfQhbhdOU",
+    tables: {
+      CONFIRMATION_STST: "confirmation_stst",
+      BIBWEWADI: "pdc_bibwewadi_submissions",
+      KONDHWA: "pdc_kondhwa_submissions",
+      REGISTRATIONS: "pdc_registrations",
+      SIMPLE_REGISTRATIONS: "pdc_simple_registrations",
+      STATS: "pdc_stats",
+      WHATSAPP_JOINS: "pdc_whatsapp_joins"
+    }
   },
 
   // ── Brand & Club Information ─────────────────────────────────────

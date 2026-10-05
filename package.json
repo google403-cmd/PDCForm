@@ -4,11 +4,10 @@
   "scripts": {
     "test": "node test/test-registration-flow.js",
     "test:reg": "node test/test-registration-flow.js",
-    "deduplicate": "node deduplicate-db.js",
-    "deploy:rules": "npx -y firebase-tools deploy --only firestore:rules"
+    "deduplicate": "node deduplicate-db.js"
   },
   "dependencies": {
-    "firebase": "^12.19.0",
-    "firebase-admin": "^14.5.0"
+    "@supabase/supabase-js": "^2.117.2",
+    "pg": "^8.23.1"
   }
 }
